@@ -12,11 +12,8 @@
     <body>
         <div class="wrapper">
             @include('front.includes.header')
-            
             @yield('content')
-                
             <!-- </div> -->
-
             <div id="flash-msg" class="alert alert-info d-none"></div>
 
             <!-- Include Footer -->

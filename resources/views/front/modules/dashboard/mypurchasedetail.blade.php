@@ -105,7 +105,7 @@
                         </table>                      
                       </div>
 
-                      <div class="order-progerss-bar">
+                      {{-- <div class="order-progerss-bar">
                         <div class="order-progerss-item order-progerss-sucess">
                           <div class="order-progerss-title"><span>Order Confirmed</span></div>
                           <div class="order-progerss-circle"></div>
@@ -183,14 +183,14 @@
                           <div class="order-progerss-circle"></div>
                           <div class="order-progerss-time"><span>Sun, 7th Jan</span></div>
                         </div>
-                      </div>
+                      </div> --}}
 
                       <div class="order-detail-item order-detail-button">
                         <a href="{{  env('WEBSITE_URL').'rateing-review' }}" class="btn-url">Rate & Review Product</a>
                         <a  class="btn-url" href="{{  env('WEBSITE_URL').'contactwithus' }}">Need help?</a>
                       </div>
 
-                      <div class="order-alerts">
+                      {{-- <div class="order-alerts">
                         <div class="order-alert order-success">
                           <div class="order-alert-icon">
                             <svg width="100px" height="100px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">                            
@@ -224,10 +224,10 @@
                             <small> On Tue, 26 Jan 2024</small>
                           </div> 
                         </div>
-                      </div>
+                      </div> --}}
 
                       <div class="order-detail-item">                       
-                        <button  class="btn-url" href="#" data-bs-target="#order-return-form" data-bs-toggle="collapse">Cancel/Return Order</button>
+                        <button  class="btn-url" href="#" @if($orderDetails->payment_status == "paid") data-bs-target="#order-return-form" data-bs-toggle="collapse" @else data-bs-toggle="modal" data-bs-target="#returnMessage" @endif >Cancel/Return Order</button>
                         <div id="order-return-form" class="collapse">
                          <div class="order-return-form pt-3">
                           <form action="{{route('front-refund.submit')}}" method="post" autocomplete="off">  
@@ -241,8 +241,8 @@
                             </div> 
                             <h4><strong>Exchange</strong></h4>  
                             <div class="form-group">
-                              <label>Comment box <span class="required">*</span></label>
-                              <textarea name="comment"  class="form-control"></textarea>
+                              <label>Refund/Return Reason<span class="required">*</span></label>
+                              <textarea name="refund_reason"  class="form-control"></textarea>
                             </div>   
                             <div class="form-group">
                               <label>Upload Photo/Video <span class="required">*</span></label>
@@ -289,6 +289,10 @@
                               <label>Bank Name<span class="required">*</span></label>
                               <input  name="bank_name" type="text" class="form-control">
                             </div> 
+                            <input type="hidden" value="{{ $orderDetails->order_number }}" name="order_number">
+                            @foreach($orderDetails->items as $itm)
+                              <input type="hidden" value="{{ $itm->id }}" name="order_item_id[]">
+                            @endforeach   
                             <div class="form-button">
                               <button type="submit" class="btn btn-primary">Submit</button>
                             </div>             
@@ -313,7 +317,27 @@
       <!--content-wrapper-->
     </section>  
     <!-- page main wrapper end -->
-     
+ 
+    <div class="modal fade" id="returnMessage" tabindex="-1" aria-labelledby="returnMessageLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="returnMessageLabel">Cancelation Reason</h1>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="">Cancelation Reason</label>
+            <textarea name="cancel_reason" id="" class="form-control"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

@@ -142,18 +142,13 @@
                                                             @foreach($variant['variant_values'] as $k => $variantValue)
                                                             @php
                                                                 $isActive = false;
-                                                                $image = '';
+                                                                $image = $variantValue['image'] ? asset('uploads/products/' . $variantValue['image']): asset('img/no-image.jpg');
                                                                 $type = $variant['variant_type'];
                                                                 $color = $variantValue['color_code'];
                                                                 $name = $variantValue['name'];
                                                                 $variantName = $variant['variant_name'];
-                                                                if($activeVarientId && $variantValue['variant_value_id']==$activeVarientId){
-                                                                    $isActive = ($hasMain && $variantValue['is_main'] == 1) || (!$hasMain && $k == 0);
-                                                                    $variantImage = $product->product_main_images->where('variant_id', $variantValue['id'])->first();
-                                                                    if($variantImage){
-                                                                        $image = asset('uploads/products/' . $variantImage->graphic);
-                                                                    }
-                                                                }
+                                                                $isActive = ($hasMain && $variantValue['is_main'] == 1) || (!$hasMain && $k == 0);
+                                                                info("------variantvalue--------",[$variantValue]);
                                                             @endphp
                                                             <li data-productId = "{{  $variant['product_id'] }}"
                                                                     data-id="{{ $variantValue['id'] }}" 
@@ -161,16 +156,11 @@
                                                                     data-value="{{ $variantValue['name'] }}"
                                                                     data-vid="{{ $variantValue['variant_value_id'] }}"
                                                                     onclick="selectVariant(this); checkVariantStock(this);updateVariantSpecification(this);"
-                                                                    class="s-variant activeVarientLi
-                                                                {{ in_array($type, [3]) ? 's-variant-round' : '' }} 
-                                                                {{ $isActive ? 'active' : '' }} mx-1"
-                                                                    style="
-                                                                    {{ in_array($type, [3, 6]) ? 'background-image:url(' . $image . '); background-size:cover;' : '' }}
-                                                                    padding:5px; cursor: pointer;
-                                                                ">   
+                                                                    class="s-variant activeVarientLi {{ $isActive ? 'active' : '' }}"
+                                                                    style="padding:5px; cursor: pointer;">   
                                                                 <input class="attribute-input" name="color" id="color_brown{{  $variantValue['id'] }}" value="{{ $variantValue['id'] }}" type="radio">                                         
                                                                 <div class="pro_img">
-                                                                <img src="https://furnishworlds.com/uploads/products/APR2026/variant_76_69df1faa8b9f0.jpg" alt="">
+                                                                 <img src="{{ $image }}" alt="{{ $variantValue['name'] }}">
                                                                 </div>
                                                                 <p style="margin-top:5px;margin-bottom:5px">{{ $variantValue['name'] }}</p>
                                                             </li>

@@ -56,9 +56,9 @@
                         </div>
                     </li>
                 @endforeach
-                <li>
+                {{-- <li>
                     <a href="#">Contact</a>
-                </li>
+                </li> --}}
             </ul>
         </nav>
 
@@ -94,7 +94,7 @@
                         @if(Auth::guard('customer')->check())
                         @foreach($carts->take(4) as $index => $cart)
                             <div class="cart-item" data-cartid="{{ $cart->id }}">
-                               <a href="{{ route('front-product.detail', ['product' => 'product','title' =>productSlug($cart->product->name).'.html', 'sku' => productSlug($cart->product->sku)])}}"><img src="{{ $cart->product->images['first'] }}" alt=""></a> 
+                               <a href="{{ route('front-product.detail', ['product' => 'product','title' =>productSlug($cart->product->name).'.html', 'sku' => $cart->product->sku])}}"><img src="{{ $cart->product->images['first'] }}" alt=""></a> 
                                 <div class="cart-info">
                                     <h5>{{ $cart->product->name }}</h5>
                                     <span>Qty: {{ $cart->quantity }}</span>
@@ -120,14 +120,19 @@
                         </div>
                     </div>
                 </div>
+                @if(!empty(Auth::guard('customer')->user()->id))
                 <button class="wishlist_button">
                     <span class="material-symbols-outlined">favorite</span>
                     Wishlist
                 </button>
+                @else 
+                <button class="wishlist_button">
+                    <span class="material-symbols-outlined">favorite</span>
+                    Wishlist
+                </button>
+                @endif 
             </div>
         </div>
-
-        <!-- Search Overlay------------------------------------------------------------------------------------ -->
         <div class="search-overlay">
             <div class="search-header">
                 <input type="text" placeholder="Search products...">
@@ -160,7 +165,7 @@
                                     <span class="old-price">₹{{ $product->buying_price }}</span>
                                 </div>
                                 <div class="product-actions">
-                                    <a href="{{ route('front-product.detail', ['product' => 'product','title' =>productSlug($product->name).'.html', 'sku' => productSlug($product->sku)]) }}" class="action-btn add_to_cart_btn">
+                                    <a href="{{ route('front-product.detail', ['product' => 'product','title' =>productSlug($product->name).'.html', 'sku' => $product->sku]) }}" class="action-btn add_to_cart_btn">
                                         Buy now
                                     </a>
 
@@ -172,7 +177,6 @@
                         </div>
                     </div>
                     @endforeach 
-                    <!-- Product -->
                 </div>
             </div>
         </div>

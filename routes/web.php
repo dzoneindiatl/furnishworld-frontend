@@ -53,6 +53,8 @@ Route::get('/blogs', [HomeController::class, 'blogList'])->name('blog.blog');
 Route::get('/blog-details/{slug}', [HomeController::class, 'blogDetails'])->name('blog.detail');
 Route::match(['get', 'post'], '/check-delevery', [CartController::class, 'checkDelevery'])->name('check.delevery');
 
+Route::post('subscribers/create',[HomeController::class,'storeNewsletterRecord'])->name('create-subscriber'); 
+
 
 Route::post('/set-currency', [HomeController::class, 'setCurrency'])->name('set-currency');
 Route::match(['get', 'post'], 'variant-combination/prices', [HomeController::class, 'variantCombinationPrices'])->name('variant.combination.prices');
@@ -136,7 +138,7 @@ Route::name('front-')->group(function () {
         Route::post('order/delivered',[CheckoutController::class,'orderReturn'])->name('order.return');
     });
 
-    Route::get('{product}/{title}/{sku}', [App\Http\Controllers\Front\HomeController::class, 'productDetail'])->name('product.detail');
+    Route::get('/product/{product}/{title}/{sku}', [HomeController::class, 'productDetail'])->name('product.detail');
     });
     
 Route::post('/checkVarientStock', [App\Http\Controllers\Front\HomeController::class, 'variantStockCheck'])->name('variant.stock.check');

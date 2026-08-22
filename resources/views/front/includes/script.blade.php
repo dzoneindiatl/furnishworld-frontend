@@ -31,30 +31,38 @@
 <script type="text/javascript" src="{{asset('assets/front/tejap/js/function.js') }}"></script>
 <script type="text/javascript" src="{{ asset('assets/front/js/product-details.js') }}"></script>
 
-
+<script>
+    $('.wishlist_button').on('click',function(){
+        if(isLoggedIn){
+            window.location.href="{{ route('front-user.wishlist') }}";
+        }else{
+            window.location.href="{{ route('front-user.login') }}";
+        }
+    }); 
+</script>
 <script>
 
-   function showFlashMessage(msg, type = 'success') {
-      const flash = document.getElementById('flash-msg');
+//    function showFlashMessage(msg, type = 'success') {
+//       const flash = document.getElementById('flash-msg');
       
-      let icon = '';
-      if (type === 'success') {
-         icon = '<i class="fas fa-check-circle text-success"></i>';
-      } else if (type === 'error') {
-         icon = '<i class="fas fa-times-circle text-danger"></i>';
-      } else if (type === 'warning') {
-         icon = '<i class="fas fa-exclamation-circle text-warning"></i>';
-      }
+//       let icon = '';
+//       if (type === 'success') {
+//          icon = '<i class="fas fa-check-circle text-success"></i>';
+//       } else if (type === 'error') {
+//          icon = '<i class="fas fa-times-circle text-danger"></i>';
+//       } else if (type === 'warning') {
+//          icon = '<i class="fas fa-exclamation-circle text-warning"></i>';
+//       }
 
-      console.log(msg);
-      flash.innerHTML = `${icon} <span>${msg}</span>`;
-      flash.classList.remove('d-none', 'alert-success', 'alert-danger', 'alert-warning');
-      flash.classList.add(`alert-${type}`);
+//       console.log(msg);
+//       flash.innerHTML = `${icon} <span>${msg}</span>`;
+//       flash.classList.remove('d-none', 'alert-success', 'alert-danger', 'alert-warning');
+//       flash.classList.add(`alert-${type}`);
 
-      setTimeout(() => {
-         flash.classList.add('d-none');
-      }, 3000);
-   }
+//       setTimeout(() => {
+//          flash.classList.add('d-none');
+//       }, 3000);
+//    }
 
     function showFlashMessage(msg, type = 'success') {
         const flash = document.getElementById('flash-msg');
@@ -77,38 +85,45 @@
             flash.classList.add('d-none');
         }, 3000);
     }
-    const localCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-    console.log(' center-main : ',localCartItems.length );
-    $('.center-main').html(localCartItems.length);
+    // const localCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    // console.log(' center-main : ',localCartItems.length );
+    // $('.center-main').html(localCartItems.length);
 
     // console.log(' old cart items : ', JSON.parse(localStorage.getItem('oldCartItems')).length );
-    console.log(' old cart : ', JSON.parse(localStorage.getItem('oldCartItems')) );
-    if (isLoggedIn &&  JSON.parse(localStorage.getItem('oldCartItems').length===0)) {
-      const getCartItem = "{{ route('user.get-cart-items') }}";
-      fetch(getCartItem)
-         .then(res => res.json())
-         .then(response => {
-               if (!response.success) return;
-               let serverCartItems = response.cartItems || [];
-               localStorage.setItem('cartItems', JSON.stringify(serverCartItems));
-               var notRequiredQtyAjaxClickonQtyBtn = true;
-               console.log('eight');
-               displayCartItems(notRequiredQtyAjaxClickonQtyBtn);
-               getCoupon();
-         });
-   } else {
-      const localCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-      if (localCartItems.length > 0) {
-         var notRequiredQtyAjaxClickonQtyBtn = true;
-         console.log('nine');
-         displayCartItems(notRequiredQtyAjaxClickonQtyBtn);
-         getCoupon();
-      } else {
-            $(".add-cart-footer").hide();
-            productListContainer.append(emptyCartImg);
-      }
-   }
+//     console.log(' old cart : ', JSON.parse(localStorage.getItem('oldCartItems')) );
+//     if (isLoggedIn &&  JSON.parse(localStorage.getItem('oldCartItems').length===0)) {
+//       const getCartItem = "{{ route('user.get-cart-items') }}";
+//       fetch(getCartItem)
+//          .then(res => res.json())
+//          .then(response => {
+//                if (!response.success) return;
+//                let serverCartItems = response.cartItems || [];
+//                localStorage.setItem('cartItems', JSON.stringify(serverCartItems));
+//                var notRequiredQtyAjaxClickonQtyBtn = true;
+//                console.log('eight');
+//                displayCartItems(notRequiredQtyAjaxClickonQtyBtn);
+//                getCoupon();
+//          });
+//    } else {
+//       const localCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+//       if (localCartItems.length > 0) {
+//          var notRequiredQtyAjaxClickonQtyBtn = true;
+//          console.log('nine');
+//          displayCartItems(notRequiredQtyAjaxClickonQtyBtn);
+//          getCoupon();
+//       } else {
+//             $(".add-cart-footer").hide();
+//             productListContainer.append(emptyCartImg);
+//       }
+//    }
 
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('img').forEach(function (img) {
+        img.setAttribute('loading', 'lazy');
+    });
+});
 </script>
 
 
@@ -218,75 +233,75 @@
 
 <!-- login form submission -->
  <script>
-    $(document).on('click', '#loginBtn', function (e) {
-        var email = $('#email').val();
-        var password = $('#password').val();
-        if(email=='' || password==''){
-            $('.login-error').html("Email & Password required field");
-            return false;
-        }
-        $('.login-success').html('');
-        $('.login-error').html('');
-        $.ajax({
-            url: "{{route('front-user.postLogin')}}",
-            method: 'POST',
-            data: {
-                _token: $('input[name="_token"]').val(),
-                email: email,
-                password: password
-            },
-            success: function(response) {
-               $('.login-success').html(response.message);
-               window.location.href = "{{ route('user.dashboard') }}";
-            },
-            error: function(jqXHR) {
-                if (jqXHR.status === 422) {
-                    var errors = jqXHR.responseJSON.errors;
-                    $('.login-error').html(errors);
-                }
-            }
-        });
-    });
+    // $(document).on('click', '#loginBtn', function (e) {
+    //     var email = $('#email').val();
+    //     var password = $('#password').val();
+    //     if(email=='' || password==''){
+    //         $('.login-error').html("Email & Password required field");
+    //         return false;
+    //     }
+    //     $('.login-success').html('');
+    //     $('.login-error').html('');
+    //     $.ajax({
+    //         url: "{{route('front-user.postLogin')}}",
+    //         method: 'POST',
+    //         data: {
+    //             _token: $('input[name="_token"]').val(),
+    //             email: email,
+    //             password: password
+    //         },
+    //         success: function(response) {
+    //            $('.login-success').html(response.message);
+    //            window.location.href = "{{ route('user.dashboard') }}";
+    //         },
+    //         error: function(jqXHR) {
+    //             if (jqXHR.status === 422) {
+    //                 var errors = jqXHR.responseJSON.errors;
+    //                 $('.login-error').html(errors);
+    //             }
+    //         }
+    //     });
+    // });
 </script>
 <!-- login form submission -->
 
 <!-- user signup form submission -->
  <script>
-    $(document).on('click', '#signupBtn', function (e) {
-        var first_name = $('#first_name').val();
-        var last_name = $('#last_name').val();
-        var email = $('#email').val();
-        var phone_number = $('#phone_number').val();
-        var password = $('#password').val();
-        if(first_name=='' || last_name=='' || email=='' || phone_number=='' || password==''){
-            $('.login-error').html("All fields are required");
-            return false;
-        }
-        $('.login-success').html('');
-        $('.login-error').html('');
-        $.ajax({
-            url: "{{route('front-user.postSignup')}}",
-            method: 'POST',
-            data: {
-                _token: $('input[name="_token"]').val(),
-                first_name: first_name,
-                last_name: last_name,
-                email: email,
-                phone_number: phone_number,
-                password: password
-            },
-            success: function(response) {
-               // window.location.href = "{{ route('user.dashboard') }}";
-               $('.login-success').html(response.message);
-            },
-            error: function(jqXHR) {
-                if (jqXHR.status === 422) {
-                    var errors = jqXHR.responseJSON.errors;
-                    $('.login-error').html(errors);
-                }
-            }
-        });
-    });
+    // $(document).on('click', '#signupBtn', function (e) {
+    //     var first_name = $('#first_name').val();
+    //     var last_name = $('#last_name').val();
+    //     var email = $('#email').val();
+    //     var phone_number = $('#phone_number').val();
+    //     var password = $('#password').val();
+    //     if(first_name=='' || last_name=='' || email=='' || phone_number=='' || password==''){
+    //         $('.login-error').html("All fields are required");
+    //         return false;
+    //     }
+    //     $('.login-success').html('');
+    //     $('.login-error').html('');
+    //     $.ajax({
+    //         url: "{{route('front-user.postSignup')}}",
+    //         method: 'POST',
+    //         data: {
+    //             _token: $('input[name="_token"]').val(),
+    //             first_name: first_name,
+    //             last_name: last_name,
+    //             email: email,
+    //             phone_number: phone_number,
+    //             password: password
+    //         },
+    //         success: function(response) {
+    //            // window.location.href = "{{ route('user.dashboard') }}";
+    //            $('.login-success').html(response.message);
+    //         },
+    //         error: function(jqXHR) {
+    //             if (jqXHR.status === 422) {
+    //                 var errors = jqXHR.responseJSON.errors;
+    //                 $('.login-error').html(errors);
+    //             }
+    //         }
+    //     });
+    // });
 
 </script>
 <!-- user signup form submission -->

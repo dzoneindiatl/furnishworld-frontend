@@ -123,7 +123,7 @@ class OrderController extends Controller
 
     public function submitRefundRequest(Request $request)
     {
-
+        info("---all data-------",[$request->all()]);
         $request->validate([
             'refund_reason' => 'required|string',
             'account_number' => 'required_if:refund_mode,account|nullable',
@@ -133,8 +133,11 @@ class OrderController extends Controller
             'bank_name' => 'required_if:refund_mode,account|nullable',
         ]);
         $user_id    = Auth::guard('customer')->user()->id;
+         info("---------user_id---------",[$user_id]); 
         $order      = Order::where("order_number", $request->order_number)->first();
-        $orderitem = OrderItem::where("id", $request->order_item_id)->first();
+         info("---------order---------",[$order]); 
+        $orderitem = OrderItem::whereIn("id", $request->order_item_id)->first();
+        info("---------order item------",[$orderitem]); 
         RefundRequest::create([
             'user_id'           => $user_id,
             "order_id"          => $order->id,
@@ -145,7 +148,7 @@ class OrderController extends Controller
             'ifsc_code'         => $request->ifsc_code,
             'account_type'      => $request->account_type,
             'bank_name'         => $request->bank_name,
-            'refund_mode' => $request->refund_type,
+            'refund_mode'       => $request->refund_type,
         ]);
         // Create order status history record
         $status = getOrderStatuss(0, 'return-requested');

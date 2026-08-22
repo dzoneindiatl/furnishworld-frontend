@@ -44,10 +44,19 @@ use App\Models\ProductVariantCombination;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use DB;
+
+use App\Service\SpecificationCombination; 
 class HomeController extends Controller
 {
+    public $specification; 
+    public function __construct(SpecificationCombination $specificationCombination){
+
+        $this->specification = $specificationCombination; 
+
+    }
     public function index()
     {
+        $this->specification->syncVariantSpecifications();  
         $cookie = Cookie::get('auto_login');
         if ($cookie) {
             $userId = decrypt($cookie);
@@ -497,23 +506,17 @@ class HomeController extends Controller
         // Pagination
         $offset = $request->input('offset', 0);
         $limit = $request->input('limit', config('Reading.records_per_page'));
-        
         $totalResults = (clone $DB)->count();
-        // $results = $DB->offset($offset)->limit($limit)->get();
-        $results = $DB->paginate(8);
-       
+        $results = $DB->take($limit)->offset($offset)->get();
+        $hasMore = ($offset + $results->count()) < $totalResults;
         $variants = Variant::where("is_active", 1)->where("is_deleted", 0)->get();
-
         if ($category->parent_id !== null) {
             $parent = Category::find($category->parent_id);
             $grandParent = $parent ? Category::find($parent->parent_id) : null;
-
             $catAttributeIds = CategoryAttribute::where('category_id', $category->parent_id);
-
             if ($grandParent) {
                 $catAttributeIds->orWhere('category_id', $grandParent->id);
             }
-
             $catAttributeIds = $catAttributeIds->pluck('attribute_id');
         } else {
             $catAttributeIds = CategoryAttribute::where('category_id', $category->id)
@@ -531,10 +534,13 @@ class HomeController extends Controller
                 ->pluck('product_id')
                 ->toArray();
         }
+
         if ($request->ajax()) {
             return response()->json([
-                'html' => view("front.modules.shop.load_more_data", compact('results', 'isWishlisteddata', 'totalResults', 'colorArr', 'sizeArr'))->render(),
+                'html' => view("front.modules.shop.load_more_data", compact('results', 'isWishlisteddata', 'totalResults', 'colorArr', 'sizeArr','category','grandParent','parent','categoryType','categoriesData','slug','variants','attributes','limit'))->render(),
                 'totalResults' => $totalResults,
+                'hasMore' => $hasMore,
+                'nextOffset' => $offset + $results->count(),
             ]);
         }
         
@@ -553,7 +559,7 @@ class HomeController extends Controller
             'colorArr',
             'sizeArr',
             'parent',
-            'grandParent'
+            'grandParent',
         ));
     }
 
@@ -1203,5 +1209,16 @@ class HomeController extends Controller
             }
         }
         return $isOutOfStock;
+    }
+
+    public function storeNewsletterRecord(Request $request)
+    {
+        $email = $request->email;
+        
+        Subscriber::create([
+            'email'=>$email
+        ]); 
+        
+        return redirect()->back()->with('success', 'Your email is added');
     }
 }

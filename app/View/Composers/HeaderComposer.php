@@ -48,8 +48,6 @@ Class HeaderComposer
             'childCategories'=>$childCategory,
         ]); 
     }
-
-
 }
 
 

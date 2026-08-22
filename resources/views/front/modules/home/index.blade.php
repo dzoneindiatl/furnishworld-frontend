@@ -404,7 +404,7 @@
 
                         <div class="room-categories">
                             @foreach($MainCategory as $index => $cate)
-                                <a href="#" data-index="{{ $index }}" class="{{ $index == 0 ? 'active' : '' }}">
+                                <a href="" data-index="{{ $index }}" class="{{ $index == 0 ? 'active' : '' }}">
                                     <span class="material-symbols-outlined">
                                         {{ $icons[$index] ?? 'category' }}
                                     </span>

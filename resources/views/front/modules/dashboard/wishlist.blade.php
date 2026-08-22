@@ -35,13 +35,13 @@
                         <ul class="products columns-3">
                             @if($wishlistData)
                             @foreach($wishlistData as $wishlist)
-                            <?php
+                            @php 
                                 $product = $wishlist->getProduct;
-                           ?>
+                            @endphp     
                             <li class="product-item product product-wishlist-item">
                                 <div class="product-wrap">
                                     <div class="product-wishlist-remove">
-                                    <a href="javascript:void(0)" class="remove remove_from_wishlist removewishlistBtn" title="Remove this product">
+                                    <a href="javascript:void(0)" class="remove remove_from_wishlist removewishlistBtn" data-product-id="{{ $product->id }}" title="Remove this product">
                                         <span class="icon-top wishlistBtn" data-product-id="{{ $product->id }}">
                                         <i class="fa-solid fa-xmark"></i>
                                         </span>
@@ -51,7 +51,7 @@
                                     <div class="onsale-trading">
                                         <span class="onsale-off">Rs {{ $product->selling_price - $product->buying_price }} OFF</span>
                                     </div>
-                                    <a  href="{{ route('front-product.detail',['product' => 'product','title' =>productSlug($product->name).'.html', 'sku' => productSlug($product->sku)])}}">
+                                    <a  href="{{ route('front-product.detail',['product' => 'product','title' =>productSlug($product->name).'.html', 'sku' => $product->sku])}}">
                                         <div class="product-main-image">
                                         <img src="{{ $product->images['first']}}" alt="{{ $product->name }}" class="main-image">
                                         </div>
@@ -62,14 +62,14 @@
                                     </div>
                                     <div class="product-content">
                                     <h5 class="product-title">
-                                        <a  href="{{ route('front-product.detail',['product' => 'product','title' =>productSlug($product->name).'.html', 'sku' => productSlug($product->sku)])}}">{{ $product->name }}</a>
+                                        <a  href="{{ route('front-product.detail',['product' => 'product','title' =>productSlug($product->name).'.html', 'sku' =>$product->sku])}}">{{ $product->name }}</a>
                                     </h5>
                                     <div class="product-price">
                                         <del>₹ {{ floor($product->buying_price) }}</del>
                                         <ins>₹ {{ floor($product->selling_price) }}</ins>
                                     </div>
                                     <div class="product-addtocart-button">
-                                        <a  href="{{ route('front-product.detail',['product' => 'product','title' =>productSlug($product->name).'.html', 'sku' => productSlug($product->sku)])}}" class="product-addtocart"> <svg fill="#010101" height="20px" width="20px" version="1.1"
+                                        <a  href="{{ route('front-product.detail',['product' => 'product','title' =>productSlug($product->name).'.html', 'sku' =>$product->sku])}}" class="product-addtocart"> <svg fill="#010101" height="20px" width="20px" version="1.1"
                                             id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                                             viewBox="0 0 483.1 483.1" xml:space="preserve">
                                             <path

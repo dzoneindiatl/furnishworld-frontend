@@ -737,7 +737,7 @@ class DashboardController extends Controller
 
     public function myPurchaseDetail(Request $request , $orderId)
     {
-         $orderDetails = Order::with('items', 'items.productGraphics')->where('id', $orderId)->where('user_id', Auth::guard('customer')->user()->id)->first();
+        $orderDetails = Order::with('items', 'items.productGraphics')->where('id', $orderId)->where('user_id', Auth::guard('customer')->user()->id)->first();
         return view('front.modules.dashboard.mypurchasedetail', compact('orderDetails'));
     }
 
@@ -772,7 +772,7 @@ class DashboardController extends Controller
                     'data' => $count
                 ]);
             } else {
-                $wishlistData = Wishlist::where('user_id', auth()->guard('customer')->user()->id)
+                  $wishlistData = Wishlist::where('user_id', auth()->guard('customer')->user()->id)
                     ->get();
                  return view('front.modules.dashboard.wishlist', compact('wishlistData'));
             }

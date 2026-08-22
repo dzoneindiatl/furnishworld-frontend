@@ -47,8 +47,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
-                <form action="{{ route('front-user.postLogin') }}" method="POST" autocomplete="off" id="loginForm">
-                   @csrf
+
                   <div class="form-focus row">
                     <div class="form-group col-12">
                       <label class="label-focus" for="email">Email <span class="required">*</span></label>
@@ -69,13 +68,12 @@
                   <div class="form-submit">
                     <button type="submit" class="btn btn-primary w-100">Submit</button>
                   </div>
-                </form>  
                 <div class="login-social">
                     <p>Login with social account</p>
                     <ul class="login-social-icon">
                       <li class="facebook"><a target="_blank" href="#"><i class="fa-brands fa-facebook-f"></i></a></li>
                       <li class="facebook"><a target="_blank" href="#"><i class="fa-brands fa-google"></i></a></li>                         
-                  </ul>
+                    </ul>
                 </div>          
                 <div class="loginregister-footer">
                   <p>Don't have an account? <a href="{{ route('front-user.signup') }}" class="ms-2 text-decoration-underline">Register</a></p>

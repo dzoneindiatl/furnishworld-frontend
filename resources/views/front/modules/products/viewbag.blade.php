@@ -167,7 +167,7 @@
                                         @endphp 
                                           <span class="onsale-off">{{ $discount }}</span>
                                       </div>
-                                      <a href="product-detail.html">
+                                      <a href="{{ route('front-product.detail', ['product' => 'product','title' =>productSlug($best->name).'.html', 'sku' => $best->sku]) }}">
                                           <div class="product-main-image">
                                               <img src="{{  $best->images['first'] }}" alt="" class="main-image">
                                           </div>
@@ -232,7 +232,7 @@
       <!--=====================================================
                       Related Products Section End
       =========================================================-->
-      @if(!empty($recentViewproduct) && count($recentViewproduct) > 0)
+      {{-- @if(!empty($recentViewproduct) && count($recentViewproduct) > 0)
       <div class="product-section section">
           <div class="container">
               <div class="section-header text-center">
@@ -320,7 +320,7 @@
               </div>
           </div>
       </div>
-      @endif 
+      @endif  --}}
       <!--=====================================================
                               Also View Section End
       =========================================================-->

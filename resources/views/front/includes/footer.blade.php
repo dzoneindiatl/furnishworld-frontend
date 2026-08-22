@@ -21,8 +21,9 @@
                 </p>
             </div>
 
-            <form class="newsletter-form">
-                <input type="email" placeholder="Enter your email address">
+            <form class="newsletter-form" action="{{ route('create-subscriber') }}" method="POST">
+                @csrf 
+                <input type="email" placeholder="Enter your email address" name="email">
                 <button type="submit">
                     Subscribe
                 </button>
@@ -79,7 +80,7 @@
                         @if($secondCategory && $secondCategory->subcategories->count())
                             @foreach($secondCategory->subcategories as $subcategory)
                                 <li>
-                                    <a href="{{ url($subcategory->slug) }}">{{ $subcategory->title }}</a>
+                                    <a href="{{url('page/'.$subcategory->slug) }}">{{ $subcategory->title }}</a>
                                 </li>
                             @endforeach
                         @endif
@@ -96,13 +97,13 @@
                 <div class="payemnt-strip">
                     <img src="{{('assets/front/images/Payment_Icons.svg') }}" alt="">
                 </div>
-                <div class="footer-links">
+                {{-- <div class="footer-links">
                     @if($fourthCategory && $fourthCategory->subcategories->count())
                         @foreach($fourthCategory->subcategories as $subcategory)
-                            <a href="{{ url($subcategory->slug) }}">{{ $subcategory->title }}</a> 
+                            <a href="{{ url('page/'.$subcategory->slug) }}">{{ $subcategory->title }}</a> 
                         @endforeach
                     @endif
-                </div>
+                </div> --}}
             </div>
             <!-- Bottom -->
             <div class="footer-bottom">
