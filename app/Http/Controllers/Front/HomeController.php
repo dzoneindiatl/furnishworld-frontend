@@ -45,6 +45,7 @@ use App\Models\ProductVariantCombination;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use DB;
+use App\Models\ProductDetailManager; 
 
 // use App\Service\SpecificationCombination; 
 class HomeController extends Controller
@@ -85,9 +86,9 @@ class HomeController extends Controller
         
         $categoryId = $MainCategory->pluck('id'); 
         $featureSubCategory=Category::select('id','slug','name','image')->where('is_featured',1)->whereIn('parent_id',$categoryId)->where('is_active',1)->get(); 
-        $modernLiving1 = $MainCategory->take(1);
-        $modernLiving2 = $MainCategory->skip(1)->take(2);  
-        $modernLiving3 = $MainCategory->skip(3)->take(1); 
+        $modernLiving1 = $MainCategory->take(2);
+        $modernLiving2 = $MainCategory->skip(2)->take(2);  
+        $modernLiving3 = $MainCategory->skip(4)->take(2); 
         $refreshYourRoom = Category::where('parent_id',2)->where('is_active',1)->get();
         $parentCategoryId = $MainCategory->whereNull('parent_id')->pluck('id');
         $subCategory = Category::select('id')->whereIn('parent_id',$parentCategoryId)->where('is_active',1)->where('is_deleted',0)->get(); 
@@ -947,8 +948,6 @@ class HomeController extends Controller
         $productChildCat = '';
         $user = Auth::guard('customer')->user();
         $product = Product::where('sku', $sku)->first();
-        info("-------product-------",[$product]); 
-        info("----User detail------",[$user]); 
         if ($user) {
 
             RecentlyViewed::updateOrCreate(
@@ -962,22 +961,19 @@ class HomeController extends Controller
             );
 
         } else {
-
             $recent = session()->get('recently_viewed', []);
-
             if (($key = array_search($product->id, $recent)) !== false) {
                 unset($recent[$key]);
             }
-
             array_unshift($recent, $product->id);
-
             // keep only last 50
             $recent = array_slice($recent, 0, 50);
-
             session(['recently_viewed' => $recent]);
         }
 
         $productcat = Category::where('id', $product->main_category_id)->first();
+        $productDetailId = explode(',',$productcat->product_detail_manager); 
+        $productDetailManager = ProductDetailManager::whereIn('id',$productDetailId)->select('id','section_name','content','order')->orderBy('order','asc')->get(); 
         $productSubCat = Category::where('id', $product->main_sub_category_id)->first();
         $productChildCat = Category::where('id', $product->main_child_category_id)->first();
         $productreview = Product::with(['reviews.user'])->where('sku', $sku)->where('is_active', 1)->first();
@@ -1085,7 +1081,7 @@ class HomeController extends Controller
         $pinterst = Setting::select('id','value')->where('key','Social.pinterest')->first(); 
         $youtube = Setting::select('id','value')->where('key','Social.youtube')->first(); 
 
-        return view('front.modules.shop.product-detail', compact('product','productChildCat', 'productcat', 'productSubCat', 'productvariants', 'related_products', 'bestproduct', 'releatedProduct', 'returnexchangeProduct', 'contactDetails', 'productVarientCom', 'isWishlisted', 'isWishlisteddata', 'categoryTaxes', 'reviews', 'productreview', 'recentlyViewedProducts','productVariantSpecification','facebook','instagram','pinterst','youtube'));
+        return view('front.modules.shop.product-detail', compact('product','productChildCat', 'productcat', 'productSubCat', 'productvariants', 'related_products', 'bestproduct', 'releatedProduct', 'returnexchangeProduct', 'contactDetails', 'productVarientCom', 'isWishlisted', 'isWishlisteddata', 'categoryTaxes', 'reviews', 'productreview', 'recentlyViewedProducts','productVariantSpecification','facebook','instagram','pinterst','youtube','productDetailManager'));
     }
 
     public function viewBag()

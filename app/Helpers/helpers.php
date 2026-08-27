@@ -67,7 +67,6 @@ if (!function_exists('activeVarientByProductId')) {
 if (!function_exists('getPriceByActiveVarientId')) {
     function getPriceByActiveVarientId($productId = 0,$activeVarientID = 0)
     {   
-        info("----------activeVatId--------",[$activeVarientID]); 
         $activeVarientID = (array) $activeVarientID;
 
         $activeVarientIdArr = ProductVariantCombination::where('product_id', $productId)
@@ -77,7 +76,6 @@ if (!function_exists('getPriceByActiveVarientId')) {
             }
         })
         ->first();
-        info("------getPriceByActiveVarientId----------",[ $activeVarientIdArr ]); 
         $getActiveVarientPriceData = array();
         if(!empty($activeVarientIdArr)){
             $getActiveVarientPriceData['buying_price'] = $activeVarientIdArr->price;

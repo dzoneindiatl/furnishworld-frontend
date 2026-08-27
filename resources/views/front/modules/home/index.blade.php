@@ -646,22 +646,25 @@
 
             const subCategories = category.sub_category || category.subCategory ||[];
             roomCarousel.innerHTML = '';
+          
             subCategories.forEach(function (subCategory) {
+                const slugUrl = `${subCategory.slug}`;
                 roomCarousel.insertAdjacentHTML(
                     'beforeend',
                     `
                     <div class="room-card">
-
                         <img
                             src="${subCategory.image || ''}"
                             alt="${subCategory.name || ''}"
-                        >
+                       
 
                         <div class="overlay">
 
+                           <a href="/${slugUrl}" style="text-decoration:none;">  
                             <h3>
                                 ${subCategory.name || ''}
                             </h3>
+                            </a>  
 
                         </div>
 

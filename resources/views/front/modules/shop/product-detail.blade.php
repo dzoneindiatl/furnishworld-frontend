@@ -698,67 +698,46 @@
                     <div class="single-product-description">
                         <div class="container">
                             <div class="row">
-                                <div class="col-lg-4 col-md-4 col-12">
-                                    @if($product->content_1)
-                                    <div class="single-product-content">
-                                        <h5>Description</h5>
-                                        <p>{!! $product->content_1 !!}</p>
-                                    </div>
-                                    @endif
-                                </div>
-                                
-                                <div class="col-lg-4 col-md-4 col-12">
-                                 
-                                    <div class="single-product-content" id="productSpecificationBox">
-                                        <h5>Specifications</h5>
-                                        <ul>
-                                            <li id="productSpecificationContent">
-                                                {!! $product->content_2 ?? '' !!}
-                                            </li>
-                                        </ul>
-                                    </div>
-                             
-                                    @if($product->content_3)
-                                    <div class="single-product-content">
-                                        <h5>Wash Care</h5>
-                                        <ul>
-                                            <li>{!! $product->content_3 !!}</li>
-                                        </ul>
-                                    </div>
-                                    @endif
-                                    @if($product->content_4)
-                                    <div class="single-product-content">
-                                        <h5>Wash Care</h5>
-                                        <ul>
-                                            <li>{!! $product->content_4 !!}</li>
-                                        </ul>
-                                    </div>
-                                    @endif
-                                    @if($product->content_5)
-                                    <div class="single-product-content">
-                                        <h5>Wash Care</h5>
-                                        <ul>
-                                            <li>{!! $product->content_5 !!}</li>
-                                        </ul>
-                                    </div>
-                                    @endif
-                                    @if($product->content_6)
-                                    <div class="single-product-content">
-                                        <h5>Wash Care</h5>
-                                        <ul>
-                                            <li>{!! $product->content_6 !!}</li>
-                                        </ul>
-                                    </div>
-                                    @endif
-                                    @if($product->content_7)
-                                    <div class="single-product-content">
-                                        <h5>Wash Care</h5>
-                                        <ul>
-                                            <li>{!! $product->content_7 !!}</li>
-                                        </ul>
-                                    </div>
-                                    @endif
-                                </div>
+                                @php #
+                                    $k = 1 ;
+                                @endphp 
+                                @foreach($productDetailManager as $detailManager)
+                                        @php 
+                                            
+                                            $contentKey = 'content_' . $k;
+                                            $sectionContent = $product->$contentKey ?? '';
+                                              if ($detailManager->section_name == 'Specification') {
+                                                $sectionContent = $product->content_1 ?? '';
+                                                if (!empty($activeVarientId) && !empty($productVariantSpecification)) {
+                                                    $specification = $productVariantSpecification->firstWhere('variant_value_id',$activeVarientId);
+                                                    if ($specification) {
+                                                        $contentKey = 'content_' . $activeVarientId;
+                                                        $variantContent = $specification->$contentKey ?? '';
+                                                        if (!empty(trim(strip_tags($variantContent)))) {
+                                                            $sectionContent = $variantContent;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        @endphp 
+                                          @if(!empty(trim(strip_tags($sectionContent))))
+                                            <div class="col-lg-4 col-md-4 col-12" @if($detailManager->section_name == 'Specification') id="productSpecificationBox" @endif>
+                                                <div class="single-product-content">
+                                                    <h5>{{ $detailManager->section_name }}</h5>
+                                                    @if($detailManager->section_name == 'Specification')
+                                                        <div id="productSpecificationContent">
+                                                            {!! $sectionContent !!}
+                                                        </div>
+                                                    @else
+                                                        {!! $sectionContent !!}
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            @endif 
+                                            @php        
+                                            $k++ ;
+                                            @endphp  
+                                    @endforeach 
                             </div>
                           {{--<div class="row mt-4 pt-md-2">
                                 <div class="col-md-12 col-12">                                            
@@ -998,19 +977,15 @@
 @if($activeVarientId)
 <script>
     $(document).ready(function () {
-
-        const activeVariant = document.querySelector(
-            '[data-vid="{{ $activeVarientId }}"]'
-        );
-
+        const activeVariant = document.querySelector('[data-vid="{{ $activeVarientId }}"]');
         if (activeVariant) {
             updateVariantSpecification(activeVariant);
         }
-
     });
     const productVariantSpecification = @json($productVariantSpecification);
-    const productDefaultSpecification = @json($product->content_2 ?? '');
-     function updateVariantSpecification(element) {
+    const productDefaultSpecification = @json($product->content_1 ?? '');
+
+    function updateVariantSpecification(element) {
         const variantValueId = $(element).data('vid');
 
         const specification = productVariantSpecification.find(
@@ -1019,21 +994,18 @@
 
         let content = productDefaultSpecification;
 
-        if (specification) {
+         if (specification) {
             const contentKey = 'content_' + variantValueId;
-
-            if (specification[contentKey]) {
+            if (specification[contentKey] && specification[contentKey].trim() !== '') {
                 content = specification[contentKey];
             }
         }
-
-        $('#productSpecificationContent').html(content);
-
-        // Agar dono nahi hain toh pura section hide
-        if (!content || !content.trim()) {
-            $('#productSpecificationBox').hide();
-        } else {
+        if (content && content.trim() !== '') {
+            $('#productSpecificationContent').html(content);
             $('#productSpecificationBox').show();
+        } else {
+            $('#productSpecificationContent').html('');
+            $('#productSpecificationBox').hide();
         }
     }
 
