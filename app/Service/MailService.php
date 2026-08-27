@@ -20,8 +20,90 @@ Class MailService
         );
         $this->sendMail($email,$subject,$body); 
     }
-    public function orderReturn(){
-        $this->sendMail(); 
+    public function orderReturnRequested($orderItem,$userData){
+        $email = $userData->email ; 
+        $customer_name = $userData->name; 
+        $template = EmailTemplate::where('name','Order Return Requested')->first(); 
+        if(!$template){
+            return response()->json([
+                'status'=>false,
+                'message'=>"order Cancel template not found" 
+            ]); 
+        } 
+        $subject = $template->subject; 
+        $body = $template->body; 
+
+        $orderDetails = '';
+        foreach ($orderItem as $item) {
+
+            $productName = $item->product->name ?? 'N/A';
+            $sku         = $item->product->sku ?? 'N/A';
+            $quantity    = $item->qty ?? 1;
+            $price       = $item->selling_price ?? 0;
+            $orderDetails .= '
+                <tr>
+                    <td style="padding:10px; border:1px solid #ddd;">
+                        ' . $productName . '
+                    </td>
+
+                    <td style="padding:10px; border:1px solid #ddd;">
+                        ' . $sku . '
+                    </td>
+
+                    <td style="padding:10px; border:1px solid #ddd; text-align:center;">
+                        ' . $quantity . '
+                    </td>
+
+                    <td style="padding:10px; border:1px solid #ddd;">
+                        ₹' . number_format($price, 2) . '
+                    </td>
+                </tr>
+            ';
+        }
+
+        $orderDetails = '
+            <table width="100%" cellpadding="0" cellspacing="0"
+                style="border-collapse:collapse; font-family:Arial,sans-serif; font-size:14px;">
+
+                <thead>
+                    <tr>
+                        <th style="padding:10px; border:1px solid #ddd; text-align:left;">
+                            Product
+                        </th>
+
+                        <th style="padding:10px; border:1px solid #ddd; text-align:left;">
+                            SKU
+                        </th>
+
+                        <th style="padding:10px; border:1px solid #ddd; text-align:center;">
+                            Qty
+                        </th>
+
+                        <th style="padding:10px; border:1px solid #ddd; text-align:left;">
+                            Price
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ' . $orderDetails . '
+                </tbody>
+
+            </table>
+        ';
+        $orderstatus = "Return Requested"; 
+        // Replace placeholders
+        $body = str_replace(
+            ['{CUSTOMER_NAME}','{ORDER_STATUS}','{ORDER_ID}', '{ORDER_DETAILS}'],
+            [   
+                $customer_name,
+                $orderstatus,
+                $orderItem->first()->order_id ?? '',
+                $orderDetails
+            ],
+            $body
+        );
+        $this->sendMail($email,$subject,$body); 
     }
     public function orderCancelled($userData, $orderData){
 

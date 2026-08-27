@@ -38,7 +38,7 @@
               <div class="col-lg-8 col-md-8 col-12">
                 <div class="cart-form-wrapper">
                   <form class="cart-form" action="cart" method="post">
-                    @if(Auth::guard('customer')->check())
+                    @if(Auth::guard('customer')->check() && count($cartItems) > 0)
                         <div class="cart-items">
                             @foreach($cartItems as $key => $item)
                                 <div class="cart-item">
@@ -338,7 +338,33 @@
         $(document).on('click', '#apply-coupon-btn', function(e) { 
             var couponCode = $('#coupon_code_input').val();
             applyCoupon(couponCode);
-}       );
+        });
+
+        $(document).ready(function () { 
+            restoreOldCartItems();
+        });
+
+        function restoreOldCartItems() {
+            const oldCartItems = localStorage.getItem('oldCartItems');
+            const isBuyNow = localStorage.getItem('isBuyNow');
+            if (isBuyNow === '1' && oldCartItems) {
+                let oldItems = JSON.parse(oldCartItems) || [];
+                let currentItems = JSON.parse(
+                    localStorage.getItem('cartItems') || '[]'
+                )
+                let mergedItems = [...oldItems, ...currentItems];
+
+                localStorage.setItem(
+                    'cartItems',
+                    JSON.stringify(mergedItems)
+                );
+                localStorage.removeItem('oldCartItems');
+                localStorage.setItem('isBuyNow', '0');
+                console.log('Old Cart:', oldItems);
+                console.log('Current Cart:', currentItems);
+                console.log('Merged Cart:', mergedItems);
+            }
+        }
 
         $(document).on('click', '.checkoutButton', function() {
             if (isLoggedIn) {

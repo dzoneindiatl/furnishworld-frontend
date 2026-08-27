@@ -63,6 +63,7 @@ class CartController extends Controller
             $quantity  = $request->input('quantity', 1);
             info("------quantity------",[$quantity]); 
             $selectedVariants = $request->input('selected_variants');
+            info("-------selected variants-------",[$selectedVariants]); 
             $type = $request->input('addType');
             info("-----type-----",[$type]);
             if(!$productId || !$quantity) {
@@ -73,13 +74,13 @@ class CartController extends Controller
                 $variantValueNames = array_values($selectedVariants);
                 $nameToId = VariantValue::whereIn('name', $variantValueNames)
                     ->pluck('id', 'name');
-
+                info("-----nameToId-----",[$nameToId]); 
                 $variantValueIds = collect($variantValueNames)
                     ->map(fn($name) => (int) ($nameToId[$name] ?? null))
                     ->filter()
                     ->values()
                     ->toArray();
-
+                info("-----variantValueIds-------",[$variantValueIds]); 
                 $jsonCombo = json_encode($variantValueIds);
 
                 $combination = ProductVariantCombination::where('product_id', $productId)

@@ -472,7 +472,6 @@ $('#pay_now').on('click', function (e) {
                 setTimeout(function(){  $(".error-msg").html("");  }, 5000);
             } else {
                 if (payment_type === "wallet" && data.success) {
-                    localStorage.removeItem('cartItems');
                     localStorage.removeItem('coupon_id');
                     localStorage.removeItem('coupon_discount');
                     window.location.href = data.url;
@@ -480,7 +479,6 @@ $('#pay_now').on('click', function (e) {
                 if (payment_type == 'razorpay') {
                     if (data.success) {
                         if (data.type == 'wallet') {
-                            localStorage.removeItem('cartItems');
                             location.href = window.location.origin + "/dashboard";
                         } else {
                             var options = {
@@ -506,15 +504,30 @@ $('#pay_now').on('click', function (e) {
                                 },
                                 "theme": {
                                     "color": "#3399cc"
+                                },
+                                "handler": function(response) {
+                                    localStorage.removeItem('coupon_id');
+                                    localStorage.removeItem('coupon_discount');
+                                    // Razorpay response ko backend par bhejna
+                                    console.log("Payment Success:", response);
+
+                                },
+                                "modal": {
+                                    "ondismiss": function() {
+                                        console.log("Razorpay closed");
+                                    }
                                 }
                             };
                             var rzp1 = new Razorpay(options);
+                            rzp1.on('payment.failed', function(response) {
+                                console.log("Payment Failed:", response.error);
+                            });
                             rzp1.open();
                         }
                     }
                 } else {
                     if (data.success) {
-                        localStorage.removeItem('cartItems');
+                                 // COD successful
                         localStorage.removeItem('coupon_id');
                         localStorage.removeItem('coupon_discount');
                         window.location.href = data.url;

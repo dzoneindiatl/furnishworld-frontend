@@ -23,10 +23,15 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\ProductVariantCombination;
 use App\Models\{ProductGraphics, VariantValue, OrderStatusHistory, OrderCancellation, RefundRequest};
-
+use App\Service\MailService; 
 class OrderController extends Controller
 {
+    public $mailService; 
+    public function __construct(MailService $mailService){
 
+        $this->mailService = $mailService ; 
+
+    }
     public function orderDetails(Request $request, $orderId)
     {
         $orderDetails = Order::with(['billingAddress', 'shippingAddress'])->where('order_number', $orderId)->firstOrFail();
@@ -123,21 +128,17 @@ class OrderController extends Controller
 
     public function submitRefundRequest(Request $request)
     {
-        info("---all data-------",[$request->all()]);
-        $request->validate([
-            'refund_reason' => 'required|string',
-            'account_number' => 'required_if:refund_mode,account|nullable',
-            'confirm_account_number' => 'required_with:account_number|same:account_number|nullable',
-            'ifsc_code' => 'required_if:refund_mode,account|nullable',
-            'account_type' => 'required_if:refund_mode,account|nullable|in:Saving,Current',
-            'bank_name' => 'required_if:refund_mode,account|nullable',
-        ]);
+        // $request->validate([
+        //     'refund_reason' => 'required|string',
+        //     'account_number' => 'required_if:refund_mode,account|nullable',
+        //     'confirm_account_number' => 'required_with:account_number|same:account_number|nullable',
+        //     'ifsc_code' => 'required_if:refund_mode,account|nullable',
+        //     'account_type' => 'required_if:refund_mode,account|nullable|in:Saving,Current',
+        //     'bank_name' => 'required_if:refund_mode,account|nullable',
+        // ]);
         $user_id    = Auth::guard('customer')->user()->id;
-         info("---------user_id---------",[$user_id]); 
         $order      = Order::where("order_number", $request->order_number)->first();
-         info("---------order---------",[$order]); 
         $orderitem = OrderItem::whereIn("id", $request->order_item_id)->first();
-        info("---------order item------",[$orderitem]); 
         RefundRequest::create([
             'user_id'           => $user_id,
             "order_id"          => $order->id,
@@ -163,7 +164,13 @@ class OrderController extends Controller
         $orderitem->status   = 'return-requested';
         $orderitem->order_status_id   = 8;
         $orderitem->save();
-        return response()->json(['message' => 'Refund request submitted successfully.']);
+
+        $userData = Auth::guard('customer')->user(); 
+        $orderItemData = OrderItem::with('order')->where('order_id',$order->id)->get(); 
+
+        $this->mailService->orderReturnRequested($orderItemData,$userData); 
+        return redirect()->back()->with('success',"Your request is generated"); 
+        // return response()->json(['message' => 'Refund request submitted successfully']);
     }
 
     public function orderSuccess(Request $request, $orderNumber)

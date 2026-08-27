@@ -121,6 +121,11 @@ $(document).on('click', '.addToCartBtn', function () {
         'cartItems',
         JSON.stringify(cartItems)
     );
+    
+    updateHeaderCart();
+    $('.cart-arrow').addClass('open');
+    $('.cart-dropdown').addClass('open');
+    $('.addToCartText').html("Go To Cart");
     showFlashMessage("Product added to cart successfully");
     console.log('Second');
     var notRequiredQtyAjaxClickonQtyBtn = true;
@@ -130,7 +135,101 @@ $(document).on('click', '.addToCartBtn', function () {
     // modal.show();
 });
 
+
+function updateHeaderCart() {
+
+    let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+    let $container = $('#headerCartItems');
+
+    if (!$container.length) {
+        return;
+    }
+
+    $container.empty();
+
+    if (cartItems.length === 0) {
+        $container.html(`
+            <div class="empty-cart">
+                Your cart is empty.
+            </div>
+        `);
+
+        $('#cartCount').text('0');
+        $('#cartTotal').text('₹0');
+
+        return;
+    }
+
+    let total = 0;
+
+    cartItems.slice(0, 4).forEach(function(item, index) {
+
+        let price = parseFloat(item.sellingPrice || 0);
+        let quantity = parseInt(item.quantity || 1);
+
+        total += price * quantity;
+
+        let productSlug = item.name
+            .toString()
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-');
+
+        let productUrl =
+            "{{ url('product/product') }}/" +
+            productSlug +
+            ".html/" +
+            item.sku;
+
+        let html = `
+            <div class="cart-item" data-randomid="${item.randomId}">
+
+                <a href="${productUrl}">
+                    <img src="${item.image}" alt="${item.name}">
+                </a>
+
+                <div class="cart-info">
+
+                    <h5>${item.name}</h5>
+
+                    <span>
+                        Qty: ${quantity}
+                    </span>
+
+                    <strong>
+                        ₹${price}
+                    </strong>
+
+                </div>
+
+                <button type="button"
+                    class="remove-item close-product"
+                    data-randomid="${item.randomId}">
+
+                    <span class="material-symbols-outlined">
+                        close
+                    </span>
+
+                </button>
+
+            </div>
+        `;
+
+        $container.append(html);
+    });
+
+    $('#cartCount').text(cartItems.length);
+
+    $('#cartTotal').text(
+        '₹' + total.toFixed(0)
+    );
+}
+
 function displayCartItems(notRequiredQtyAjaxClickonQtyBtn) {
+   
     let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
     let productListContainer = $('.productListContainer');
     let productListCartPageContainer = $('.productListCartPageContainer');
@@ -155,8 +254,9 @@ function displayCartItems(notRequiredQtyAjaxClickonQtyBtn) {
     console.log('cartItems : ',cartItems);
     var cartTotal = 0;
     productListCartPageContainer.empty();
+
+    
     cartItems.forEach(function (item, index) {
-    // $.each(cartItems, function(index, item) {
         console.log("----complete item-------",item); 
         let variants = item.selectedVariants || {};
         let product_sku = item.sku.toLowerCase();
@@ -362,15 +462,28 @@ function decodeHtml(html) {
 
 function priceCalculation() {
     let couponDiscount = parseFloat(localStorage.getItem('coupon_discount')) || 0;
-    let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    let cartItems; 
+    if(window.buyNowData){
+        cartItems = [{
+            product_id: window.buyNowData.product_id,
+            name: window.buyNowData.product_name,
+            sku: window.buyNowData.sku,
+            price: parseFloat(window.buyNowData.price) || 0,
+            sellingPrice: parseFloat(window.buyNowData.selling_price) || 0,
+            quantity: parseInt(window.buyNowData.quantity) || 1,
+            image:window.buyNowData.image,
+            rawTaxArr:window.buyNowData.tax_arr,
+        }];
+    }
+    else{
+        cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    }
+     
     const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-
     let cartData = cartItems.map(item => {
         var rawTaxArr = item.rawTaxArr;
-
         let decodedJson = decodeHtml(rawTaxArr);
         let taxArr = JSON.parse(decodedJson) || [];
-
         let tax_price_total = 0;
         let tax_option = "inclusive";
         let tax_id = "";
@@ -380,7 +493,6 @@ function priceCalculation() {
         var finalTax = 0;
         if (couponDiscount > 0) {
             netPrice = (item.sellingPrice) - (couponDiscount / totalQuantity);
-            //netPrice = (item.sellingPrice * item.quantity) - (couponDiscount / cartItems.length);
         } else {
             netPrice = item.sellingPrice;
         }
@@ -434,8 +546,15 @@ function priceCalculation() {
             rawTaxArr: rawTaxArr,
         };
     });
-    localStorage.setItem('cartItems', JSON.stringify(cartData));
-    cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    
+    if(window.buyNowData){
+         cartItems = cartData; 
+    }
+    else{
+        localStorage.setItem('cartItems', JSON.stringify(cartData));
+        cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    }
+    
     let totalMrp = 0;
     let totalDiscount = 0;
     let totalTaxPrice = 0;
@@ -444,20 +563,15 @@ function priceCalculation() {
     cartItems.forEach(function (item) {
         totalMrp += item.price * item.quantity;
         totalSelling += item.sellingPrice * item.quantity;
-
-        /* if (item.discountType == "flat") {
-            totalDiscount += parseInt(item.discountAmount);
-        } else if (item.discountType == "percentage") {
-            totalDiscount += ((parseInt(item.discountAmount) * totalMrp) / 100);
-        } */
-        /*  console.log('totalMrp---', totalMrp);
-         console.log('totalSelling---', totalSelling);
-         console.log('totalDiscount', totalDiscount); */
         taxOption = item.tax_option;
         totalTaxPrice += item.tax_price;
-        /* console.log('item.tax_price--', item.tax_price);
-        console.log(totalTaxPrice); */
     });
+
+    console.log("------cartItem------data------",cartItems); 
+    console.log("---total Mrp------",totalMrp); 
+    console.log("-----total Selling------",totalSelling); 
+    console.log("---------taxOption---------",taxOption); 
+    console.log("--------------totalTaxPrice---------",totalTaxPrice); 
     totalDiscount = totalMrp - totalSelling;
     let subTotal = totalMrp - totalDiscount;
     let grandTotal = subTotal - couponDiscount;

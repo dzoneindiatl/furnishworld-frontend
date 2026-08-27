@@ -199,9 +199,16 @@
                                                     </button>
                                                 @endif 
                                                 @if($product->in_stock == '1')
-                                                    <button type="button" class="buy_now_button btn btn-primary buy-now-btn me-3" id="buy_now_auto_add_to_cart">Buy Now</button>
-                                                
-                                                </a>
+                                                    <button type="button" class="buy_now_button btn btn-primary buy-now-btn me-3 checkoutButton btn_place_order" id="buy_now_auto_add_to_cart" data-id="{{ $product->id }}" 
+                                                        data-name="{{ $product->name }}"
+                                                        data-producttype="{{ $product->product_type }}"
+                                                        data-sku="{{ $product->sku }}"
+                                                        data-price="{{ $buying_price }}"
+                                                        data-salePrice="{{ $selling_price }}"
+                                                        data-discountType="Flat"
+                                                        data-discount="{{ $discount_product }}"
+                                                        data-image = "{{ $product->images['first'] }}"
+                                                        data-tax-arr="{{ e(json_encode($categoryTaxes)) }}">Buy Now</button>
                                                 @endif                                                
                                             </div>
                                         </form>
@@ -229,10 +236,10 @@
                                         <div class="product-share">
                                             <p>Share On : </p>
                                             <div class="product-share-icon">
-                                                <a class="facebook" href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                                                <a class="twitter" href="#" target="_blank"><i class="fab fa-twitter"></i></a>
-                                                <a class="whatsapp" href="#" target="_blank"><i class="fab fa-whatsapp"></i></a>
-                                                <a class="envelope" href="#" target="_blank"><i class="far fa-envelope"></i></a>
+                                                <a class="facebook" href="{{ $facebook->value }}" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                                                <a class="twitter" href="{{ $instagram->value }}" target="_blank"><i class="fab fa-twitter"></i></a>
+                                                <a class="whatsapp" href="{{ $pinterst->value }}" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                                                <a class="envelope" href="{{ $youtube->value }}" target="_blank"><i class="far fa-envelope"></i></a>
                                             </div>
                                         </div>
                                     </div> 
@@ -1032,18 +1039,51 @@
 
 </script>
 @endif
-
 <script>
-    
-    document.getElementById("cartToggle").addEventListener("click", function () {
-        document.getElementById("cartPopup").classList.add("active");
+     var checkoutUrl = "{{ route('front-product.checkoutBag') }}";
+        $(document).ready(function() {
+            $("#buy_now_auto_add_to_cart").click(function() {
+                localStorage.setItem('oldCartItems', JSON.stringify([]));
+
+                var oldCartItems = localStorage.getItem('cartItems') || '[]';
+                console.log("---------my old cart--------",oldCartItems); 
+                localStorage.setItem('oldCartItems', oldCartItems);
+                localStorage.setItem('isBuyNow', '1');
+                localStorage.setItem('cartItems', JSON.stringify([]));
+                
+                setTimeout(() => {
+                    $(".addToCartBtn").trigger("click");
+                    window.location.href = checkoutUrl;
+                }, 1000);
+            });
+        });
+    </script>
+<script>
+    $(document).ready(function () { 
+        restoreOldCartItems();
     });
 
-    document.querySelector(".close-cart").addEventListener("click", function () {
-        document.getElementById("cartPopup").classList.remove("active");
-    });
+        function restoreOldCartItems() {
+            const oldCartItems = localStorage.getItem('oldCartItems');
+            const isBuyNow = localStorage.getItem('isBuyNow');
+            if (isBuyNow === '1' && oldCartItems) {
+                let oldItems = JSON.parse(oldCartItems) || [];
+                let currentItems = JSON.parse(
+                    localStorage.getItem('cartItems') || '[]'
+                )
+                let mergedItems = [...oldItems, ...currentItems];
 
-
+                localStorage.setItem(
+                    'cartItems',
+                    JSON.stringify(mergedItems)
+                );
+                localStorage.removeItem('oldCartItems');
+                localStorage.setItem('isBuyNow', '0');
+                console.log('Old Cart:', oldItems);
+                console.log('Current Cart:', currentItems);
+                console.log('Merged Cart:', mergedItems);
+            }
+        }
     $(document).on('click', '.search-category', function () {
         selectVariant($(this));
     });

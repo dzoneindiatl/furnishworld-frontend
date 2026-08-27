@@ -18,11 +18,10 @@
     var getCouponUrl = "{{ route('get.coupon') }}";
     var wishlistUrl = "{{ route('front-user.wishlist') }}";
     var viewCartUrl = "{{ route('product.viewBag') }}";
+    var headerSearchUrl = "{{ route('front-header-product-search') }}"; 
 </script>
 <script src="{{asset('assets/front/js/cart.js')}}"></script>
 <script src="{{asset('assets/front/js/checkouts.js')}}"></script>
-
-<!-- Scripts FIle-->
 <script type="text/javascript" src="{{asset('assets/front/tejap/js/wow.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('assets/front/tejap/js/jquery-ui.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('assets/front/tejap/js/fancybox.min.js') }}"></script>
@@ -30,7 +29,6 @@
 <script type="text/javascript" src="{{asset('assets/front/tejap/js/bootstrap.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('assets/front/tejap/js/function.js') }}"></script>
 <script type="text/javascript" src="{{ asset('assets/front/js/product-details.js') }}"></script>
-
 <script>
     $('.wishlist_button').on('click',function(){
         if(isLoggedIn){
@@ -39,6 +37,62 @@
             window.location.href="{{ route('front-user.login') }}";
         }
     }); 
+</script>
+
+<script>
+$(document).on('change', '#searchingproducts', function() {
+    var searchValue = $(this).val();
+    $.ajax({
+        url:headerSearchUrl,
+        method:"GET",
+        data:{
+            searchValue,
+            _token: $('meta[name="csrf-token"]').attr('content'),
+        },
+        success:function(response){
+            console.log(response);
+            $('#searching-product').empty();
+                if(response.success && response.data.length != 0){
+                    $.each(response.data, function(index, value) {
+                        let title = value.slug + '.html';
+                        let productUrl = "{{ url('product/product') }}/" + title + "/" + value.sku;
+                        let html = `<div class="product-card">
+                                <div class="product-image"> 
+                                    <img src="${value.images['first']}" alt="${value.name}">
+                                </div>
+                                <div class="hover-panel">
+                                    <div class="hover-content">
+                                        <h3>${value.name}</h3>
+                                        <div class="price-wrap">
+                                            <span class="price">₹ ${value.selling_price}</span>
+                                            <span class="old-price">₹ ${value.buying_price}</span>
+                                        </div>
+                                        <div class="product-actions">
+                                            <a href="${productUrl}" class="action-btn add_to_cart_btn">
+                                                Buy now
+                                            </a>
+                                            <button class="wishlist-btn">
+                                                <span class="material-symbols-outlined">favorite</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                        $('#searching-product').append(html);
+                    });
+                }
+                else{
+                    if(!response.success){
+                        let html = "Sorry No Product Found"; 
+                        $('#searching-product').append(html);
+                    }   
+                }
+        },
+        error:function(error){
+            console.log(err); 
+        }
+    }); 
+});
 </script>
 <script>
 

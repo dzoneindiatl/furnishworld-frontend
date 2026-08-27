@@ -40,7 +40,7 @@
             <div class="page-banner-wrap">
               <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
                 <ul class="breadcrumb-items">
-                  <li class="breadcrumb-item trail-begin"><a href="index.html" rel="home"><span
+                  <li class="breadcrumb-item trail-begin"><a href="{{ url('/') }}" rel="home"><span
                         itemprop="name">Home</span></a></li>
                   <li class="breadcrumb-item trail-end"><span itemprop="name">Checkout</span></li>
                 </ul>

@@ -40,19 +40,19 @@
                         {!! $fifthCategory->description !!}
                     @endif
                     <div class="footer-social">
-                        <a href="#">
+                        <a href="{{ $facebook->value }}">
                             <i class="fa-brands fa-facebook-f"></i>
                         </a>
 
-                        <a href="#">
+                        <a href="{{ $instagram->value }}">
                             <i class="fa-brands fa-instagram"></i>
                         </a>
 
-                        <a href="#">
+                        <a href="{{ $pinterst->value }}">
                             <i class="fa-brands fa-pinterest-p"></i>
                         </a>
 
-                        <a href="#">
+                        <a href="{{ $youtube->value }}">
                             <i class="fa-brands fa-youtube"></i>
                         </a>
                     </div>
@@ -66,7 +66,7 @@
                         @if($firstCategory && $firstCategory->subcategories->count())
                             @foreach($firstCategory->subcategories as $subcategory)
                                 <li>
-                                     <a href="{{ url($subcategory->slug) }}">{{ $subcategory->title }}</a>
+                                     <a href="{{ url('page/'.$subcategory->slug) }}">{{ $subcategory->title }}</a>
                                 </li>
                             @endforeach
                         @endif
@@ -125,10 +125,6 @@
     @else  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     @endif 
-    
-   
-
-
     @if (url()->current() == url('/'))
 
     @else
@@ -149,44 +145,26 @@
     </div>
 @endif
 <script>
-
-    $('#loginForm').on('submit', function () {
-        setLoginCartItems();
-        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        $('#loginCartItems').val(
-            JSON.stringify(cartItems)
-        );
-    });
-    function setLoginCartItems() {
-        let cartItems =
-            JSON.parse(localStorage.getItem('cartItems')) || [];
-
-        $('#loginCartItems').val(
-            JSON.stringify(cartItems)
-        );
-    }
-    setLoginCartItems(); 
-
-
-    window.isCustomerLoggedIn = @json(Auth::guard('customer')->check());
-    if (!window.isCustomerLoggedIn) {
-        displayGuestCart();
-    }
-
-    $('.close-product').on('click', function () {
+    
+</script>
+<script>
+    $(document).ready(function(){
+        updateCartData();
+        $('.close-product').on('click', function () {
         var button = $(this);
         var index = $(this).data('index'); 
-        var cartId = button.data('cartid');
-
-        console.log("-------index-------",index); 
+        const cartData = @json($cart);
+            console.log("-----cart data------",cartData); 
+        if(isLoggedIn){
+            cartData.forEach(function(value){
+                let product_id = value.product_id ; 
+                let quantity = value.quantity; 
+                let variantCombinationId = value.product_variant_combination_id;
+                removeProductCartFromDB(product_id,quantity,variantCombinationId); 
+            }); 
+        }
         var cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        console.log("---------cartItem------",cartItems)
         if (cartItems[index]) {
-            var productId = cartItems[index].productId;
-            var quantity = cartItems[index].quantity; 
-            var selectedVariants = cartItems[index].selectedVariants || {};
-     
-            isLoginUser(productId, quantity, selectedVariants, 'remove');
             cartItems.splice(index, 1);
             localStorage.setItem('cartItems', JSON.stringify(cartItems));
             button.closest('.cart-item').remove();
@@ -196,7 +174,48 @@
             localStorage.setItem('coupon_discount', 0);
             showFlashMessage("Product removed from cart", "warning");
         }
+    }); 
     });
+    $('#loginForm').on('submit', function () {
+        setLoginCartItems();
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        $('#loginCartItems').val(
+            JSON.stringify(cartItems)
+        );
+    });
+     
+    function removeProductCartFromDB(productId,quantity,variantCombinationId){
+        if(isLoggedIn){
+            url:"{{ route('front-remove-cart-product') }}",
+            method:"GET",
+            data:{
+                productId,
+                quantity,
+                variantCombinationId
+            },
+            success:function(response){
+                console.log(response); 
+            },
+            error:function(err){
+                console.log(err); 
+            }
+        }
+    }
+    function setLoginCartItems() {
+        let cartItems =
+            JSON.parse(localStorage.getItem('cartItems')) || [];
+
+        $('#loginCartItems').val(
+            JSON.stringify(cartItems)
+        );
+    }
+
+    setLoginCartItems(); 
+    window.isCustomerLoggedIn = @json(Auth::guard('customer')->check());
+    if (!window.isCustomerLoggedIn) {
+        displayGuestCart();
+    }
+    
     function updateCartTotal(cartItems) {
         let total = 0;
          cartItems.forEach(function (item) {
@@ -211,6 +230,7 @@
     function displayGuestCart() {
 
         let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            console.log("-------cart items data from footer---",cartItems); 
         let cartCount = cartItems.length; 
         let container = $('#headerCartItems');
         container.empty();
@@ -225,6 +245,7 @@
             $('#cartTotal').text('₹0');
             return;
         }
+
         cartItems.slice(0, 4).forEach(function (item, index) {
             container.append(`
                 <div class="cart-item">
@@ -252,6 +273,26 @@
         updateCartTotal(cartItems);
     }
 
+    function updateCartData() {
+
+        var productIds = []; 
+        const cartData = @json($cart);
+        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        cartData.forEach(function(val){
+            productIds.push(val.product_id); 
+        }); 
+        cartItems.forEach(function(item){
+            if(!productIds.includes(item.productId)){
+                if(isLoggedIn){
+                    let productId = item.productId;
+                    let quantity = item.quantity;
+                    let selectedVariants = item.selectedVariants;
+                    isLoginUser(productId,quantity,selectedVariants);
+                }
+            } 
+        }); 
+    }
+
     function isLoginUser(productId, quantity, selectedVariants, type = null) {
     if (isLoggedIn) {
         $.ajax({
@@ -274,6 +315,7 @@
     }
 
 }
+
 </script>
 </body>
 </html>

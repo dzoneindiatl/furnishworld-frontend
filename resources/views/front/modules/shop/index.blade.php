@@ -20,196 +20,61 @@
     <div class="content-wrapper product-cat-content-wrapper">
         <div class="container">
             <div class="page-header text-center">
-                <h1 class="page-title">{{ ucwords($category->name) }}</h1>
+                <h1 class="page-title" id="pageTitle">{{ ucwords($category->name) }}</h1>
             </div>
             <div class="content-area">
                 <div class="product-cat-page">
-                    <!-- <div class="product-cat-banner">
-                        <img src="images/product-banner.jpg" alt="">
-                    </div> -->
-                    <!-- product-cat-banner -->
                     <div class="product-filter-outer">                           
                         <div class="product-filter-area">
                             <div class="product-filters">
-                                <div class="product-filter">
-                                    <button class="filter-toggle"><i class="fa-solid fa-sliders"></i> Filters </button>     
+                                <div class="product-filter dropdown">
+                                    <select name="category_id" class="form-control product-filter-select" id="category_id" onchange="getSubCategory();">
+                                        <option value="">Select Category</option>
+                                        @foreach($AllMainCategory as $cat)
+                                            <option value="{{ $cat->id }}" {{ $category->id == $cat->id ? "selected" : ""}}>{{ $cat->name }}</option>
+                                        @endforeach 
+                                    </select>
                                 </div>
                                 <div class="product-filter dropdown">
-                                    <button class="product-filter-title" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Category</button>
-                                    <div class="product-filter-dropdown dropdown-menu">                                            
-                                        <ul class="product-filter-menu">
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Sofas</span>
-                                                        <span>(102)</span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Beds</span>
-                                                        <span>(102)</span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Dining Sets</span>
-                                                        <span>(102)</span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Tv Cabinets</span>
-                                                        <span>(102)</span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Dressing Tables</span>
-                                                        <span>(102)</span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Shoe Racks</span>
-                                                        <span>(102)</span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Stools</span>
-                                                        <span>(102)</span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Laptop Tables</span>
-                                                        <span>(102)</span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                    <select name="sub_category_id" class="form-control product-filter-select" id="sub_category_id" onchange="getSubChildCategory();">
+                                        <option value="">Select Sub Category</option> 
+                                    </select>
                                 </div>
                                 <div class="product-filter dropdown">
-                                    <button class="product-filter-title" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Collection</button>
-                                    <div class="product-filter-dropdown dropdown-menu">                                            
-                                        <ul class="product-filter-menu">
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Modern</span>
-                                                        <span>(102)</span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Contemporary</span>
-                                                        <span>(102)</span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Traditional</span>
-                                                        <span>(102)</span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Industrial</span>
-                                                        <span>(102)</span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                    <select name="sub_child_category_id" class="form-control product-filter-select" id="sub_child_category_id">
+                                        <option value="">Select Sub Child Category</option>
+                                    </select>
                                 </div>
                                 <div class="product-filter dropdown">
-                                    <button class="product-filter-title" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By</button>
-                                    <div class="product-filter-dropdown dropdown-menu">                                            
-                                        <ul class="product-filter-menu">
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Name (A-Z)</span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Name (Z-A)</span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Price Low to High</span>
-                                                    </div>
-                                                </label>
-                                            </li>
-                                            <li>   
-                                                <input class="product-filter-input" name="cat" id="cat_shirt" value="" type="checkbox">                                         
-                                                <label class="product-filter-label" for="cat_shirt">  
-                                                    <div class="product-filter-frame"></div>                                                        
-                                                    <div class="product-filter-text">
-                                                        <span>Price High to Low</span>
-                                                     </div>
-                                                </label>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                    <select name="variantValuesColor" class="form-control product-filter-select" id="variantValuesColor">
+                                        <option value="">Select Variant Colors</option>
+                                            @foreach($variantColor as $col)
+                                                <option value="{{ $col->id }}">{{ $col->name }}</option>
+                                            @endforeach 
+                                    </select>
+                                </div>
+                                <div class="product-filter dropdown">
+                                    <select name="price_range" class="form-control product-filter-select" id="price_range">
+                                        <option value="">Select Price Range</option>
+                                        <option value="1000-5000">1000-5000</option>
+                                        <option value="5000-10000">5000-10000</option>
+                                        <option value="10000-20000">10000-20000</option>
+                                        <option value="20000-30000">20000-30000</option>
+                                        <option value="30000-40000">30000-40000</option>
+                                        <option value="40000-50000">40000-50000</option>
+                                        <option value="50000-60000">50000-60000</option>
+                                    </select>
+                                </div>
+                                <div class="product-filter dropdown">
+                                    <select name="sortBy" class="form-control product-filter-select" id="">
+                                        <option value="">Sort By</option>
+                                        <option value="new_arrivals">New Arrivals</option>
+                                        <option value="best_seller">Best Seller</option>
+                                        <option value="featured">Featured</option>
+                                        <option value="trending">Trending</option>
+                                        <option value="low_high">Price Low To High</option>
+                                        <option value="high_low">Price High To Low</option>
+                                    </select>
                                 </div>
                             </div>                   
                             <div class="product-display-mode">                                        
@@ -217,332 +82,9 @@
                                 <div id="grid_large" class="active"><a href="javascript:void(0);" title="4 Column"><span></span><span></span><span></span><span></span></a></div>                                       
                             </div>    
                             </div>
-                        </div>
-                        <!-- product-sortby-filter -->                                    
-                        <div class="product-sidebar-filter product-sidebar-area">
-                            <h3 class="product-sidebar-heading">
-                                Filter By
-                                <button class="filter-close"><i class="fas fa-times"></i></button>
-                            </h3>
-                            <div class="product-widget-items">
-                                <div class="product-widget-item">
-                                    <div class="product-widget-wrap">
-                                        <h4 class="product-widget-title">Price </h4>
-                                        <div class="product-widget-dropdown price-filter">
-                                            <div id="slider-range"></div>
-                                            <div class="price-range">
-                                                <label for="amount">Range:</label>
-                                                <input type="text" id="amount" readonly>
-                                            </div>
-                                        </div>
-                                    </div>                                           
-                                    <div class="product-widget-wrap">                                               
-                                        <h4 class="product-widget-title">Sort By </h4>
-                                        <div class="product-widget-dropdown">
-                                            <ul class="product-filter-menu">
-                                                <li>   
-                                                    <input class="product-filter-input" name="orderby1" id="popularity1" type="radio" checked="checked">                                         
-                                                    <label class="product-filter-label" for="popularity1">   
-                                                        <div class="product-filter-frame"></div>
-                                                        <div class="product-filter-text">
-                                                            <span>Popularity</span>                                                           
-                                                        </div>
-                                                    </label>                                           
-                                                </li>
-                                                <li>   
-                                                    <input class="product-filter-input" name="orderby1" id="date1" type="radio" checked="checked">                                         
-                                                    <label class="product-filter-label" for="date1">   
-                                                        <div class="product-filter-frame"></div>
-                                                        <div class="product-filter-text">
-                                                            <span>Latest</span>                                                           
-                                                        </div>
-                                                    </label>                                           
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>                                           
-                                </div>
-                                <div class="product-widget-item">
-                                    <div class="product-widget-wrap">
-                                        <p class="product-widget-title open">Availability  </p>  
-                                        <div class="product-widget-dropdown">
-                                            <ul class="product-filter-menu">
-                                                <li class="product-filter-active">   
-                                                    <input class="product-filter-input" name="off" id="off-20" value="" type="checkbox" checked="checked">                                         
-                                                    <label class="product-filter-label" for="off-20">   
-                                                        <div class="product-filter-frame"></div>
-                                                        <div class="product-filter-text">
-                                                            <span>In stock</span>
-                                                            <span>(4)</span>
-                                                        </div>
-                                                    </label>                                           
-                                                </li>
-                                                <li>
-                                                    <input class="product-filter-input" name="off" id="off-40" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="off-40">                                                  
-                                                        <div class="product-filter-frame"></div>
-                                                        <div class="product-filter-text">
-                                                            <span>Out of stock</span>
-                                                            <span>(4)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>
-                                            </ul>
-                                        </div> 
-                                    </div>                                            
-                                </div>
-                                <div class="product-widget-item">
-                                    <div class="product-widget-wrap">
-                                        <p class="product-widget-title open">By Discount  </p>  
-                                        <div class="product-widget-dropdown">
-                                            <ul class="product-filter-menu">
-                                                <li class="product-filter-active">   
-                                                    <input class="product-filter-input" name="off" id="off-20" value="" type="checkbox" checked="checked">                                         
-                                                    <label class="product-filter-label" for="off-20">   
-                                                        <div class="product-filter-frame"></div>
-                                                        <div class="product-filter-text">
-                                                            <span>20% OFF</span>
-                                                            <span>(4)</span>
-                                                        </div>
-                                                    </label>                                           
-                                                </li>
-                                                <li>
-                                                    <input class="product-filter-input" name="off" id="off-40" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="off-40">                                                  
-                                                        <div class="product-filter-frame"></div>
-                                                        <div class="product-filter-text">
-                                                            <span>40% OFF</span>
-                                                            <span>(4)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <input class="product-filter-input" name="off" id="off-60" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="off-60">                                                   
-                                                        <div class="product-filter-frame"></div>
-                                                        <div class="product-filter-text">
-                                                            <span>60% OFF</span>
-                                                            <span>(4)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <input class="product-filter-input" name="off" id="off-80" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="off-80">  
-                                                        <div class="product-filter-frame"></div>
-                                                        <div class="product-filter-text">
-                                                            <span>80% OFF</span>
-                                                            <span>(4)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>                                        
-                                            </ul>
-                                        </div> 
-                                    </div>                                            
-                                </div>
-                                <div class="product-widget-item">
-                                    <div class="product-widget-wrap">
-                                        <p class="product-widget-title">Category</p> 
-                                        <div class="product-widget-dropdown">
-                                            <ul class="product-filter-menu">
-                                                <li>   
-                                                    <input class="product-filter-input" name="cat" id="cat_shirt1" value="" type="checkbox">                                         
-                                                    <label class="product-filter-label" for="cat_shirt1">  
-                                                        <div class="product-filter-frame"></div>                                                        
-                                                        <div class="product-filter-text">
-                                                            <span>Sofas</span>
-                                                            <span>(102)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <input class="product-filter-input" name="cat" id="cat_shortseleve1" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="cat_shortseleve1">  
-                                                        <div class="product-filter-frame"></div>                                                              
-                                                        <div class="product-filter-text">
-                                                            <span>Beds</span>
-                                                            <span>(40)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <input class="product-filter-input" name="cat" id="cat_seleve_less1" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="cat_seleve_less1">    
-                                                        <div class="product-filter-frame"></div>                                                             
-                                                        <div class="product-filter-text">
-                                                            <span>Dining Sets</span>
-                                                            <span>(14)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>                                              
-                                                <li>
-                                                    <input class="product-filter-input" name="cat" id="cat_polo_neck1" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="cat_polo_neck1">  
-                                                        <div class="product-filter-frame"></div>      
-                                                        <div class="product-filter-text">
-                                                            <span>Tv Cabinets</span>
-                                                            <span>(18)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>  
-                                                <li>
-                                                    <input class="product-filter-input" name="cat" id="cat_strip1" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="cat_strip1">  
-                                                        <div class="product-filter-frame"></div>      
-                                                        <div class="product-filter-text">
-                                                            <span>Dressing Tables</span>
-                                                            <span>(28)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <input class="product-filter-input" name="cat" id="cat_strip1" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="cat_strip1">  
-                                                        <div class="product-filter-frame"></div>      
-                                                        <div class="product-filter-text">
-                                                            <span>Shoe Racks</span>
-                                                            <span>(28)</span>
-                                                        </div>
-                                                    </label>
-                                                </li> 
-                                                <li>
-                                                    <input class="product-filter-input" name="cat" id="cat_strip1" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="cat_strip1">  
-                                                        <div class="product-filter-frame"></div>      
-                                                        <div class="product-filter-text">
-                                                            <span>Stools</span>
-                                                            <span>(28)</span>
-                                                        </div>
-                                                    </label>
-                                                </li> 
-                                                <li>
-                                                    <input class="product-filter-input" name="cat" id="cat_strip1" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="cat_strip1">  
-                                                        <div class="product-filter-frame"></div>      
-                                                        <div class="product-filter-text">
-                                                            <span>Laptop Tables</span>
-                                                            <span>(28)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>                                      
-                                            </ul>
-                                        </div> 
-                                    </div>                                             
-                                </div> 
-                                <div class="product-widget-item">
-                                    <div class="product-widget-wrap">
-                                        <p class="product-widget-title">Color</p>    
-                                        <div class="product-widget-dropdown">                                  
-                                            <ul class="product-filter-menu product-filter-color">
-                                                <li>   
-                                                    <input class="product-filter-input" name="color" id="color_brown1" value="" type="checkbox">                                         
-                                                    <label class="product-filter-label" for="color_brown1">
-                                                        <div class="product-filter-frame" style="background: #964b00;"></div>                                                              
-                                                        <div class="product-filter-text">
-                                                            <span>Brown</span>
-                                                            <span>(102)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <input class="product-filter-input" name="color" id="color_yellow2" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="color_yellow2">  
-                                                        <div class="product-filter-frame" style="background: #f1c40f;"></div>                                                              
-                                                        <div class="product-filter-text">
-                                                            <span>Yellow</span>
-                                                            <span>(40)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <input class="product-filter-input" name="color" id="color_blue3" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="color_blue3">   
-                                                        <div class="product-filter-frame" style="background: #310ff1;"></div>                                                              
-                                                        <div class="product-filter-text">
-                                                            <span>Blue</span>
-                                                            <span>(14)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>                                              
-                                                <li>
-                                                    <input class="product-filter-input" name="color" id="color_red4" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="color_red4">  
-                                                        <div class="product-filter-frame" style="background: #ff0000;"></div>      
-                                                        <div class="product-filter-text">
-                                                            <span>Red</span>
-                                                            <span>(18)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>    
-                                                <li>
-                                                    <input class="product-filter-input" name="color" id="color_black5" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="color_black5">  
-                                                        <div class="product-filter-frame" style="background: #000000;"></div>      
-                                                        <div class="product-filter-text">
-                                                            <span>Black</span>
-                                                            <span>(28)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>                                      
-                                            </ul> 
-                                        </div>
-                                    </div>                                            
-                                </div>  
-                                <div class="product-widget-item">
-                                    <div class="product-widget-wrap">
-                                        <p class="product-widget-title">Material</p>   
-                                        <div class="product-widget-dropdown">                                   
-                                            <ul class="product-filter-menu">
-                                                <li>     
-                                                    <input class="product-filter-input" name="off" id="pattern_1" value="" type="checkbox">                                       
-                                                    <label class="product-filter-label" for="pattern_1">   
-                                                        <div class="product-filter-frame"></div>
-                                                        <div class="product-filter-text">
-                                                            <span>Fabric</span>
-                                                            <span>(102)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <input class="product-filter-input" name="off" id="pattern_2" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="pattern_2">   
-                                                        <div class="product-filter-frame"></div>
-                                                        <div class="product-filter-text">
-                                                            <span>Leather</span>
-                                                            <span>(40)</span>
-                                                        </div>
-                                                    </label>
-                                                </li> 
-                                                <li>
-                                                    <input class="product-filter-input" name="off" id="pattern_3" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="pattern_3">   
-                                                        <div class="product-filter-frame"></div>
-                                                        <div class="product-filter-text">
-                                                            <span>Velvet</span>
-                                                            <span>(14)</span>
-                                                        </div>
-                                                    </label>
-                                                </li> 
-                                                <li>
-                                                    <input class="product-filter-input" name="off" id="pattern_3" value="" type="checkbox">
-                                                    <label class="product-filter-label" for="pattern_3">   
-                                                        <div class="product-filter-frame"></div>
-                                                        <div class="product-filter-text">
-                                                            <span>Performance Fabric</span>
-                                                            <span>(14)</span>
-                                                        </div>
-                                                    </label>
-                                                </li>                                              
-                                            </ul>
-                                        </div>
-                                    </div>                                           
-                                </div>  
-                            </div>                           
-                        </div>
-                        
+                        </div> 
                     </div>
                     <div class="product-filter-overlay"></div> 
-                    <!--sidebar-section-->
                     <div class="products-area">
                         <ul class="products column-4" id="product-list">
                             @include("front.modules.shop.load_more_data")
@@ -579,11 +121,137 @@
         padding:20px;
     }
 </style>
+<script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
+<script>
+    var url= "{{ route('front-get-category') }}"; 
+    function getSubCategory(){
+        var parentId =$('select[name="category_id"]').val();
+        $.ajax({
+            url:url,
+            data:{
+                parentId:parentId,
+            },
+            headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+            success:function(response){
+                $('#sub_category_id').empty(); 
+                let s = new Option("Select Sub Category",""); 
+                $('#sub_category_id').append(s);  
+                response.forEach(function(item, index) {
+                    let r = `<option value="${item.id}">${item.name}</option>`;
+                    $('#sub_category_id').append(r);
+                });
+            },
+            error:function(error){
+                console.log(err); 
+            }
+
+        }); 
+    }
+
+    function getSubChildCategory(){
+        var parentId =$('select[name="sub_category_id"]').val();
+        $.ajax({
+            url:url,
+            data:{
+                parentId:parentId,
+            },
+            headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+            success:function(response){
+                console.log(response);
+                $('#sub_child_category_id').empty(); 
+                let s = new Option("Select Sub Category",""); 
+                $('#sub_child_category_id').append(s);  
+                response.forEach(function(item, index) {
+                    let r = `<option value="${item.id}">${item.name}</option>`;
+                    $('#sub_child_category_id').append(r);
+                });
+            },
+            error:function(error){
+                console.log(err); 
+            }
+
+        });
+    }
+    
+    
+    $(document).on('change', '.product-filter-select', function () {
+    console.log('Filter changed');
+    offset = 0;
+    hasMore = true;
+    loadProducts(true);
+
+    function loadProducts(reset = false)
+    {
+        let categoryId = $('select[name="category_id"]').val();
+        let subCategoryId = $('select[name="sub_category_id"]').val();
+        let subChildCategoryId = $('select[name="sub_child_category_id"]').val();
+        let color = $('select[name="variantValuesColor"]').val();
+        let priceRange = $('select[name="price_range"]').val();
+        let sortBy = $('select[name="sortBy"]').val();
+        
+        if(subChildCategoryId){
+            let subChildCategoryName = $('#sub_child_category_id option:selected').text();
+            $('#pageTitle').text(subChildCategoryName);
+        }else if (subCategoryId) {
+            let subCategoryName = $('#sub_category_id option:selected').text();
+            $('#pageTitle').text(subCategoryName);
+        } else if (categoryId) {
+            let categoryName = $('#category_id option:selected').text();
+            $('#pageTitle').text(categoryName);
+        }
+
+
+        $.ajax({
+            url: "{{ route('category.show', $slug) }}",
+            type: "GET",
+
+            data: {
+                category_id: categoryId,
+                sub_category_id: subCategoryId,
+                sub_child_category_id:subChildCategoryId,
+                variantValuesColor: color,
+                price_range: priceRange,
+                sortBy: sortBy,
+                offset: offset,
+                limit: 20
+            },
+
+            beforeSend: function () {
+                $('#productLoader').show();
+            },
+
+            success: function (response) {
+                console.log(response); 
+                if (reset == true) {
+                    $('#product-list').html(response.html);
+                } else {
+                    $('#product-list').append(response.html);
+                }
+                hasMore = response.hasMore;
+                offset = response.nextOffset;
+            },
+
+            error: function (xhr) {
+                console.log(xhr.responseText);
+            },
+
+            complete: function () {
+                loading = false;
+                $('#productLoader').hide();
+            }
+        });
+    }
+});
+</script>
 <script>
 
-let offset = 8;
+let offset = {{ $results->count() }};
 let loading = false;
-let hasMore = true;
+let hasMore = {{ $hasMore ? 'true' : 'false' }};
 
 window.addEventListener('scroll', function () {
 
@@ -594,13 +262,6 @@ window.addEventListener('scroll', function () {
     const scrollTop = window.scrollY;
     const windowHeight = window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
-
-    console.log(
-        'scrollTop:', scrollTop,
-        'windowHeight:', windowHeight,
-        'documentHeight:', documentHeight
-    );
-
     if (scrollTop + windowHeight >= documentHeight - 500) {
         loading = true;
         $.ajax({
@@ -619,7 +280,7 @@ window.addEventListener('scroll', function () {
                 console.log('AJAX RESPONSE:', response);
                 if (response.html && response.html.trim() !== '') {
                     $('#product-list').append(response.html);
-                    offset += response.totalResults;
+                    offset = response.nextOffset;
                     hasMore = response.hasMore;
                 } else {
                     hasMore = false;

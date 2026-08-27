@@ -138,7 +138,11 @@ Route::name('front-')->group(function () {
         Route::post('order/delivered',[CheckoutController::class,'orderReturn'])->name('order.return');
     });
 
+    Route::get('header-product-search',[HomeController::class,'headerProductSearch'])->name('header-product-search'); 
     Route::get('/product/{product}/{title}/{sku}', [HomeController::class, 'productDetail'])->name('product.detail');
+
+    Route::get('get/sub/child/category',[HomeController::class,'getSubAndChildCategory'])->name('get-category'); 
+    Route::post('/remove-cart-product',[HomeController::class,'removeCartProduct'])->name('remove-cart-product'); 
     });
     
 Route::post('/checkVarientStock', [App\Http\Controllers\Front\HomeController::class, 'variantStockCheck'])->name('variant.stock.check');
