@@ -698,46 +698,78 @@
                     <div class="single-product-description">
                         <div class="container">
                             <div class="row">
-                                @php #
-                                    $k = 1 ;
-                                @endphp 
+                                @php
+                                    $k = 1;
+                                @endphp
+
                                 @foreach($productDetailManager as $detailManager)
-                                        @php 
-                                            
-                                            $contentKey = 'content_' . $k;
-                                            $sectionContent = $product->$contentKey ?? '';
-                                              if ($detailManager->section_name == 'Specification') {
-                                                $sectionContent = $product->content_1 ?? '';
-                                                if (!empty($activeVarientId) && !empty($productVariantSpecification)) {
-                                                    $specification = $productVariantSpecification->firstWhere('variant_value_id',$activeVarientId);
-                                                    if ($specification) {
-                                                        $contentKey = 'content_' . $activeVarientId;
-                                                        $variantContent = $specification->$contentKey ?? '';
-                                                        if (!empty(trim(strip_tags($variantContent)))) {
-                                                            $sectionContent = $variantContent;
-                                                        }
+
+                                    @php
+                                        $contentKey = 'content_' . $k;
+                                        $sectionContent = $product->$contentKey ?? '';
+
+                                        if ($detailManager->section_name == 'Specification') {
+
+                                            // Default product specification
+                                            $sectionContent = $product->content_1 ?? '';
+
+                                            // Variant specification ko priority do
+                                            if (!empty($activeVarientId) && !empty($productVariantSpecification)) {
+
+                                                $specification = $productVariantSpecification->firstWhere(
+                                                    'variant_value_id',
+                                                    $activeVarientId
+                                                );
+
+                                                if ($specification) {
+
+                                                    $variantContentKey = 'content_' . $activeVarientId;
+
+                                                    $variantContent = $specification->$variantContentKey ?? '';
+
+                                                    // Agar variant content hai to variant wala show hoga
+                                                    if (!empty(trim(strip_tags($variantContent)))) {
+                                                        $sectionContent = $variantContent;
                                                     }
                                                 }
                                             }
-                                        @endphp 
-                                          @if(!empty(trim(strip_tags($sectionContent))))
-                                            <div class="col-lg-4 col-md-4 col-12" @if($detailManager->section_name == 'Specification') id="productSpecificationBox" @endif>
-                                                <div class="single-product-content">
-                                                    <h5>{{ $detailManager->section_name }}</h5>
-                                                    @if($detailManager->section_name == 'Specification')
-                                                        <div id="productSpecificationContent">
-                                                            {!! $sectionContent !!}
-                                                        </div>
-                                                    @else
+                                        }
+                                    @endphp
+
+                                    @if(!empty(trim(strip_tags($sectionContent))))
+
+                                        <div class="col-lg-4 col-md-4 col-12"
+                                            @if($detailManager->section_name == 'Specification')
+                                                id="productSpecificationBox"
+                                            @endif>
+
+                                            <div class="single-product-content">
+
+                                                <h5>{{ $detailManager->section_name }}</h5>
+
+                                                @if($detailManager->section_name == 'Specification')
+
+                                                    <div id="productSpecificationContent">
                                                         {!! $sectionContent !!}
-                                                    @endif
-                                                </div>
+                                                    </div>
+
+                                                @else
+
+                                                    {!! $sectionContent !!}
+
+                                                @endif
+
                                             </div>
-                                            @endif 
-                                            @php        
-                                            $k++ ;
-                                            @endphp  
-                                    @endforeach 
+
+                                        </div>
+
+                                    @endif
+
+                                    @php
+                                        $k++;
+                                    @endphp
+
+                                @endforeach
                             </div>
                           {{--<div class="row mt-4 pt-md-2">
                                 <div class="col-md-12 col-12">                                            
@@ -973,43 +1005,63 @@
                 Site Section End
 =========================================================-->
 @push('scripts')
+    @if($activeVarientId)
 
-@if($activeVarientId)
 <script>
+    const productVariantSpecification = @json($productVariantSpecification);
+    const productDefaultSpecification = @json($product->content_1 ?? '');
+
     $(document).ready(function () {
-        const activeVariant = document.querySelector('[data-vid="{{ $activeVarientId }}"]');
+
+        const activeVariant = document.querySelector(
+            '[data-vid="{{ $activeVarientId }}"]'
+        );
+
         if (activeVariant) {
             updateVariantSpecification(activeVariant);
         }
     });
-    const productVariantSpecification = @json($productVariantSpecification);
-    const productDefaultSpecification = @json($product->content_1 ?? '');
 
     function updateVariantSpecification(element) {
+
         const variantValueId = $(element).data('vid');
 
         const specification = productVariantSpecification.find(
             item => item.variant_value_id == variantValueId
         );
 
+        // Default product specification
         let content = productDefaultSpecification;
 
-         if (specification) {
+        if (specification) {
+
             const contentKey = 'content_' + variantValueId;
-            if (specification[contentKey] && specification[contentKey].trim() !== '') {
-                content = specification[contentKey];
+
+            const variantContent = specification[contentKey] ?? '';
+
+            // Variant content has priority
+            if (
+                variantContent &&
+                variantContent.trim() !== ''
+            ) {
+                content = variantContent;
             }
         }
+
         if (content && content.trim() !== '') {
+
             $('#productSpecificationContent').html(content);
             $('#productSpecificationBox').show();
+
         } else {
+
             $('#productSpecificationContent').html('');
             $('#productSpecificationBox').hide();
+
         }
     }
-
 </script>
+
 @endif
 <script>
      var checkoutUrl = "{{ route('front-product.checkoutBag') }}";
