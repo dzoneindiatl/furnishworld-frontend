@@ -66,11 +66,23 @@
                                     $discount_product = $buying_price - $selling_price;
                                     $productImages = getActiveVarientImg($product->id, $product->id);
                                 }
+                                 
+                                $discountText = "" ;
+                               
+                                if(!empty($product->discount) && !empty($product->discount_type)){
+                                    if($product->discount_type == "percentage"){
+                                        $discountText =  $product->discount . "% Off"; 
+                                    }
+                                    if($product->discount_type == "flat"){
+                                        $discountText = '₹'.$product->discount . 'Off'; 
+                                    }
+                                }
+                                
                                 ?>
                                 <div class="product-gallery">
                                     <div class="product-gallery-area product-gallery-with-images">
                                         <div class="onsale-trading">
-                                            <div class="onsale-off">Rs {{ $discount_product }} OFF</div>                                                   
+                                            <div class="onsale-off">{{ $discountText }}</div>                                                   
                                         </div>
                                         <div class="product-gallery-wrapper product-gallery-slider">
                                             @if($firstImage)
@@ -119,7 +131,7 @@
                                     <div class="single-product-price">
                                     <del id="pdpStrikedMrp">₹ {{ floor($buying_price)  }}</del>
                                     <ins id="productPrice">₹ {{ floor($selling_price) }}</ins>
-                                    <span class="single-product-priceoff" id="discountShow">{{  "₹".$discount_product ? $discount_product : '' }} OFF</span>
+                                    <span class="single-product-priceoff" id="discountShow">{{ $discountText }}</span>
                                     </div>
                                     
                                     <div class="single-product-summarycart">
@@ -701,99 +713,37 @@
                                 @php
                                     $k = 1;
                                 @endphp
-
                                 @foreach($productDetailManager as $detailManager)
-
                                     @php
                                         $contentKey = 'content_' . $k;
-                                        $sectionContent = $product->$contentKey ?? '';
-
-                                        if ($detailManager->section_name == 'Specification') {
-
-                                            // Default product specification
-                                            $sectionContent = $product->content_1 ?? '';
-
-                                            // Variant specification ko priority do
-                                            if (!empty($activeVarientId) && !empty($productVariantSpecification)) {
-
-                                                $specification = $productVariantSpecification->firstWhere(
-                                                    'variant_value_id',
-                                                    $activeVarientId
-                                                );
-
-                                                if ($specification) {
-
-                                                    $variantContentKey = 'content_' . $activeVarientId;
-
-                                                    $variantContent = $specification->$variantContentKey ?? '';
-
-                                                    // Agar variant content hai to variant wala show hoga
-                                                    if (!empty(trim(strip_tags($variantContent)))) {
-                                                        $sectionContent = $variantContent;
-                                                    }
-                                                }
-                                            }
-                                        }
                                     @endphp
-
-                                    @if(!empty(trim(strip_tags($sectionContent))))
-
-                                        <div class="col-lg-4 col-md-4 col-12"
-                                            @if($detailManager->section_name == 'Specification')
-                                                id="productSpecificationBox"
-                                            @endif>
-
+                                    @if($detailManager->section_name == 'Specification')
+                                        <div class="col-lg-4 col-md-4 col-12" id="productSpecificationBox"
+                                            style="display: none;">
                                             <div class="single-product-content">
-
                                                 <h5>{{ $detailManager->section_name }}</h5>
-
-                                                @if($detailManager->section_name == 'Specification')
-
-                                                    <div id="productSpecificationContent">
-                                                        {!! $sectionContent !!}
-                                                    </div>
-
-                                                @else
-
-                                                    {!! $sectionContent !!}
-
-                                                @endif
-
+                                                <div id="productSpecificationContent"></div>
                                             </div>
-
                                         </div>
+                                    @else
+                                        @php
+                                            $sectionContent = $product->$contentKey ?? '';
+                                        @endphp
 
+                                        @if(!empty(trim(strip_tags($sectionContent))))
+                                            <div class="col-lg-4 col-md-4 col-12">
+                                                <div class="single-product-content">
+                                                    <h5>{{ $detailManager->section_name }}</h5>
+                                                    {!! $sectionContent !!}
+                                                </div>
+                                            </div>
+                                        @endif
                                     @endif
-
                                     @php
                                         $k++;
                                     @endphp
-
                                 @endforeach
                             </div>
-                          {{--<div class="row mt-4 pt-md-2">
-                                <div class="col-md-12 col-12">                                            
-                                    <div  class="single-product-content ">  
-                                        <h5 class="collapsed mb-0" data-bs-toggle="collapse" data-bs-target="#Returns_Exchanges">
-                                            <i class="fa-solid fa-plus me-1"></i> 
-                                            <i class="fa-solid fa-minus me-1"></i> 
-                                            Returns & Exchanges
-                                        </h5>
-                                        <div id="Returns_Exchanges" class="collapse">
-                                            <div class="pt-3 pt-lg-4">
-                                                <h5>RISK FREE SHOPPING</h5>
-                                                <p>You can return or exchange any product if you are not satisfied with the fit or size, within 60 days from the date of delivery.</p>
-                                                <h5>ELIGIBILITY</h5>
-                                                <p>Products must be unused, unwashed, undamaged and should have all the original tags and packaging. Once your return is processed, the full product price, including taxes, will be returned to you. Any additional shipping charges, if paid, are not returned.</p>
-                                                <h5>PROCESS</h5>
-                                                <p>To initiate a return/exchange, create a request here. Alternatively, you can also contact us with your order details.</p>
-                                                <p>Our warehouse team typically takes around 48-72 hours to inspect all items due for returns or exchanges. Once approved, it’ll take upto 7 business days for the amount to reflect in your back account in case of a refund.</p>
-                                                <p>For an exchange, we’ll ship out your new size/product once the pickup is completed.</p>
-                                            </div>                                                    
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> --}} 
                         </div>    
                     </div>
                     <div class="single-product-review">
@@ -1005,8 +955,8 @@
                 Site Section End
 =========================================================-->
 @push('scripts')
-    @if($activeVarientId)
 
+@if($activeVarientId)
 <script>
     const productVariantSpecification = @json($productVariantSpecification);
     const productDefaultSpecification = @json($product->content_1 ?? '');
@@ -1026,15 +976,18 @@
 
         const variantValueId = $(element).data('vid');
 
+        // Find selected variant specification
         const specification = productVariantSpecification.find(
-            item => item.variant_value_id == variantValueId
+            item => String(item.variant_value_id) === String(variantValueId)
         );
 
-        // Default product specification
-        let content = productDefaultSpecification;
+        let content = productDefaultSpecification || '';
 
         if (specification) {
 
+            // Example:
+            // variantValueId = 1  => content_1
+            // variantValueId = 14 => content_14
             const contentKey = 'content_' + variantValueId;
 
             const variantContent = specification[contentKey] ?? '';
@@ -1042,26 +995,24 @@
             // Variant content has priority
             if (
                 variantContent &&
-                variantContent.trim() !== ''
+                String(variantContent).replace(/<[^>]*>/g, '').trim() !== ''
             ) {
                 content = variantContent;
             }
         }
 
-        if (content && content.trim() !== '') {
-
+        if (
+            content &&
+            String(content).replace(/<[^>]*>/g, '').trim() !== ''
+        ) {
             $('#productSpecificationContent').html(content);
             $('#productSpecificationBox').show();
-
         } else {
-
             $('#productSpecificationContent').html('');
             $('#productSpecificationBox').hide();
-
         }
     }
 </script>
-
 @endif
 <script>
      var checkoutUrl = "{{ route('front-product.checkoutBag') }}";
