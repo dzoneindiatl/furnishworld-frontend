@@ -4143,6 +4143,7 @@ a {
 .product-gallery {
     position: sticky;
     top: 20px;
+    z-index: 9;
 }
 
 .single-product-details-right {
@@ -9879,6 +9880,10 @@ mark.order-date {
 
     .fw_subcategory_grid_center {
         flex: 1 1 1035px;
+    }
+
+    .single-product-head {
+        width: calc(100% - 45px);
     }
 }
 
