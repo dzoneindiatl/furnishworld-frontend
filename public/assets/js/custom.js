@@ -69,7 +69,7 @@ $(document).ready(function () {
                 {
                     breakpoint: 1200,
                     settings: {
-                        slidesToShow: 2.5
+                        slidesToShow: 2
                     }
                 },
                 {
@@ -99,11 +99,11 @@ $(document).ready(function () {
 $(document).ready(function () {
     if ($('.fw_product_grid').length) {
         $('.fw_product_grid').slick({
-            slidesToShow: 5.7,
+            slidesToShow: 4.7,
             slidesToScroll: 1,
             infinite: true,
             arrows: true,
-             autoplay: true,
+            autoplay: true,
             speed: 800,
 
             prevArrow: $('.fw_prev'),
@@ -113,7 +113,7 @@ $(document).ready(function () {
                 {
                     breakpoint: 1200,
                     settings: {
-                        slidesToShow: 2.5
+                        slidesToShow: 3
                     }
                 },
                 {
@@ -125,7 +125,9 @@ $(document).ready(function () {
                 {
                     breakpoint: 767,
                     settings: {
-                        slidesToShow: 1
+                        slidesToShow: 1.1,
+                        infinite: false,
+                        initialSlide: 0
                     }
                 }
             ]
@@ -142,7 +144,7 @@ $(document).ready(function () {
 $(document).ready(function () {
     if ($('.best_seller').length) {
         $('.best_seller').slick({
-            slidesToShow: 5.7,
+            slidesToShow: 4.7,
             slidesToScroll: 1,
             infinite: true,
             arrows: true,
@@ -155,7 +157,7 @@ $(document).ready(function () {
                 {
                     breakpoint: 1200,
                     settings: {
-                        slidesToShow: 2.5
+                        slidesToShow: 3
                     }
                 },
                 {
@@ -167,7 +169,9 @@ $(document).ready(function () {
                 {
                     breakpoint: 767,
                     settings: {
-                        slidesToShow: 1
+                        slidesToShow: 1.1,
+                        infinite: false,
+                        initialSlide: 0
                     }
                 }
             ]
@@ -274,7 +278,7 @@ var swiper = new Swiper(".product_card_swiper", {
         },
         // when window width is >= 480px
         767: {
-            slidesPerView: 3
+            slidesPerView: 2
         },
         992: {
             slidesPerView: 3.5
@@ -363,7 +367,7 @@ document.addEventListener("click", (e) => {
 
 //MEGA MENU (NAVIGATION) ---------------------------------------------------------------------------------------
 document.querySelectorAll(
-    '.has-mega > a, .has-dropdown > a').forEach(item => {
+    '.has-mega > a, .has-dropdown > a, .mega-menu-inner .mega-col h4 a').forEach(item => {
         item.addEventListener('click', function (e) {
             if (window.innerWidth <= 1155) {
                 e.preventDefault();

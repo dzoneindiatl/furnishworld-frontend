@@ -1,156 +1,188 @@
 @extends('front.layouts.app')
 @section('content')
     <!-- page-banner-section -->
-      <section class="site-content myaccount-site-content">      
-      <div class="page-banner-section">
-        <div class="page-banner">
-            <div class="container">
-                <div class="page-banner-wrap">
-                    <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
-                        <ul class="breadcrumb-items">
-                            <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}" rel="home"><span itemprop="name">Home</span></a></li>                          
-                            <li class="breadcrumb-item trail-end"><span itemprop="name">My Purchase</span></li>
-                        </ul>
+    <section class="site-content myaccount-site-content">
+        <div class="page-banner-section">
+            <div class="page-banner">
+                <div class="container">
+                    <div class="page-banner-wrap">
+                        <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
+                            <ul class="breadcrumb-items">
+                                <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}"
+                                        rel="home"><span itemprop="name">Home</span></a></li>
+                                <li class="breadcrumb-item trail-end"><span itemprop="name">My Purchase</span></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-      <!-- page-banner-section -->
-      <div class="content-wrapper">
-        <div class="container">         
-          <div class="content-area">
-            <div class="myaccout-section">
-              <div class="row">
-                <!-- sidebar-section -->
-                @include('front.modules.dashboard.sidebar')
-                <!-- sidebar-section -->
-                
-                <div class="myaccout-content-area col-md-9 col-sm-12 col-12">                 
-                    <div class="page-header">
-                      <h1 class="page-title">Rate & Reviews</h1>
-                    </div>
-                    <div class="myaccout-content-wrapper">
-                      <div class="my-review-section">
-                        <h4>My Reviews (2)</h4>
-                        <div class="my-review-row">
-                          <div class="my-review-item">
-                            <div class="my-review-wrap">
-                              <div class="my-review-image">
-                                <img src="{{  env('WEBSITE_URL').'tjap-images/product-1.jpg' }}" alt="Desert Eagle Hoodie (Navy, S)" />
-                              </div>
-                              <div class="my-review-summery">
-                                <div class="my-review-title">Desert Eagle Hoodie (Navy, S)</div>
-                                <div class="my-review-count my-review-positive">
-                                  <span class="my-review-star">4 <i class="fa-solid fa-star"></i></span>
-                                  <p>Worth the money</p>
+        <!-- page-banner-section -->
+        <div class="content-wrapper">
+            <div class="container">
+                <div class="content-area">
+                    <div class="myaccout-section">
+                        <div class="dashboard-inner-row">
+                            <!-- sidebar-section -->
+                            @include('front.modules.dashboard.sidebar')
+                            <!-- sidebar-section -->
+
+                            <div class="myaccout-content-area col-md-9 col-sm-12 col-12">
+                                <div class="page-header">
+                                    <h1 class="page-title">Rate & Reviews</h1>
                                 </div>
-                                <div class="my-review-comment">
-                                  Good Product
+                                <div class="myaccout-content-wrapper">
+                                    <div class="my-review-section">
+                                        <h4>My Reviews (2)</h4>
+                                        <div class="my-review-row">
+                                            <div class="my-review-item">
+                                                <div class="my-review-wrap">
+                                                    <div class="my-review-image">
+                                                        <img src="{{ env('WEBSITE_URL') . 'tjap-images/product-1.jpg' }}"
+                                                            alt="Desert Eagle Hoodie (Navy, S)" />
+                                                    </div>
+                                                    <div class="my-review-summery">
+                                                        <div class="my-review-title">Desert Eagle Hoodie (Navy, S)</div>
+                                                        <div class="my-review-count my-review-positive">
+                                                            <span class="my-review-star">4 <i
+                                                                    class="fa-solid fa-star"></i></span>
+                                                            <p>Worth the money</p>
+                                                        </div>
+                                                        <div class="my-review-comment">
+                                                            Good Product
+                                                        </div>
+                                                        <div class="my-review-user">
+                                                            <span>By Tanmay Sharma</span>
+                                                            <span>on 13 Jan, 2024</span>
+                                                        </div>
+                                                        <div class="my-review-button">
+                                                            <button class="my-review-editbutton">Edit</button>
+                                                            <button class="my-review-deletebutton">Delete</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="my-review-item">
+                                                <div class="my-review-wrap">
+                                                    <div class="my-review-image">
+                                                        <img src="{{ env('WEBSITE_URL') . 'tjap-images/product-1.jpg' }}"
+                                                            alt="Desert Eagle Hoodie (Navy, S)" />
+                                                    </div>
+                                                    <div class="my-review-summery">
+                                                        <div class="my-review-title">Desert Eagle Hoodie (Navy, S)</div>
+                                                        <div class="my-review-count my-review-negative">
+                                                            <span class="my-review-star">1 <i
+                                                                    class="fa-solid fa-star"></i></span>
+                                                            <p>Did not meet expectations</p>
+                                                        </div>
+                                                        <div class="my-review-comment">
+                                                            Product not meet expectations
+                                                        </div>
+                                                        <div class="my-review-user">
+                                                            <span>By Tanmay Sharma</span>
+                                                            <span>on 05 Jan, 2024</span>
+                                                        </div>
+                                                        <div class="my-review-button">
+                                                            <button class="my-review-editbutton">Edit</button>
+                                                            <button class="my-review-deletebutton">Delete</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="my-rating-section my-review-section">
+                                        <h4>Orders you might be interested reviewing</h4>
+                                        <div class="my-review-row">
+                                            <div class="my-review-item">
+                                                <div class="my-review-wrap">
+                                                    <div class="my-review-image">
+                                                        <img src="{{ env('WEBSITE_URL') . 'tjap-images/product-1.jpg' }}"
+                                                            alt="Desert Eagle Hoodie (Navy, S)" />
+                                                    </div>
+                                                    <div class="my-review-summery">
+                                                        <div class="my-review-title">Desert Eagle Hoodie (Navy, S)</div>
+                                                        <div class="my-review-rating">
+                                                            <span class="rating">
+                                                                <input type="radio" id="star1" name="rating"
+                                                                    value="1">
+                                                                <label for="star1"
+                                                                    title="Sucks big time - 1 star"></label>
+                                                                <input type="radio" id="star2" name="rating"
+                                                                    value="2">
+                                                                <label for="star2" title="Kinda bad - 2 stars"></label>
+                                                                <input type="radio" id="star3" name="rating"
+                                                                    value="3">
+                                                                <label for="star3" title="Meh - 3 stars"></label>
+                                                                <input type="radio" id="star4" name="rating"
+                                                                    value="4">
+                                                                <label for="star4" title="Pretty good - 4 stars"></label>
+                                                                <input type="radio" id="star5" name="rating"
+                                                                    value="5">
+                                                                <label for="star5" title="Awesome - 5 stars"></label>
+                                                            </span>
+                                                        </div>
+                                                        <div class="my-review-button">
+                                                            <button class="my-review-ratebutton">Rate and Review</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="my-review-item">
+                                                <div class="my-review-wrap">
+                                                    <div class="my-review-image">
+                                                        <img src="{{ env('WEBSITE_URL') . 'tjap-images/product-1.jpg' }}"
+                                                            alt="Desert Eagle Hoodie (Navy, S)" />
+                                                    </div>
+                                                    <div class="my-review-summery">
+                                                        <div class="my-review-title">Desert Eagle Hoodie (Navy, S)</div>
+                                                        <div class="my-review-rating">
+                                                            <span class="rating">
+                                                                <input type="radio" id="star11" name="rating1"
+                                                                    value="1">
+                                                                <label for="star11"
+                                                                    title="Sucks big time - 1 star"></label>
+                                                                <input type="radio" id="star21" name="rating1"
+                                                                    value="2" checked="checked">
+                                                                <label for="star21" title="Kinda bad - 2 stars"></label>
+                                                                <input type="radio" id="star31" name="rating1"
+                                                                    value="3">
+                                                                <label for="star31" title="Meh - 3 stars"></label>
+                                                                <input type="radio" id="star41" name="rating1"
+                                                                    value="4">
+                                                                <label for="star41"
+                                                                    title="Pretty good - 4 stars"></label>
+                                                                <input type="radio" id="star51" name="rating1"
+                                                                    value="5">
+                                                                <label for="star51" title="Awesome - 5 stars"></label>
+                                                            </span>
+                                                        </div>
+                                                        <div class="my-review-button">
+                                                            <button class="my-review-ratebutton">Write a Review</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="my-review-user">
-                                  <span>By Tanmay Sharma</span>
-                                  <span>on 13 Jan, 2024</span>
-                                </div>
-                                <div class="my-review-button">
-                                  <button class="my-review-editbutton">Edit</button>
-                                  <button class="my-review-deletebutton">Delete</button>
-                                </div>
-                              </div>
                             </div>
-                          </div>
-                          <div class="my-review-item">
-                            <div class="my-review-wrap">
-                              <div class="my-review-image">
-                                <img src="{{  env('WEBSITE_URL').'tjap-images/product-1.jpg' }}" alt="Desert Eagle Hoodie (Navy, S)" />
-                              </div>
-                              <div class="my-review-summery">
-                                <div class="my-review-title">Desert Eagle Hoodie (Navy, S)</div>
-                                <div class="my-review-count my-review-negative">
-                                  <span class="my-review-star">1 <i class="fa-solid fa-star"></i></span>
-                                  <p>Did not meet expectations</p>
-                                </div>
-                                <div class="my-review-comment">
-                                  Product not meet expectations
-                                </div>
-                                <div class="my-review-user">
-                                  <span>By Tanmay Sharma</span>
-                                  <span>on 05 Jan, 2024</span>
-                                </div>
-                                <div class="my-review-button">
-                                  <button class="my-review-editbutton">Edit</button>
-                                  <button class="my-review-deletebutton">Delete</button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                            <!-- myaccout-content-area -->
                         </div>
-                      </div>
-                      <div class="my-rating-section my-review-section">
-                        <h4>Orders you might be interested reviewing</h4>
-                        <div class="my-review-row">
-                          <div class="my-review-item">
-                            <div class="my-review-wrap">
-                              <div class="my-review-image">
-                                <img src="{{  env('WEBSITE_URL').'tjap-images/product-1.jpg' }}" alt="Desert Eagle Hoodie (Navy, S)" />
-                              </div>                              
-                              <div class="my-review-summery">
-                                <div class="my-review-title">Desert Eagle Hoodie (Navy, S)</div>
-                                <div class="my-review-rating">
-                                  <span class="rating">
-                                    <input type="radio" id="star1" name="rating" value="1">
-                                    <label for="star1" title="Sucks big time - 1 star"></label>
-                                    <input type="radio" id="star2" name="rating" value="2">
-                                    <label for="star2" title="Kinda bad - 2 stars"></label>
-                                    <input type="radio" id="star3" name="rating" value="3">
-                                    <label for="star3" title="Meh - 3 stars"></label>
-                                    <input type="radio" id="star4" name="rating" value="4">
-                                    <label for="star4" title="Pretty good - 4 stars"></label>
-                                    <input type="radio" id="star5" name="rating" value="5">
-                                    <label for="star5" title="Awesome - 5 stars"></label>
-                                  </span>
-                                </div>
-                                <div class="my-review-button">
-                                  <button class="my-review-ratebutton">Rate and Review</button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="my-review-item">
-                            <div class="my-review-wrap">
-                              <div class="my-review-image">
-                                <img src="{{  env('WEBSITE_URL').'tjap-images/product-1.jpg' }}" alt="Desert Eagle Hoodie (Navy, S)" />
-                              </div>                            
-                              <div class="my-review-summery">
-                                <div class="my-review-title">Desert Eagle Hoodie (Navy, S)</div>
-                                <div class="my-review-rating">
-                                  <span class="rating">
-                                    <input type="radio" id="star11" name="rating1" value="1">
-                                    <label for="star11" title="Sucks big time - 1 star"></label>
-                                    <input type="radio" id="star21" name="rating1" value="2" checked="checked">
-                                    <label for="star21" title="Kinda bad - 2 stars"></label>
-                                    <input type="radio" id="star31" name="rating1" value="3">
-                                    <label for="star31" title="Meh - 3 stars"></label>
-                                    <input type="radio" id="star41" name="rating1" value="4">
-                                    <label for="star41" title="Pretty good - 4 stars"></label>
-                                    <input type="radio" id="star51" name="rating1" value="5">
-                                    <label for="star51" title="Awesome - 5 stars"></label>
-                                </span>
-                                </div>
-                                <div class="my-review-button">
-                                  <button class="my-review-ratebutton">Write a Review</button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>  
-                      </div>
-                    </div>                  
-                </div>  
-                 <!-- myaccout-content-area -->
-                      
+                        <!-- row -->
+                    </div>
+                    <!-- myaccout-section -->
+                </div>
+                <!--content-area  -->
+            </div>
+            <!--container-->
+        </div>
+        <!--content-wrapper-->
+    </section>
+
+
     <!-- page main wrapper end -->
-     
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -212,10 +244,10 @@
         });
     </script>
     <script>
-        $(document).on('click', '.removewishlistBtn', function() {   
-           // Delay for 2 seconds (2000 milliseconds)
+        $(document).on('click', '.removewishlistBtn', function() {
+            // Delay for 2 seconds (2000 milliseconds)
             setTimeout(function() {
-            location.reload();
+                location.reload();
             }, 2000);
         });
 
@@ -335,16 +367,18 @@
         });
         $(document).on('click', '.wishlistBtn', function() {
             let that = $(this);
-           let pid = $(this).data('product-id');
+            let pid = $(this).data('product-id');
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                         'content')
-                },                
+                },
                 type: "POST",
                 url: "{{ route('front-addwish') }}",
-                data:{product_id:pid},
-                dataType:"json",
+                data: {
+                    product_id: pid
+                },
+                dataType: "json",
                 success: function(response) {
                     that.parents('.product-card').parent().remove();
                     wishlistItemCount();
@@ -362,62 +396,62 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-      $(document).ready(function() {
-    $('#update-dashboard').on('submit', function(e) {
-        e.preventDefault();
+        $(document).ready(function() {
+            $('#update-dashboard').on('submit', function(e) {
+                e.preventDefault();
 
-        let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
+                let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
 
-        // ✅ Client-side validation
-        if (phoneNumber === '') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Validation Error',
-                text: 'Phone number is required.',
-            });
-            return; // stop the form submission
-        }
-
-        let formData = new FormData(this); // captures all form data including files
-
-        $.ajax({
-            url: "{{ route('front-user.updateProfile') }}",
-            type: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: response.message,
-                    showConfirmButton: false,
-                    timer: 2000
-                }).then(() => {
-                    window.location.href = response.redirect_url;
-                });
-            },
-            error: function(xhr) {
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
-                    let firstError = Object.values(errors)[0][0];
-
+                // ✅ Client-side validation
+                if (phoneNumber === '') {
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: firstError,
+                        icon: 'warning',
+                        title: 'Validation Error',
+                        text: 'Phone number is required.',
                     });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Server Error',
-                        text: 'Something went wrong. Please try again later.',
-                    });
+                    return; // stop the form submission
                 }
-            }
+
+                let formData = new FormData(this); // captures all form data including files
+
+                $.ajax({
+                    url: "{{ route('front-user.updateProfile') }}",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = response.redirect_url;
+                        });
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            let firstError = Object.values(errors)[0][0];
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: firstError,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Server Error',
+                                text: 'Something went wrong. Please try again later.',
+                            });
+                        }
+                    }
+                });
+            });
         });
-    });
-});
 
 
         const img = document.getElementById('preview-image');
@@ -501,7 +535,7 @@
     </script>
 
     <!-- Tabing Order panel -->
-     <style>
+    <style>
         /* Style the tab */
         .tab {
             overflow: hidden;
@@ -529,12 +563,12 @@
 
         /* Change background color of buttons on hover */
         .tab button:hover {
-        background-color: #ddd;
+            background-color: #ddd;
         }
 
         /* Create an active/current tablink class */
         .tab button.active {
-        background-color: #f3eeae;
+            background-color: #f3eeae;
         }
 
         /* Style the tab content */
@@ -544,7 +578,7 @@
             /* border: 1px solid #ccc; */
             /* border-top: none; */
         }
-        </style>
+    </style>
     <script>
         function openOrder(evt, OrderName) {
             var i, tabcontent, tablinks;

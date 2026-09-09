@@ -1,167 +1,209 @@
 @extends('front.layouts.app')
 @section('content')
     <!-- page-banner-section -->
-      <section class="site-content myaccount-site-content">      
-      <div class="page-banner-section">
-        <div class="page-banner">
-            <div class="container">
-                <div class="page-banner-wrap">
-                    <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
-                        <ul class="breadcrumb-items">
-                            <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}" rel="home"><span itemprop="name">Home</span></a></li>                          
-                            <li class="breadcrumb-item trail-end"><span itemprop="name">My Purchase</span></li>
-                        </ul>
+    <section class="site-content myaccount-site-content">
+        <div class="page-banner-section">
+            <div class="page-banner">
+                <div class="container">
+                    <div class="page-banner-wrap">
+                        <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
+                            <ul class="breadcrumb-items">
+                                <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}"
+                                        rel="home"><span itemprop="name">Home</span></a></li>
+                                <li class="breadcrumb-item trail-end"><span itemprop="name">My Purchase</span></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-      <!-- page-banner-section -->
-      <div class="content-wrapper">
-        <div class="container">         
-          <div class="content-area">
-            <div class="myaccout-section">
-              <div class="row">
-                
-                <div class="content-wrapper">
-                    <div class="container">
-                    <div class="page-header text-center">
-                        <h1 class="page-title">Contact Us</h1>
-                    </div>
-                    <div class="content-area">
-                        <div class="contact-info-section">
+        <!-- page-banner-section -->
+        <div class="content-wrapper">
+            <div class="container">
+                <div class="content-area">
+                    <div class="myaccout-section">
                         <div class="row">
-                            <div class="col-lg-7 col-md-6 col-sm-12 col-12 mb-4 mb-md-0">
-                            <div class="contact-info">
-                                <h4 class="contact-info-title">Corporate Office/ Address for Store Pickup</h4>
-                                <ul>
-                                <li class="col-md-12 col-sm-12 col-12">
-                                    <div class="contact-wrap">
-                                    <div class="contact-icon"> <i class="fa-regular fa-map"></i> </div>
-                                    <div class="contact-text">
-                                        <h5 class="contact-title">Address</h5>
-                                        <p>Jaipur, Rajasthan 302033, India</p>
+
+                            <div class="content-wrapper">
+                                <div class="container">
+                                    <div class="page-header text-center">
+                                        <h1 class="page-title">Contact Us</h1>
                                     </div>
+                                    <div class="content-area">
+                                        <div class="contact-info-section">
+                                            <div class="contact-info-section-inner">
+                                                <div
+                                                    class="col-lg-7 col-md-6 col-sm-12 col-12 mb-4 mb-md-0 contact-info-section-left">
+                                                    <div class="contact-info">
+                                                        <h4 class="contact-info-title">Corporate Office/ Address for Store
+                                                            Pickup</h4>
+                                                        <ul>
+                                                            <li
+                                                                class="col-md-12 col-sm-12 col-12 contact-info-section-full">
+                                                                <div class="contact-wrap">
+                                                                    <div class="contact-icon"> <i
+                                                                            class="fa-regular fa-map"></i> </div>
+                                                                    <div class="contact-text">
+                                                                        <h5 class="contact-title">Address</h5>
+                                                                        <p>Jaipur, Rajasthan 302033, India</p>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li class="col-md-4 col-sm-6 col-12 contact-info-section-thir">
+                                                                <div class="contact-wrap">
+                                                                    <div class="contact-icon"> <i
+                                                                            class="fa-solid fa-phone"></i> </div>
+                                                                    <div class="contact-text">
+                                                                        <h5 class="contact-title">Phone</h5>
+                                                                        <p><a href="tel:+91 9876543210">+91 9876543210</a>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li class="col-md-4 col-sm-6 col-12 contact-info-section-thir">
+                                                                <div class="contact-wrap">
+                                                                    <div class="contact-icon"> <i
+                                                                            class="fa-solid fa-mobile-screen-button"></i>
+                                                                    </div>
+                                                                    <div class="contact-text">
+                                                                        <h5 class="contact-title">Mobile</h5>
+                                                                        <p><a href="tel:+91 9876543210">+91 9876543210</a>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li class="col-md-4 col-sm-6 col-12 contact-info-section-thir">
+                                                                <div class="contact-wrap">
+                                                                    <div class="contact-icon"> <i
+                                                                            class="fa-brands fa-whatsapp"></i> </div>
+                                                                    <div class="contact-text">
+                                                                        <h5 class="contact-title">Whatsapp</h5>
+                                                                        <p>
+                                                                            <span class="d-none d-md-block">
+                                                                                <a target="_blank"
+                                                                                    href="https://web.whatsapp.com/send?phone=+91-9876543210&amp;text=Hi, I had some queries.">+91-98765-43210</a>
+                                                                            </span>
+                                                                            <span class="d-md-none">
+                                                                                <a target="_blank"
+                                                                                    href="https://api.whatsapp.com/send?phone=+91-9876543210&amp;text=Hi, I had some queries.">+91-98765-43210</a>
+                                                                            </span>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <!-- <li class="col-md-4 col-6 col-12">
+                                                    <div class="contact-wrap">
+                                                    <div class="contact-icon"> <i class="fa-regular fa-envelope"></i> </div>
+                                                    <div class="contact-text">
+                                                        <h5 class="contact-title">Email</h5>
+                                                        <p><a href="mailto:contact@shoptjap.com">contact@shoptjap.com</a></p>
+                                                    </div>
+                                                    </div>
+                                                </li> -->
+                                                            <!-- <li class="col-md-4 col-6 col-12">
+                                                    <div class="contact-wrap">
+                                                    <div class="contact-icon"> <i class="fa-regular fa-clock"></i></div>
+                                                    <div class="contact-text">
+                                                        <h5 class="contact-title">Working Hour</h5>
+                                                        <p>Mon-Fri | 10:00 AM - 06:30 PM (IST)</p>
+                                                    </div>
+                                                    </div>
+                                                </li> -->
+                                                        </ul>
+                                                    </div>
+                                                    <!--contact-info-->
+                                                    <div class="contact-page-map">
+                                                        <iframe title="map"
+                                                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113874.36215608017!2d75.63466729188981!3d26.88527834347104!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396c4adf4c57e281%3A0xce1c63a0cf22e09!2sJaipur%2C%20Rajasthan!5e0!3m2!1sen!2sin!4v1703757829792!5m2!1sen!2sin"
+                                                            width="100%" height="365" style="border:0;"
+                                                            allowfullscreen="" loading="lazy"
+                                                            referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="col-lg-5 col-md-6 col-sm-12 col-12 ps-lg-5 contact-info-section-right">
+                                                    <div class="contact-page-form">
+                                                        @if ($errors->any())
+                                                            <div class="alert alert-danger alert-dismissible fade show"
+                                                                role="alert">
+                                                                <strong>Whoops!</strong> There were some problems with your
+                                                                input.
+                                                                <ul class="mt-2 mb-0">
+                                                                    @foreach ($errors->all() as $error)
+                                                                        <li>{{ $error }}</li>
+                                                                    @endforeach
+                                                                </ul>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="alert" aria-label="Close"></button>
+                                                            </div>
+                                                        @endif
+                                                        @if (session('success'))
+                                                            <div class="alert alert-success alert-dismissible fade show"
+                                                                role="alert">
+                                                                <strong>Success!</strong> {{ session('success') }}
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="alert" aria-label="Close"></button>
+                                                            </div>
+                                                        @endif
+                                                        <h4 class="contact-form-title">Get in Touch With us!</h4>
+                                                        <div class="form">
+                                                            <form action="{{ route('front-user.contactSuggestionSave') }}"
+                                                                method="post" autocomplete="off">
+                                                                @csrf
+                                                                <input type="hidden" name="type" value="contact">
+                                                                <div class="contact-info-section-touch">
+                                                                    <div class="form-group col-sm-12 col-12">
+                                                                        <label>Name</label><input type="text"
+                                                                            name="name" value="" size="40"
+                                                                            class="form-control">
+                                                                    </div>
+                                                                    <div class="form-group col-sm-12 col-12">
+                                                                        <label>Email</label><input type="email"
+                                                                            name="email" value="" size="40"
+                                                                            class="form-control">
+                                                                    </div>
+                                                                    <div class="form-group col-sm-12 col-12">
+                                                                        <label>Phone</label><input type="tel"
+                                                                            name="phone_number" value=""
+                                                                            size="40" class="form-control">
+                                                                    </div>
+                                                                    <div class="form-group col-sm-12 col-12">
+                                                                        <label>Subject</label><input type="text"
+                                                                            name="subject" value="" size="40"
+                                                                            class="form-control">
+                                                                    </div>
+                                                                    <div class="form-group col-sm-12 col-12">
+                                                                        <label>Message</label>
+                                                                        <textarea name="message" cols="40" rows="10" class="form-control"></textarea>
+                                                                    </div>
+                                                                    <div class="form-submit col-sm-12 col-12">
+                                                                        <input type="submit" value="Submit"
+                                                                            class="btn btn-secondary">
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </li>
-                                <li class="col-md-4 col-sm-6 col-12">
-                                    <div class="contact-wrap">
-                                    <div class="contact-icon"> <i class="fa-solid fa-phone"></i> </div>
-                                    <div class="contact-text">
-                                        <h5 class="contact-title">Phone</h5>
-                                        <p><a href="tel:+91 9876543210">+91 9876543210</a></p>
-                                    </div>
-                                    </div>
-                                </li>
-                                <li class="col-md-4 col-sm-6 col-12">
-                                    <div class="contact-wrap">
-                                    <div class="contact-icon"> <i class="fa-solid fa-mobile-screen-button"></i></div>
-                                    <div class="contact-text">
-                                        <h5 class="contact-title">Mobile</h5>
-                                        <p><a href="tel:+91 9876543210">+91 9876543210</a></p>
-                                    </div>
-                                    </div>
-                                </li>
-                                <li class="col-md-4 col-sm-6 col-12">
-                                    <div class="contact-wrap">
-                                    <div class="contact-icon"> <i class="fa-brands fa-whatsapp"></i> </div>
-                                    <div class="contact-text">
-                                        <h5 class="contact-title">Whatsapp</h5>
-                                        <p>
-                                        <span class="d-none d-md-block">
-                                            <a target="_blank" href="https://web.whatsapp.com/send?phone=+91-9876543210&amp;text=Hi, I had some queries.">+91-98765-43210</a>
-                                        </span>
-                                        <span class="d-md-none">
-                                            <a target="_blank" href="https://api.whatsapp.com/send?phone=+91-9876543210&amp;text=Hi, I had some queries.">+91-98765-43210</a>
-                                        </span>
-                                        </p>
-                                    </div>
-                                    </div>
-                                </li>
-                                <!-- <li class="col-md-4 col-6 col-12">
-                                    <div class="contact-wrap">
-                                    <div class="contact-icon"> <i class="fa-regular fa-envelope"></i> </div>
-                                    <div class="contact-text">
-                                        <h5 class="contact-title">Email</h5>
-                                        <p><a href="mailto:contact@shoptjap.com">contact@shoptjap.com</a></p>
-                                    </div>
-                                    </div>
-                                </li> -->
-                                <!-- <li class="col-md-4 col-6 col-12">
-                                    <div class="contact-wrap">
-                                    <div class="contact-icon"> <i class="fa-regular fa-clock"></i></div>
-                                    <div class="contact-text">
-                                        <h5 class="contact-title">Working Hour</h5>
-                                        <p>Mon-Fri | 10:00 AM - 06:30 PM (IST)</p>
-                                    </div>
-                                    </div>
-                                </li> -->
-                                </ul>
-                            </div>
-                            <!--contact-info-->
-                            <div class="contact-page-map">
-                                <iframe title="map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113874.36215608017!2d75.63466729188981!3d26.88527834347104!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396c4adf4c57e281%3A0xce1c63a0cf22e09!2sJaipur%2C%20Rajasthan!5e0!3m2!1sen!2sin!4v1703757829792!5m2!1sen!2sin" width="100%" height="365" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                            </div>
-                            </div>
-                            <div class="col-lg-5 col-md-6 col-sm-12 col-12 ps-lg-5">
-                            <div class="contact-page-form">
-                                @if ($errors->any())
-                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                        <strong>Whoops!</strong> There were some problems with your input.
-                                        <ul class="mt-2 mb-0">
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                @endif
-                                @if (session('success'))
-                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        <strong>Success!</strong> {{ session('success') }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                @endif
-                                <h4 class="contact-form-title">Get in Touch With us!</h4>
-                                <div class="form">
-                                <form action="{{route('front-user.contactSuggestionSave')}}" method="post" autocomplete="off">  
-                                    @csrf
-                                    <input type="hidden" name="type" value="contact">
-                                    <div class="row">
-                                    <div class="form-group col-sm-12 col-12">
-                                        <label>Name</label><input type="text" name="name" value="" size="40" class="form-control">
-                                    </div>
-                                    <div class="form-group col-sm-12 col-12">
-                                        <label>Email</label><input type="email" name="email" value="" size="40"
-                                        class="form-control">
-                                    </div>
-                                    <div class="form-group col-sm-12 col-12">
-                                        <label>Phone</label><input type="tel" name="phone_number" value="" size="40" class="form-control">
-                                    </div>
-                                    <div class="form-group col-sm-12 col-12">
-                                        <label>Subject</label><input type="text" name="subject" value="" size="40"
-                                        class="form-control">
-                                    </div>
-                                    <div class="form-group col-sm-12 col-12">
-                                        <label>Message</label><textarea name="message" cols="40" rows="10"
-                                        class="form-control"></textarea>
-                                    </div>
-                                    <div class="form-submit col-sm-12 col-12">
-                                        <input type="submit" value="Submit" class="btn btn-secondary">
-                                    </div>
-                                    </div>
-                                </form>
+                                    <!--content-area-->
                                 </div>
                             </div>
-                            </div>                
+                            <!-- row -->
                         </div>
-                        </div>            
+                        <!-- myaccout-section -->
                     </div>
-                    <!--content-area-->
-                    </div>
-                      
+                    <!--content-area  -->
+                </div>
+                <!--container-->
+            </div>
+            <!--content-wrapper-->
+    </section>
+
     <!-- page main wrapper end -->
-     
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -223,10 +265,10 @@
         });
     </script>
     <script>
-        $(document).on('click', '.removewishlistBtn', function() {   
-           // Delay for 2 seconds (2000 milliseconds)
+        $(document).on('click', '.removewishlistBtn', function() {
+            // Delay for 2 seconds (2000 milliseconds)
             setTimeout(function() {
-            location.reload();
+                location.reload();
             }, 2000);
         });
 
@@ -346,16 +388,18 @@
         });
         $(document).on('click', '.wishlistBtn', function() {
             let that = $(this);
-           let pid = $(this).data('product-id');
+            let pid = $(this).data('product-id');
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                         'content')
-                },                
+                },
                 type: "POST",
                 url: "{{ route('front-addwish') }}",
-                data:{product_id:pid},
-                dataType:"json",
+                data: {
+                    product_id: pid
+                },
+                dataType: "json",
                 success: function(response) {
                     that.parents('.product-card').parent().remove();
                     wishlistItemCount();
@@ -373,62 +417,62 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-      $(document).ready(function() {
-    $('#update-dashboard').on('submit', function(e) {
-        e.preventDefault();
+        $(document).ready(function() {
+            $('#update-dashboard').on('submit', function(e) {
+                e.preventDefault();
 
-        let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
+                let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
 
-        // ✅ Client-side validation
-        if (phoneNumber === '') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Validation Error',
-                text: 'Phone number is required.',
-            });
-            return; // stop the form submission
-        }
-
-        let formData = new FormData(this); // captures all form data including files
-
-        $.ajax({
-            url: "{{ route('front-user.updateProfile') }}",
-            type: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: response.message,
-                    showConfirmButton: false,
-                    timer: 2000
-                }).then(() => {
-                    window.location.href = response.redirect_url;
-                });
-            },
-            error: function(xhr) {
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
-                    let firstError = Object.values(errors)[0][0];
-
+                // ✅ Client-side validation
+                if (phoneNumber === '') {
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: firstError,
+                        icon: 'warning',
+                        title: 'Validation Error',
+                        text: 'Phone number is required.',
                     });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Server Error',
-                        text: 'Something went wrong. Please try again later.',
-                    });
+                    return; // stop the form submission
                 }
-            }
+
+                let formData = new FormData(this); // captures all form data including files
+
+                $.ajax({
+                    url: "{{ route('front-user.updateProfile') }}",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = response.redirect_url;
+                        });
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            let firstError = Object.values(errors)[0][0];
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: firstError,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Server Error',
+                                text: 'Something went wrong. Please try again later.',
+                            });
+                        }
+                    }
+                });
+            });
         });
-    });
-});
 
 
         const img = document.getElementById('preview-image');
@@ -512,7 +556,7 @@
     </script>
 
     <!-- Tabing Order panel -->
-     <style>
+    <style>
         /* Style the tab */
         .tab {
             overflow: hidden;
@@ -540,12 +584,12 @@
 
         /* Change background color of buttons on hover */
         .tab button:hover {
-        background-color: #ddd;
+            background-color: #ddd;
         }
 
         /* Create an active/current tablink class */
         .tab button.active {
-        background-color: #f3eeae;
+            background-color: #f3eeae;
         }
 
         /* Style the tab content */
@@ -555,7 +599,7 @@
             /* border: 1px solid #ccc; */
             /* border-top: none; */
         }
-        </style>
+    </style>
     <script>
         function openOrder(evt, OrderName) {
             var i, tabcontent, tablinks;

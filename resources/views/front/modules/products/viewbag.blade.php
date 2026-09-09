@@ -12,227 +12,355 @@
 
     <!--  Cart Section -->
     <section class="site-content">
-      <div class="page-banner-section">
-        <div class="page-banner">
-          <div class="container">
-            <div class="page-banner-wrap">
-              <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
-                <ul class="breadcrumb-items">
-                  <li class="breadcrumb-item trail-begin"><a href="{{ Url('/') }}" rel="home"><span
-                        itemprop="name">Home</span></a></li>
-                  <li class="breadcrumb-item trail-end"><span itemprop="name">Cart</span></li>
-                </ul>
-              </div>
+        <div class="page-banner-section">
+            <div class="page-banner">
+                <div class="container">
+                    <div class="page-banner-wrap">
+                        <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
+                            <ul class="breadcrumb-items">
+                                <li class="breadcrumb-item trail-begin"><a href="{{ Url('/') }}" rel="home"><span
+                                            itemprop="name">Home</span></a></li>
+                                <li class="breadcrumb-item trail-end"><span itemprop="name">Cart</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-      <!-- page-banner-section -->
-      <div class="content-wrapper">
-        <div class="container">
-          <div class="page-header text-center">
-            <h1 class="page-title">Cart</h1>
-          </div>        
-          <div class="content-area">          
-            <div class="row">
-              <div class="col-lg-8 col-md-8 col-12">
-                <div class="cart-form-wrapper">
-                  <form class="cart-form" action="cart" method="post">
-                    @if(Auth::guard('customer')->check() && count($cartItems) > 0)
-                        <div class="cart-items">
-                            @foreach($cartItems as $key => $item)
-                                <div class="cart-item">
-                                    <div class="cart-image">
-                                        <a href="javascript:void(0)"><img src="{{ $item['product']['images']['first'] }}" alt=""></a>
-                                    </div>
-                                    <div class="cart-summery">
-                                        <div class="cart-summerydata">
-                                            <a href="javascript:void(0)" class="cart-title">{{ $item['product']['name'] }}</a>                               
-                                            <div class="cart-quantity">
-                                                <div class="quantity-group">
-                                                    <a href="javascript:void(0)" class="dec qty-btn"></a>
-                                                    <input type="text" id="quantity" class="input-text qty" name="quantity" value="{{ $item['quantity'] }}" maxlength="50">
-                                                    <a href="javascript:void(0)" class="inc qty-btn"></a>
+        <!-- page-banner-section -->
+        <div class="content-wrapper page-check-cart">
+            <div class="container">
+                <div class="page-header text-center">
+                    <h1 class="page-title">Cart</h1>
+                </div>
+                <div class="content-area">
+                    <div class="cart-main-inner">
+                        <div class="cart-main-inner-left">
+                            <div class="cart-form-wrapper">
+                                <form class="cart-form" action="cart" method="post">
+                                    @if (Auth::guard('customer')->check() && count($cartItems) > 0)
+                                        <div class="cart-items">
+                                            @foreach ($cartItems as $key => $item)
+                                                <div class="cart-item">
+                                                    <div class="cart-image">
+                                                        <a href="javascript:void(0)"><img
+                                                                src="{{ $item['product']['images']['first'] }}"
+                                                                alt=""></a>
+                                                    </div>
+                                                    <div class="cart-summery">
+                                                        <div class="cart-summerydata">
+                                                            <a href="javascript:void(0)"
+                                                                class="cart-title">{{ $item['product']['name'] }}</a>
+                                                            <div class="cart-quantity">
+                                                                <div class="quantity-group">
+                                                                    <a href="javascript:void(0)" class="dec qty-btn"></a>
+                                                                    <input type="text" id="quantity"
+                                                                        class="input-text qty" name="quantity"
+                                                                        value="{{ $item['quantity'] }}" maxlength="50">
+                                                                    <a href="javascript:void(0)" class="inc qty-btn"></a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="cart-summeryprice">
+                                                            <span class="cart-price">
+                                                                <del>₹ {{ $item['product']['buying_price'] }}</del>
+                                                                <ins>₹ {{ $item['product']['selling_price'] }}</ins>
+                                                            </span>
+                                                            <a href="#" data-index="{{ $key }}"
+                                                                class="remove remove_from_cart_button trash-icon close-product">Remove</a>
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="cart-items productListCartPageContainer"> </div>
+                                    @endif
+                                </form>
+                            </div>
+                        </div>
+                        <div class="cart-main-inner-right">
+                            <div class="cart-collaterals">
+                                <div class="cart-totals">
+                                    <h4>Order Summary</h4>
+                                    <div class="coupon">
+                                        <label for="coupon_code">Apply Coupon Code</label>
+                                        <!-- <span class="coupon_error" style="color:red;font-size:16px;font-weight:bold"></span>
+                                                                    <span class="coupon_success" style="color:green;font-size:16px;font-weight:bold"></span> -->
+                                        <div class="coupon-group">
+                                            <input type="text" name="coupon_code" class="form-control"
+                                                id="coupon_code_input" value="" placeholder="Enter Your Coupon Code">
+                                            <button type="submit" class="btn btn-primary btn_apply_coup"
+                                                id="apply-coupon-btn" name="apply_coupon"
+                                                value="Apply coupon">Apply</button>
+                                        </div>
+                                        <div class="view-more-link">
+                                            <button class="offer_coupon_btn" id="openCoupon">
+                                                🎁 Offers & Coupons Codes
+                                            </button>
+
+                                            <!-- Overlay -->
+                                            <div class="coupon_overlay" id="couponOverlay"></div>
+
+                                            <!-- Right Side Coupon Drawer -->
+                                            <div class="coupon_drawer" id="couponDrawer">
+
+                                                <div class="coupon_header">
+                                                    <div>
+                                                        <span class="small_title">SAVE MORE</span>
+                                                        <h3>Offers & Coupons</h3>
+                                                    </div>
+
+                                                    <button class="coupon_close" id="closeCoupon">
+                                                        &times;
+                                                    </button>
+                                                </div>
+
+                                                <div class="coupon_body">
+
+                                                    <!-- Coupon 1 -->
+                                                    <div class="coupon_card">
+                                                        <div class="coupon_top">
+                                                            <div class="coupon_icon">10%</div>
+
+                                                            <div class="coupon_info">
+                                                                <h4>Flat 20% OFF</h4>
+                                                                <p>Get flat 20% off on your first order.</p>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="coupon_bottom">
+                                                            <div class="coupon_code">WELCOME20</div>
+
+                                                            <button class="copy_coupon" data-code="WELCOME20">
+                                                                COPY
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Coupon 2 -->
+                                                    <div class="coupon_card">
+                                                        <div class="coupon_top">
+                                                            <div class="coupon_icon">220₹</div>
+
+                                                            <div class="coupon_info">
+                                                                <h4>₹500 OFF</h4>
+                                                                <p>Save ₹500 on orders above ₹2999.</p>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="coupon_bottom">
+                                                            <div class="coupon_code">SAVE500</div>
+
+                                                            <button class="copy_coupon" data-code="SAVE500">
+                                                                COPY
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Coupon 3 -->
+                                                    <div class="coupon_card">
+                                                        <div class="coupon_top">
+                                                            <div class="coupon_icon">🚚</div>
+
+                                                            <div class="coupon_info">
+                                                                <h4>Free Delivery</h4>
+                                                                <p>Enjoy free delivery on selected products.</p>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="coupon_bottom">
+                                                            <div class="coupon_code">FREESHIP</div>
+
+                                                            <button class="copy_coupon" data-code="FREESHIP">
+                                                                COPY
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
                                             </div>
                                         </div>
-                                        <div class="cart-summeryprice">
-                                            <span class="cart-price">
-                                                <del>₹ {{ $item['product']['buying_price'] }}</del>
-                                                <ins>₹ {{ $item['product']['selling_price'] }}</ins>
-                                            </span>
-                                            <a href="#" data-index="{{ $key }}" class="remove remove_from_cart_button trash-icon close-product">Remove</a>
-                                        </div>                              
                                     </div>
-                                </div>  
-                            @endforeach 
+                                    <div class="cart-totals-table">
+                                        <table class="shop-table">
+                                            <tbody>
+                                                <tr class="cart-subtotal">
+                                                    <th>Total MRP</th>
+                                                    <td data-title="Subtotal" class="text-end"><strong
+                                                            id="totalMrp"></strong> </td>
+                                                </tr>
+                                                <tr class="shipping-totals shipping">
+                                                    <td>Discount</td>
+                                                    <td data-title="Shipping" class="text-end text-green"
+                                                        id="totalDiscount"></td>
+                                                </tr>
+                                                <tr class="shipping-totals shipping">
+                                                    <td>Sub Total</td>
+                                                    <td data-title="Shipping" class="text-end" id="subTotal"></td>
+                                                </tr>
+                                                <tr class="order-total">
+                                                    <th>Coupon Discount</th>
+                                                    <td data-title="Total" class="text-end"><strong
+                                                            id="couponDiscount"></strong></td>
+                                                </tr>
+                                                <tr class="cart-subtotal">
+                                                    <th>Grand Total</th>
+                                                    <td data-title="Subtotal" class="text-end"><strong
+                                                            id="grandTotal"></strong></td>
+                                                </tr>
+                                                <tr class="shipping-totals shipping">
+                                                    <td>Taxable Amount</td>
+                                                    <td data-title="Shipping" class="text-end text-green"
+                                                        id="taxableAmount"></td>
+                                                </tr>
+                                                <tr class="shipping-totals shipping">
+                                                    <td>Total GST(Tax)</td>
+                                                    <td data-title="Shipping" class="text-end" id="taxPrice"></td>
+                                                </tr>
+                                                <tr class="order-total">
+                                                    <th><b>Total Payable</b> (Tax Included)</th>
+                                                    <td data-title="Total" class="text-end"><strong
+                                                            id="finalAmount"></strong></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="proceed-to-checkout text-center">
+                                        <p><a href="javascript:void('0')"
+                                                class="btn btn-primary w-100 checkoutButton btn_place_order"> Checkout</a>
+                                        </p>
+                                        <small>15-Day Hassle Free Returns</small>
+                                    </div>
+                                    <div class="text-center mt-4">
+                                        <img src="{{ env('WEBSITE_URL') . 'tjap-images/payments.webp' }}"
+                                            alt="payments method" />
+                                    </div>
+                                </div>
+                                {{-- </div> --}}
+                            </div>
                         </div>
-                    @else 
-                        <div class="cart-items productListCartPageContainer"> </div>             
-                    @endif 
-                  </form>
+                    </div>
+                    <!--content-area-->
                 </div>
-              </div>
-              <div class="col-lg-4 col-md-8 col-12">
-                <div class="cart-collaterals">                    
-                  <div class="cart-totals">
-                        <h4>Order Summary</h4>
-                        <div class="coupon">
-                        <label for="coupon_code">Apply Coupon Code</label> 
-                        <!-- <span class="coupon_error" style="color:red;font-size:16px;font-weight:bold"></span>
-                        <span class="coupon_success" style="color:green;font-size:16px;font-weight:bold"></span> -->
-                        <div class="coupon-group">
-                            <input type="text" name="coupon_code" class="form-control" id="coupon_code_input" value="" placeholder="Enter Your Coupon Code">
-                            <button type="submit" class="btn btn-primary btn_apply_coup" id="apply-coupon-btn"  name="apply_coupon" value="Apply coupon">Apply</button>
+            </div>
+            <!--content-wrapper -->
+
+            {{-- @if (!empty($bestproduct) && count($bestproduct) > 0)
+                <div class="product-section section">
+                    <div class="container">
+                        <div class="section-header text-center">
+                            <h2 class="section-title">Best Product</h2>
+                        </div>
+                        <div class="products-wrapper">
+                            <div class="products-area">
+                                <ul class="products product-carousel">
+                                    @foreach ($bestproduct as $pro => $best)
+                                        <li class="product-item product">
+                                            <div class="product-wrap">
+                                                <div class="product-image">
+                                                    <div class="onsale-trading">
+                                                        @php
+                                                            $discount = '';
+                                                            if (
+                                                                !empty($best->discount_type) &&
+                                                                !is_null($best->discount_type)
+                                                            ) {
+                                                                if ($best->discount_type == 'percentage') {
+                                                                    $discount = $best->discount . ' OFF';
+                                                                }
+                                                                if ($best->discount_type == 'flat') {
+                                                                    $discount = '₹ ' . $best->discount . 'OFF';
+                                                                }
+                                                            }
+                                                        @endphp
+                                                        <span class="onsale-off">{{ $discount }}</span>
+                                                    </div>
+                                                    <a
+                                                        href="{{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($best->name) . '.html', 'sku' => $best->sku]) }}">
+                                                        <div class="product-main-image">
+                                                            <img src="{{ $best->images['first'] }}" alt=""
+                                                                class="main-image">
+                                                        </div>
+                                                        <div class="product-hover-image">
+                                                            <img src="{{ $best->images['second'] }}" alt=""
+                                                                class="hover-image">
+                                                        </div>
+                                                    </a>
+                                                    <div class="product-wishlist wishlist">
+                                                        <a href="#" class="add-to-wishlist">
+                                                            <i class="far fa-heart"></i>
+                                                        </a>
+                                                    </div>
+
+                                                    <div class="product-options">
+                                                        <div class="product-option-item">
+                                                            <div class="product-option-title">Size</div>
+                                                            <div class="product-option-wrap">
+                                                                <fieldset class="product-option-list product-option-size">
+                                                                    <input id="xs" type="radio" name="Size"
+                                                                        value="XS" form="product-form-1">
+                                                                    <label for="xs">XS</label>
+                                                                    <input id="s" type="radio" name="Size"
+                                                                        value="S" form="product-form-1">
+                                                                    <label for="s">S</label>
+                                                                    <input id="m" type="radio" name="Size"
+                                                                        value="M/L" form="product-form-1"
+                                                                        checked="checked">
+                                                                    <label for="m">M</label>
+                                                                    <input id="l" type="radio" name="Size"
+                                                                        value="L" form="product-form-1">
+                                                                    <label for="l">L</label>
+                                                                    <input id="xl" type="radio" name="Size"
+                                                                        value="XL" form="product-form-1">
+                                                                    <label for="xl" class="disabled">XL</label>
+                                                                </fieldset>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="product-content">
+                                                    <h5 class="product-title">
+                                                        <a
+                                                            href="{{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($best->name) . '.html', 'sku' => productSlug($best->sku)]) }}">{{ $best->name }}</a>
+                                                    </h5>
+                                                    <div class="product-price">
+                                                        <del>₹ {{ $best->buying_price }}</del>
+                                                        <ins>₹ {{ $best->selling_price }}</ins>
+                                                    </div>
+                                                    <div class="product-addtocart-button">
+                                                        <a href="{{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($best->name) . '.html', 'sku' => productSlug($best->sku)]) }}"
+                                                            class="product-addtocart"> <svg fill="#010101" height="20px"
+                                                                width="20px" version="1.1" id="Capa_1"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                                viewBox="0 0 483.1 483.1" xml:space="preserve">
+                                                                <path
+                                                                    d="M434.55,418.7l-27.8-313.3c-0.5-6.2-5.7-10.9-12-10.9h-58.6c-0.1-52.1-42.5-94.5-94.6-94.5s-94.5,42.4-94.6,94.5h-58.6
+                                                                                      c-6.2,0-11.4,4.7-12,10.9l-27.8,313.3c0,0.4,0,0.7,0,1.1c0,34.9,32.1,63.3,71.5,63.3h243c39.4,0,71.5-28.4,71.5-63.3
+                                                                                      C434.55,419.4,434.55,419.1,434.55,418.7z M241.55,24c38.9,0,70.5,31.6,70.6,70.5h-141.2C171.05,55.6,202.65,24,241.55,24z
+                                                                                          M363.05,459h-243c-26,0-47.2-17.3-47.5-38.8l26.8-301.7h47.6v42.1c0,6.6,5.4,12,12,12s12-5.4,12-12v-42.1h141.2v42.1
+                                                                                      c0,6.6,5.4,12,12,12s12-5.4,12-12v-42.1h47.6l26.8,301.8C410.25,441.7,389.05,459,363.05,459z" />
+
+                                                            </svg></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                    <div class="cart-totals-table">
-                      <table class="shop-table">
-                        <tbody>
-                            <tr class="cart-subtotal">
-                                <th>Total MRP</th>
-                                <td data-title="Subtotal" class="text-end"><strong id="totalMrp"></strong> </td>
-                            </tr>
-                            <tr class="shipping-totals shipping">
-                                <td>Discount</td>
-                                <td data-title="Shipping" class="text-end text-green" id="totalDiscount"></td>
-                            </tr>
-                            <tr class="shipping-totals shipping">
-                                <td>Sub Total</td>
-                                <td data-title="Shipping" class="text-end" id="subTotal"></td>
-                            </tr>
-                            <tr class="order-total">
-                                <th>Coupon Discount</th>
-                                <td data-title="Total" class="text-end"><strong id="couponDiscount"></strong></td>
-                            </tr>
-                            <tr class="cart-subtotal">
-                                <th>Grand Total</th>
-                                <td data-title="Subtotal" class="text-end"><strong id="grandTotal"></strong></td>
-                            </tr>
-                            <tr class="shipping-totals shipping">
-                                <td>Taxable Amount</td>
-                                <td data-title="Shipping" class="text-end text-green" id="taxableAmount"></td>
-                            </tr>
-                            <tr class="shipping-totals shipping">
-                                <td>Total GST(Tax)</td>
-                                <td data-title="Shipping" class="text-end" id="taxPrice"></td>
-                            </tr>
-                            <tr class="order-total">
-                                <th><b>Total Payable</b> (Tax Included)</th>
-                                <td data-title="Total" class="text-end"><strong id="finalAmount"></strong></td>
-                            </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                    <div class="proceed-to-checkout text-center">
-                      <p><a href="javascript:void('0')" class="btn btn-primary w-100 checkoutButton btn_place_order"> Checkout</a></p>
-                      <small>15-Day Hassle Free Returns</small>
-                    </div>
-                    <div class="text-center mt-4">
-                      <img src="{{  env('WEBSITE_URL').'tjap-images/payments.webp' }}" alt="payments method" />
-                    </div>
-                  </div>
-                {{-- </div> --}}
-              </div>
-            </div>          
-          </div>
-          <!--content-area-->        
-        </div>
-      </div>
-      <!--content-wrapper -->  
-      @if(!empty($bestproduct) && count($bestproduct) > 0)  
-      <div class="product-section section">
-          <div class="container">
-              <div class="section-header text-center">
-                  <h2 class="section-title">Best Product</h2>                       
-              </div>
-              <div class="products-wrapper">
-                  <div class="products-area">
-                      <ul class="products product-carousel">
-                        @foreach($bestproduct as $pro => $best)
-                          <li class="product-item product">
-                              <div class="product-wrap">
-                                  <div class="product-image">
-                                      <div class="onsale-trading">                                                              
-                                        @php 
-                                            $discount = ""; 
-                                            if(!empty($best->discount_type) && !is_null($best->discount_type)){
-                                                if($best->discount_type == "percentage"){
-                                                    $discount = $best->discount." OFF" ; 
-                                                }
-                                                if($best->discount_type == "flat"){
-                                                    $discount = "₹ ".$best->discount. "OFF"; 
-                                                }
-                                            }
-                                        @endphp 
-                                          <span class="onsale-off">{{ $discount }}</span>
-                                      </div>
-                                      <a href="{{ route('front-product.detail', ['product' => 'product','title' =>productSlug($best->name).'.html', 'sku' => $best->sku]) }}">
-                                          <div class="product-main-image">
-                                              <img src="{{  $best->images['first'] }}" alt="" class="main-image">
-                                          </div>
-                                          <div class="product-hover-image">
-                                              <img src="{{  $best->images['second'] }}" alt="" class="hover-image">
-                                          </div>    
-                                      </a>                                           
-                                      <div class="product-wishlist wishlist">
-                                          <a href="#" class="add-to-wishlist">
-                                              <i class="far fa-heart"></i>
-                                          </a>
-                                      </div>
-                                      
-                                      <div class="product-options">                                             
-                                          <div class="product-option-item">
-                                              <div class="product-option-title">Size</div>
-                                              <div class="product-option-wrap">
-                                              <fieldset class="product-option-list product-option-size">                                                    
-                                                  <input id="xs" type="radio" name="Size" value="XS" form="product-form-1" >
-                                                  <label for="xs">XS</label>                                                      
-                                                  <input id="s" type="radio" name="Size" value="S" form="product-form-1">
-                                                  <label for="s">S</label>                                                   
-                                                  <input id="m" type="radio" name="Size" value="M/L" form="product-form-1" checked="checked">
-                                                  <label for="m">M</label>                                                   
-                                                  <input id="l" type="radio" name="Size" value="L" form="product-form-1">
-                                                  <label for="l">L</label>                                                     
-                                                  <input id="xl" type="radio" name="Size" value="XL" form="product-form-1">
-                                                  <label for="xl" class="disabled" >XL</label>  
-                                              </fieldset>
-                                              </div>
-                                          </div>                                                
-                                          </div>
-                                  </div>
-                                  <div class="product-content">
-                                      <h5 class="product-title">
-                                          <a href="{{ route('front-product.detail', ['product' => 'product','title' =>productSlug($best->name).'.html', 'sku' => productSlug($best->sku)]) }}">{{ $best->name }}</a>
-                                      </h5>
-                                      <div class="product-price">
-                                          <del>₹ {{ $best->buying_price }}</del>
-                                          <ins>₹ {{ $best->selling_price }}</ins>
-                                      </div>   
-                                      <div class="product-addtocart-button">
-                                          <a href="{{ route('front-product.detail', ['product' => 'product','title' =>productSlug($best->name).'.html', 'sku' => productSlug($best->sku)]) }}" class="product-addtocart"> <svg fill="#010101" height="20px" width="20px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 483.1 483.1" xml:space="preserve">                                          
-                                              <path d="M434.55,418.7l-27.8-313.3c-0.5-6.2-5.7-10.9-12-10.9h-58.6c-0.1-52.1-42.5-94.5-94.6-94.5s-94.5,42.4-94.6,94.5h-58.6
-                                                  c-6.2,0-11.4,4.7-12,10.9l-27.8,313.3c0,0.4,0,0.7,0,1.1c0,34.9,32.1,63.3,71.5,63.3h243c39.4,0,71.5-28.4,71.5-63.3
-                                                  C434.55,419.4,434.55,419.1,434.55,418.7z M241.55,24c38.9,0,70.5,31.6,70.6,70.5h-141.2C171.05,55.6,202.65,24,241.55,24z
-                                                      M363.05,459h-243c-26,0-47.2-17.3-47.5-38.8l26.8-301.7h47.6v42.1c0,6.6,5.4,12,12,12s12-5.4,12-12v-42.1h141.2v42.1
-                                                  c0,6.6,5.4,12,12,12s12-5.4,12-12v-42.1h47.6l26.8,301.8C410.25,441.7,389.05,459,363.05,459z"/>
-                                          
-                                          </svg></a>
-                                      </div>                                        
-                                  </div>
-                              </div>
-                          </li>
-                        @endforeach   
-                      </ul>
-                  </div>
-              </div>
-          </div>
-      </div>
-      @endif 
-      <!--=====================================================
-                      Related Products Section End
-      =========================================================-->
-      {{-- @if(!empty($recentViewproduct) && count($recentViewproduct) > 0)
+                </div>
+            @endif --}}
+
+
+            <!--=====================================================
+                                                                  Related Products Section End
+                                                  =========================================================-->
+            {{-- @if (!empty($recentViewproduct) && count($recentViewproduct) > 0)
       <div class="product-section section">
           <div class="container">
               <div class="section-header text-center">
@@ -241,7 +369,7 @@
               <div class="products-wrapper">
                   <div class="products-area">
                       <ul class="products product-carousel">
-                        @foreach($recentViewproduct as $recent)
+                        @foreach ($recentViewproduct as $recent)
                           <li class="product-item product">
                               <div class="product-wrap">
                                   <div class="product-image">
@@ -321,26 +449,89 @@
           </div>
       </div>
       @endif  --}}
-      <!--=====================================================
-                              Also View Section End
-      =========================================================-->
-      
+            <!--=====================================================
+                                                                          Also View Section End
+                                                  =========================================================-->
+
     </section>
-	
-	<!--  Cart Section -->
+
+    <!--  Cart Section -->
 @endsection
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+
+        // Open
+        $('#openCoupon').on('click', function() {
+
+            $('#couponDrawer').addClass('active');
+            $('#couponOverlay').addClass('active');
+
+            $('body').css('overflow', 'hidden');
+        });
+
+
+        // Close
+        $('#closeCoupon, #couponOverlay').on('click', function() {
+
+            $('#couponDrawer').removeClass('active');
+            $('#couponOverlay').removeClass('active');
+
+            $('body').css('overflow', '');
+        });
+
+
+        // ESC Key Close
+        $(document).on('keydown', function(e) {
+
+            if (e.key === 'Escape') {
+
+                $('#couponDrawer').removeClass('active');
+                $('#couponOverlay').removeClass('active');
+
+                $('body').css('overflow', '');
+            }
+
+        });
+
+
+        // Copy Coupon
+        $('.copy_coupon').on('click', function() {
+
+            let btn = $(this);
+            let code = btn.data('code');
+
+            navigator.clipboard.writeText(code)
+                .then(function() {
+
+                    let oldText = btn.text();
+
+                    btn.text('COPIED ✓');
+
+                    setTimeout(function() {
+                        btn.text(oldText);
+                    }, 1800);
+
+                });
+
+        });
+
+    });
+</script>
 
 @push('scripts')
     <script>
         console.log('sixth');
         var notRequiredQtyAjaxClickonQtyBtn = true;
         displayCartItems(notRequiredQtyAjaxClickonQtyBtn);
-        $(document).on('click', '#apply-coupon-btn', function(e) { 
+        $(document).on('click', '#apply-coupon-btn', function(e) {
             var couponCode = $('#coupon_code_input').val();
             applyCoupon(couponCode);
         });
 
-        $(document).ready(function () { 
+        $(document).ready(function() {
             restoreOldCartItems();
         });
 
@@ -370,7 +561,7 @@
             if (isLoggedIn) {
                 window.location.href = "{{ route('front-product.checkoutBag') }}";
             } else {
-                window.location.href= "{{ route('front-user.login') }}"; 
+                window.location.href = "{{ route('front-user.login') }}";
             }
         });
 
@@ -379,7 +570,7 @@
         getCoupon();
 
         function applyCoupon(couponCode) {
-            if(couponCode==''){
+            if (couponCode == '') {
                 showFlashMessage('Please enter coupon code!!!');
             }
 
