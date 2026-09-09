@@ -74,7 +74,11 @@
                 <a href="http://127.0.0.1:8004/living-room">
                     Living Room
                     <span class="material-symbols-outlined">
-                        expand_more
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
                     </span>
                 </a>
                 <div class="mega-menu mega-menu-inner" bis_skin_checked="1">
@@ -124,7 +128,11 @@
                 <a href="http://127.0.0.1:8004/bedroom">
                     Bedroom
                     <span class="material-symbols-outlined">
-                        expand_more
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
                     </span>
                 </a>
                 <div class="mega-menu mega-menu-inner" bis_skin_checked="1">
@@ -162,7 +170,11 @@
                 <a href="http://127.0.0.1:8004/dining-and-kitchen">
                     Dining and Kitchen
                     <span class="material-symbols-outlined">
-                        expand_more
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
                     </span>
                 </a>
                 <div class="mega-menu mega-menu-inner" bis_skin_checked="1">
@@ -195,7 +207,11 @@
                 <a href="http://127.0.0.1:8004/study-and-office">
                     Study and Office
                     <span class="material-symbols-outlined">
-                        expand_more
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
                     </span>
                 </a>
                 <div class="mega-menu main-menu-cats" bis_skin_checked="1">
@@ -208,7 +224,11 @@
                 <a href="http://127.0.0.1:8004/storage">
                     Storage
                     <span class="material-symbols-outlined">
-                        expand_more
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
                     </span>
                 </a>
                 <div class="mega-menu main-menu-cats" bis_skin_checked="1">
@@ -239,7 +259,11 @@
                 <a href="http://127.0.0.1:8004/decor-furnishing">
                     Decor &amp; Furnishing
                     <span class="material-symbols-outlined">
-                        expand_more
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
                     </span>
                 </a>
                 <div class="mega-menu main-menu-cats" bis_skin_checked="1">
