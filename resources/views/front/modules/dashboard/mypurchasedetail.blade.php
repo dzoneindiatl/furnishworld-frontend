@@ -1,111 +1,134 @@
 @extends('front.layouts.app')
 @section('content')
     <!-- page-banner-section -->
-      <section class="site-content myaccount-site-content">      
-      <div class="page-banner-section">
-        <div class="page-banner">
-            <div class="container">
-                <div class="page-banner-wrap">
-                    <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
-                        <ul class="breadcrumb-items">
-                            <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}" rel="home"><span itemprop="name">Home</span></a></li>                          
-                            <li class="breadcrumb-item trail-end"><span itemprop="name">My Purchase</span></li>
-                        </ul>
+    <section class="site-content myaccount-site-content">
+        <div class="page-banner-section">
+            <div class="page-banner">
+                <div class="container">
+                    <div class="page-banner-wrap">
+                        <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
+                            <ul class="breadcrumb-items">
+                                <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}"
+                                        rel="home"><span itemprop="name">Home</span></a></li>
+                                <li class="breadcrumb-item trail-end"><span itemprop="name">My Purchase</span></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-      <!-- page-banner-section -->
-      <div class="content-wrapper">
-        <div class="container">         
-          <div class="content-area">
-            <div class="myaccout-section">
-              <div class="row">
-                <!-- sidebar-section -->
-                @include('front.modules.dashboard.sidebar')
-                <!-- sidebar-section -->
-                <div class="myaccout-content-area col-md-9 col-sm-12 col-12">                 
-                    <div class="page-header">
-                      <h1 class="page-title">My Purchase Details</h1>
-                    </div>
-                    <div class="myaccout-content-wrapper">  
-                      <div class="order-detail-item">
-                        <div class="row justify-content-between">
-                          <div class="col-lg-8 col-md-8 col-12">
-                            <p>
-                              Order #<mark class="order-number">{{ $orderDetails->order_number }}</mark> was placed on <mark class="order-date">{{ \Carbon\Carbon::parse($orderDetails->updated_at)->format('d M Y at h:i A') }}</mark>.</p>
-                          </div>
-                          <div class="col-lg-4 col-md-4 col-12 text-end">
-                            <a href="javascript:void(0);" class="btn btn-outline-primary">Download Invoice</a>
-                          </div>                         
-                        </div>
-                        <hr class="border-secondary">
-                        <div class="row">
-                          <div class="col-lg-6 col-md-6 col-12">
-                            <?php $shippingAddress = json_decode($orderDetails->shipping_address); ?>
-                            <p><strong>Delivery Address</strong></p>
-                            {{ @$shippingAddress->shipping_customer_name }}<br>                             
-                            {{ @$shippingAddress->shipping_address }} , {{ @$shippingAddress->shipping_city }} , {{ @$shippingAddress->shipping_state }}, {{ @$shippingAddress->shipping_country }}, {{ @$shippingAddress->shipping_pincode }}  
-                            </br>Phone number : {{ @$shippingAddress->shipping_phone }}  
-                            </br>Eamil : {{ @$shippingAddress->shipping_email }}
-                          </div>
-                          <div class="col-lg-6 col-md-6 col-12">
-                              <p><strong>Your Rewards</strong></p>
-                              <!-- <p>28 Points Cashback</p>
-                              <p><small>Use it to save on your next order</small></p> -->
-                              <a href="javascript:void(0);" class="btn btn-outline-primary btn-sm">View All</a>
-                          </div>
-                        </div>  
-                      </div>                      
-                      
-                      <div class="order-detail-item mb-0 p-0">
-                        @if($orderDetails->items->count() > 0)
-                            @foreach($orderDetails->items as $item)
-                                <?php $productDetail = getProductDetail($item->product_id); ?>
-                                <div class="tabel-row">
-                                    <div class="table-cell order-img"><a href="product-detail.html"><img src="{{ env('WEBSITE_URL').'uploads/products/'.@$item->productGraphics->graphic }}" width="75" height="75"></a></div>
-                                    <div class="table-cell">
-                                        <p class="order-title"><a href="product-detail.html">{{ $productDetail->name ?? '' }}</a></p>
-                                        <?php $productVariants = json_decode($item->combination); 
+        <!-- page-banner-section -->
+        <div class="content-wrapper">
+            <div class="container">
+                <div class="content-area">
+                    <div class="myaccout-section">
+                        <div class="dashboard-inner-row">
+                            <!-- sidebar-section -->
+                            @include('front.modules.dashboard.sidebar')
+                            <!-- sidebar-section -->
+                            <div class="myaccout-content-area col-md-9 col-sm-12 col-12">
+                                <div class="page-header">
+                                    <h1 class="page-title">My Purchase Details</h1>
+                                </div>
+                                <div class="myaccout-content-wrapper">
+                                    <div class="order-detail-item">
+                                        <div class="order-place-main-txt row justify-content-between">
+                                            <div class="order-place-main-txt1 col-lg-8 col-md-8 col-12">
+                                                <p>
+                                                    Order #<mark
+                                                        class="order-number">{{ $orderDetails->order_number }}</mark> was
+                                                    placed on <mark
+                                                        class="order-date">{{ \Carbon\Carbon::parse($orderDetails->updated_at)->format('d M Y at h:i A') }}</mark>.
+                                                </p>
+                                            </div>
+                                            <div class="order-place-main-txt2 col-lg-4 col-md-4 col-12 text-end">
+                                                <a href="javascript:void(0);"
+                                                    class="btn btn-outline-primary btn-download-invoice">Download
+                                                    Invoice</a>
+                                            </div>
+                                        </div>
+                                        <hr class="border-secondary">
+                                        <div class="inner-cont-deliv-txt">
+                                            <div class="inner-cont-deliv-txt1 col-lg-6 col-md-6 col-12">
+                                                <?php $shippingAddress = json_decode($orderDetails->shipping_address); ?>
+                                                <p><strong>Delivery Address</strong></p>
+                                                {{ @$shippingAddress->shipping_customer_name }}<br>
+                                                {{ @$shippingAddress->shipping_address }} ,
+                                                {{ @$shippingAddress->shipping_city }} ,
+                                                {{ @$shippingAddress->shipping_state }},
+                                                {{ @$shippingAddress->shipping_country }},
+                                                {{ @$shippingAddress->shipping_pincode }}
+                                                </br>Phone number : {{ @$shippingAddress->shipping_phone }}
+                                                </br>Eamil : {{ @$shippingAddress->shipping_email }}
+                                            </div>
+                                            <div class="inner-cont-deliv-txt2 col-lg-6 col-md-6 col-12">
+                                                <p><strong>Your Rewards</strong></p>
+                                                <!-- <p>28 Points Cashback</p>
+                                                      <p><small>Use it to save on your next order</small></p> -->
+                                                <a href="javascript:void(0);"
+                                                    class="btn btn-outline-primary btn-sm btn-view-all">View
+                                                    All</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="order-detail-item mb-0 p-0">
+                                        @if ($orderDetails->items->count() > 0)
+                                            @foreach ($orderDetails->items as $item)
+                                                <?php $productDetail = getProductDetail($item->product_id); ?>
+                                                <div class="tabel-row">
+                                                    <div class="table-cell order-img"><a href="product-detail.html"><img
+                                                                src="{{ env('WEBSITE_URL') . 'uploads/products/' . @$item->productGraphics->graphic }}"
+                                                                width="75" height="75"></a></div>
+                                                    <div class="table-cell">
+                                                        <p class="order-title"><a
+                                                                href="product-detail.html">{{ $productDetail->name ?? '' }}</a>
+                                                        </p>
+                                                        <?php $productVariants = json_decode($item->combination); 
                                         foreach($productVariants as $key=>$value){
                                         ?>
-                                        <p class="f-12 mb-0">{{ $key }} : {{ $value }}</p>  
-                                        <?php } ?>                                          
-                                    </div>
-                                    <div class="table-cell text-end order-total">
-                                        <p class="order-price">₹ {{ number_format($item->selling_price, 2) }}</p>                            
-                                    </div>
-                                </div>
-                            @endforeach
-                        @endif
-                        
-                      </div>
-                      
-                      <div class="order-detail-item p-2">
-                        <table class="shop-table table table-borderless mb-0">
-                          <tbody>
-                            <tr class="cart-subtotal">
-                              <th>Subtotal</th>
-                              <td data-title="Subtotal" class="text-end"><strong>₹ {{ number_format($orderDetails->sub_total, 2) }}</strong> </td>
-                            </tr>
-                            <tr class="shipping-totals shipping">
-                              <td>Coupon Discount</td>
-                              <td data-title="Shipping" class="text-end text-green">-₹{{ number_format($orderDetails->coupon_discount, 2) }}</td>
-                            </tr>
-                            <tr class="shipping-totals shipping">
-                              <td>Shipping</td>
-                              <td data-title="Shipping" class="text-end">{{ number_format($orderDetails->shippingcharge, 2) }}</td>
-                            </tr>
-                            <tr class="order-total">
-                              <th>Total</th>
-                              <td data-title="Total" class="text-end"><strong>{{ number_format($orderDetails->total, 2) }}</strong> </td>
-                            </tr>
-                          </tbody>
-                        </table>                      
-                      </div>
+                                                        <p class="f-12 mb-0">{{ $key }} : {{ $value }}</p>
+                                                        <?php } ?>
+                                                    </div>
+                                                    <div class="table-cell text-end order-total">
+                                                        <p class="order-price">₹
+                                                            {{ number_format($item->selling_price, 2) }}</p>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @endif
 
-                      {{-- <div class="order-progerss-bar">
+                                    </div>
+
+                                    <div class="order-detail-item p-2">
+                                        <table class="shop-table table table-borderless mb-0">
+                                            <tbody>
+                                                <tr class="cart-subtotal">
+                                                    <th>Subtotal</th>
+                                                    <td data-title="Subtotal" class="text-end"><strong>₹
+                                                            {{ number_format($orderDetails->sub_total, 2) }}</strong> </td>
+                                                </tr>
+                                                <tr class="shipping-totals shipping">
+                                                    <td>Coupon Discount</td>
+                                                    <td data-title="Shipping" class="text-end text-green">
+                                                        -₹{{ number_format($orderDetails->coupon_discount, 2) }}</td>
+                                                </tr>
+                                                <tr class="shipping-totals shipping">
+                                                    <td>Shipping</td>
+                                                    <td data-title="Shipping" class="text-end">
+                                                        {{ number_format($orderDetails->shippingcharge, 2) }}</td>
+                                                </tr>
+                                                <tr class="order-total">
+                                                    <th>Total</th>
+                                                    <td data-title="Total" class="text-end">
+                                                        <strong>{{ number_format($orderDetails->total, 2) }}</strong>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {{-- <div class="order-progerss-bar">
                         <div class="order-progerss-item order-progerss-sucess">
                           <div class="order-progerss-title"><span>Order Confirmed</span></div>
                           <div class="order-progerss-circle"></div>
@@ -185,12 +208,13 @@
                         </div>
                       </div> --}}
 
-                      <div class="order-detail-item order-detail-button">
-                        <a href="{{  env('WEBSITE_URL').'rateing-review' }}" class="btn-url">Rate & Review Product</a>
-                        <a  class="btn-url" href="{{  env('WEBSITE_URL').'contactwithus' }}">Need help?</a>
-                      </div>
+                                    <div class="order-detail-item order-detail-button">
+                                        <a href="{{ env('WEBSITE_URL') . 'rateing-review' }}" class="btn-url">Rate & Review
+                                            Product</a>
+                                        <a class="btn-url" href="{{ env('WEBSITE_URL') . 'contactwithus' }}">Need help?</a>
+                                    </div>
 
-                      {{-- <div class="order-alerts">
+                                    {{-- <div class="order-alerts">
                         <div class="order-alert order-success">
                           <div class="order-alert-icon">
                             <svg width="100px" height="100px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">                            
@@ -226,117 +250,127 @@
                         </div>
                       </div> --}}
 
-                      <div class="order-detail-item">                       
-                        <button  class="btn-url" href="#" @if($orderDetails->payment_status == "paid") data-bs-target="#order-return-form" data-bs-toggle="collapse" @else data-bs-toggle="modal" data-bs-target="#returnMessage" @endif >Cancel/Return Order</button>
-                        <div id="order-return-form" class="collapse">
-                         <div class="order-return-form pt-3">
-                          <form action="{{route('front-refund.submit')}}" method="post" autocomplete="off">  
-                            @csrf
-                            <div class="form-group">
-                              <label>Cancel order with reason <span class="required">*</span></label>
-                              <select name="return_type" class="form-control">
-                                <option>Return/Refund</option>
-                                <option>Looking Exchange</option>
-                              </select>                              
-                            </div> 
-                            <h4><strong>Exchange</strong></h4>  
-                            <div class="form-group">
-                              <label>Refund/Return Reason<span class="required">*</span></label>
-                              <textarea name="refund_reason"  class="form-control"></textarea>
-                            </div>   
-                            <div class="form-group">
-                              <label>Upload Photo/Video <span class="required">*</span></label>
-                              <input name="file"  type="file" class="form-control">
-                            </div> 
-                            <h4><strong>Refund</strong></h4>  
-                            <div class="form-group">
-                              <p>Refund in <span class="required">*</span></p>
-                              <div class="mb-3">
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" name="refund_type"  type="radio" name="refund" id="refundwallet">
-                                  <label class="form-check-label" for="refundwallet">
-                                    Wallet
-                                  </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input"  name="refund_type" type="radio" name="refund" id="refundaccount" checked>
-                                  <label class="form-check-label" for="refundaccount">
-                                    Account
-                                  </label>
-                                </div>
-                              </div>                             
-                            </div>   
-                            <div class="form-group">
-                              <label>Account Number <span class="required">*</span></label>
-                              <input  name="account_number" type="text" class="form-control">
-                            </div>     
-                            <div class="form-group">
-                              <label>Confirm Account Number <span class="required">*</span></label>
-                              <input type="text" class="form-control">
-                            </div>   
-                            <div class="form-group">
-                              <label>IFSC code <span class="required">*</span></label>
-                              <input  name="ifsc_code" type="text" class="form-control">
-                            </div> 
-                            <div class="form-group">
-                              <label>Saving/Current <span class="required">*</span></label>                            
-                              <select class="form-control">
-                                <option>Saving</option>
-                                <option>Current</option>
-                              </select>
-                            </div>  
-                            <div class="form-group">
-                              <label>Bank Name<span class="required">*</span></label>
-                              <input  name="bank_name" type="text" class="form-control">
-                            </div> 
-                            <input type="hidden" value="{{ $orderDetails->order_number }}" name="order_number">
-                            @foreach($orderDetails->items as $itm)
-                              <input type="hidden" value="{{ $itm->id }}" name="order_item_id[]">
-                            @endforeach   
-                            <div class="form-button">
-                              <button type="submit" class="btn btn-primary">Submit</button>
-                            </div>             
-                          </form>
-                         </div>                         
-                        </div>
-                      </div>
+                                    <div class="order-detail-item">
+                                        <button class="btn-url" href="#"
+                                            @if ($orderDetails->payment_status == 'paid') data-bs-target="#order-return-form" data-bs-toggle="collapse" @else data-bs-toggle="modal" data-bs-target="#returnMessage" @endif>Cancel/Return
+                                            Order</button>
+                                        <div id="order-return-form" class="collapse" style="display: none;">
+                                            <div class="order-return-form pt-3">
+                                                <form action="{{ route('front-refund.submit') }}" method="post"
+                                                    autocomplete="off">
+                                                    @csrf
+                                                    <div class="form-group">
+                                                        <label>Cancel order with reason <span
+                                                                class="required">*</span></label>
+                                                        <select name="return_type" class="form-control">
+                                                            <option>Return/Refund</option>
+                                                            <option>Looking Exchange</option>
+                                                        </select>
+                                                    </div>
+                                                    <h4><strong>Exchange</strong></h4>
+                                                    <div class="form-group">
+                                                        <label>Refund/Return Reason<span class="required">*</span></label>
+                                                        <textarea name="refund_reason" class="form-control"></textarea>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Upload Photo/Video <span class="required">*</span></label>
+                                                        <input name="file" type="file" class="form-control">
+                                                    </div>
+                                                    <h4><strong>Refund</strong></h4>
+                                                    <div class="form-group">
+                                                        <p>Refund in <span class="required">*</span></p>
+                                                        <div class="mb-3">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="refund_type"
+                                                                    type="radio" name="refund" id="refundwallet">
+                                                                <label class="form-check-label" for="refundwallet">
+                                                                    Wallet
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" name="refund_type"
+                                                                    type="radio" name="refund" id="refundaccount"
+                                                                    checked>
+                                                                <label class="form-check-label" for="refundaccount">
+                                                                    Account
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Account Number <span class="required">*</span></label>
+                                                        <input name="account_number" type="text" class="form-control">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Confirm Account Number <span
+                                                                class="required">*</span></label>
+                                                        <input type="text" class="form-control">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>IFSC code <span class="required">*</span></label>
+                                                        <input name="ifsc_code" type="text" class="form-control">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Saving/Current <span class="required">*</span></label>
+                                                        <select class="form-control">
+                                                            <option>Saving</option>
+                                                            <option>Current</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Bank Name<span class="required">*</span></label>
+                                                        <input name="bank_name" type="text" class="form-control">
+                                                    </div>
+                                                    <input type="hidden" value="{{ $orderDetails->order_number }}"
+                                                        name="order_number">
+                                                    @foreach ($orderDetails->items as $itm)
+                                                        <input type="hidden" value="{{ $itm->id }}"
+                                                            name="order_item_id[]">
+                                                    @endforeach
+                                                    <div class="form-button">
+                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                               
-                    </div>  
-                </div>   
-                 <!-- myaccout-content-area -->
-              </div>
-              <!-- row -->
+
+                                </div>
+                            </div>
+                            <!-- myaccout-content-area -->
+                        </div>
+                        <!-- row -->
+                    </div>
+                    <!-- myaccout-section -->
+                </div>
+                <!--content-area  -->
             </div>
-            <!-- myaccout-section -->
-          </div>
-         <!--content-area  -->
+            <!--container-->
         </div>
-        <!--container-->
-      </div>
-      <!--content-wrapper-->
-    </section>  
+        <!--content-wrapper-->
+    </section>
     <!-- page main wrapper end -->
- 
+
     <div class="modal fade" id="returnMessage" tabindex="-1" aria-labelledby="returnMessageLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="returnMessageLabel">Cancelation Reason</h1>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="returnMessageLabel">Cancelation Reason</h1>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="">Cancelation Reason</label>
+                        <textarea name="cancel_reason" id="" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label for="">Cancelation Reason</label>
-            <textarea name="cancel_reason" id="" class="form-control"></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
     </div>
-  </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -515,16 +549,18 @@
         });
         $(document).on('click', '.wishlistBtn', function() {
             let that = $(this);
-           let pid = $(this).data('product-id');
+            let pid = $(this).data('product-id');
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                         'content')
-                },                
+                },
                 type: "POST",
                 url: "{{ route('front-addwish') }}",
-                data:{product_id:pid},
-                dataType:"json",
+                data: {
+                    product_id: pid
+                },
+                dataType: "json",
                 success: function(response) {
                     that.parents('.product-card').parent().remove();
                     wishlistItemCount();
@@ -542,62 +578,62 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-      $(document).ready(function() {
-    $('#update-dashboard').on('submit', function(e) {
-        e.preventDefault();
+        $(document).ready(function() {
+            $('#update-dashboard').on('submit', function(e) {
+                e.preventDefault();
 
-        let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
+                let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
 
-        // ✅ Client-side validation
-        if (phoneNumber === '') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Validation Error',
-                text: 'Phone number is required.',
-            });
-            return; // stop the form submission
-        }
-
-        let formData = new FormData(this); // captures all form data including files
-
-        $.ajax({
-            url: "{{ route('front-user.updateProfile') }}",
-            type: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: response.message,
-                    showConfirmButton: false,
-                    timer: 2000
-                }).then(() => {
-                    window.location.href = response.redirect_url;
-                });
-            },
-            error: function(xhr) {
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
-                    let firstError = Object.values(errors)[0][0];
-
+                // ✅ Client-side validation
+                if (phoneNumber === '') {
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: firstError,
+                        icon: 'warning',
+                        title: 'Validation Error',
+                        text: 'Phone number is required.',
                     });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Server Error',
-                        text: 'Something went wrong. Please try again later.',
-                    });
+                    return; // stop the form submission
                 }
-            }
+
+                let formData = new FormData(this); // captures all form data including files
+
+                $.ajax({
+                    url: "{{ route('front-user.updateProfile') }}",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = response.redirect_url;
+                        });
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            let firstError = Object.values(errors)[0][0];
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: firstError,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Server Error',
+                                text: 'Something went wrong. Please try again later.',
+                            });
+                        }
+                    }
+                });
+            });
         });
-    });
-});
 
 
         const img = document.getElementById('preview-image');
@@ -681,7 +717,7 @@
     </script>
 
     <!-- Tabing Order panel -->
-     <style>
+    <style>
         /* Style the tab */
         .tab {
             overflow: hidden;
@@ -709,12 +745,12 @@
 
         /* Change background color of buttons on hover */
         .tab button:hover {
-        background-color: #ddd;
+            background-color: #ddd;
         }
 
         /* Create an active/current tablink class */
         .tab button.active {
-        background-color: #f3eeae;
+            background-color: #f3eeae;
         }
 
         /* Style the tab content */
@@ -724,7 +760,7 @@
             /* border: 1px solid #ccc; */
             /* border-top: none; */
         }
-        </style>
+    </style>
     <script>
         function openOrder(evt, OrderName) {
             var i, tabcontent, tablinks;

@@ -1076,12 +1076,13 @@ class HomeController extends Controller
                 ->pluck('product_id')
                 ->toArray();
         }
+        $best_seller_products = Product::where('best_seller', 1)->where('is_active', 1)->orderBy('id', 'desc')->get();
         $facebook = Setting::select('id','value')->where('key','Social.facebook')->first();
         $instagram = Setting::select('id','value')->where('key','Social.instagram')->first(); 
         $pinterst = Setting::select('id','value')->where('key','Social.pinterest')->first(); 
         $youtube = Setting::select('id','value')->where('key','Social.youtube')->first(); 
 
-        return view('front.modules.shop.product-detail', compact('product','productChildCat', 'productcat', 'productSubCat', 'productvariants', 'related_products', 'bestproduct', 'releatedProduct', 'returnexchangeProduct', 'contactDetails', 'productVarientCom', 'isWishlisted', 'isWishlisteddata', 'categoryTaxes', 'reviews', 'productreview', 'recentlyViewedProducts','productVariantSpecification','facebook','instagram','pinterst','youtube','productDetailManager'));
+        return view('front.modules.shop.product-detail', compact('product','productChildCat', 'productcat', 'productSubCat', 'productvariants', 'related_products', 'bestproduct', 'releatedProduct', 'returnexchangeProduct', 'contactDetails', 'productVarientCom', 'isWishlisted', 'isWishlisteddata', 'categoryTaxes', 'reviews', 'productreview', 'recentlyViewedProducts','productVariantSpecification','facebook','instagram','pinterst','youtube','productDetailManager', 'best_seller_products'));
     }
 
     public function viewBag()

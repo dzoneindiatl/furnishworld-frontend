@@ -7,7 +7,7 @@
                 @foreach ($homeSlider as $slider)
                     <div class="slide">
                         <img src="{{ url('uploads/banners/' . ($slider->media_url ?? '')) }}" alt="Hero Slide 1">
-                    </div>  
+                    </div>
                 @endforeach
             </div>
         </div>
@@ -68,10 +68,10 @@
                         $images = json_decode($ActiveCoupon->image, true);
                     @endphp
 
-                    @if(!empty($images))
-                        @foreach($images as $image)
+                    @if (!empty($images))
+                        @foreach ($images as $image)
                             <div class="fw_ads_one">
-                                <img src="{{ url('uploads/coupon/'.$image) }}" alt="">
+                                <img src="{{ url('uploads/coupon/' . $image) }}" alt="">
                             </div>
                         @endforeach
                     @endif
@@ -85,11 +85,12 @@
         <div class="container">
 
             <div class="fw_category_grid">
-                @if(!empty($featureSubCategory))
+                @if (!empty($featureSubCategory))
                     @foreach ($featureSubCategory->take(14) as $category)
                         <a href="{{ route('category.show', $category->slug) }}" class="fw_category_card">
                             <div class="fw_category_image">
-                                <img src="{{ url('uploads/categories/' . ($category->getAttributes()['image'] ?? '')) }}" alt="{{ $category->name }}{{ $category->image }}">
+                                <img src="{{ url('uploads/categories/' . ($category->getAttributes()['image'] ?? '')) }}"
+                                    alt="{{ $category->name }}{{ $category->image }}">
                             </div>
                             <h4 style="color: #000000">{{ $category->name }}</h4>
                         </a>
@@ -129,19 +130,20 @@
 
                 <!-- Slider -->
                 <div class="fw_refresh_slider">
-                    @if(!empty($refreshYourRoom))
-                        @foreach($refreshYourRoom as $category)
-                                <div class="fw_collection_card">
-                                    <div class="image">
-                                        <a href="{{ route('category.show', $category->slug) }}">
-                                            <img src="{{ $category->image ?? asset('assets/front/images/collection_01.png') }}" alt="{{ $category->name }}">
-                                        </a>
-                                    </div>
-                                    <h3>{{ $category->name }}</h3>
-                                    <a href="{{ route('category.show', $category->slug) }}" class="btn">
-                                        Shop Now
+                    @if (!empty($refreshYourRoom))
+                        @foreach ($refreshYourRoom as $category)
+                            <div class="fw_collection_card">
+                                <div class="image">
+                                    <a href="{{ route('category.show', $category->slug) }}">
+                                        <img src="{{ $category->image ?? asset('assets/front/images/collection_01.png') }}"
+                                            alt="{{ $category->name }}">
                                     </a>
                                 </div>
+                                <h3>{{ $category->name }}</h3>
+                                <a href="{{ route('category.show', $category->slug) }}" class="btn">
+                                    Shop Now
+                                </a>
+                            </div>
                         @endforeach
                     @endif
                 </div>
@@ -169,33 +171,34 @@
             <div class="best_seller">
                 <!-- Product -->
                 @foreach ($best_seller_products as $bestseller)
-                <div class="product-card">
-                    <div class="product-image">
-                       <img src="{{$bestseller->images['first']}}" class="default" alt="">
-                       <img src="{{$bestseller->images['second']}}" class="hover" alt="">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="{{ $bestseller->images['first'] }}" class="default" alt="">
+                            <img src="{{ $bestseller->images['second'] }}" class="hover" alt="">
 
-                    </div>
-                    <div class="hover-panel">
-                        <div class="hover-content">
-                            <h3>
-                                {{ $bestseller->name }}
-                            </h3>
-                            <div class="price-wrap">
-                                <span class="price">₹{{ $bestseller->selling_price }}</span>
-                                <span class="old-price">₹{{ $bestseller->buying_price }}</span>
-                            </div>
-                            <div class="product-actions">
-                                <a href="{{ env('WEBSITE_URL') .'product/'. productSlug($bestseller->name) . '.html/' . productSlug($bestseller->sku) }}" class="action-btn add_to_cart_btn">
-                                    Buy now
-                                </a>
+                        </div>
+                        <div class="hover-panel">
+                            <div class="hover-content">
+                                <h3>
+                                    {{ $bestseller->name }}
+                                </h3>
+                                <div class="price-wrap">
+                                    <span class="price">₹{{ $bestseller->selling_price }}</span>
+                                    <span class="old-price">₹{{ $bestseller->buying_price }}</span>
+                                </div>
+                                <div class="product-actions">
+                                    <a href="{{ env('WEBSITE_URL') . 'product/' . productSlug($bestseller->name) . '.html/' . productSlug($bestseller->sku) }}"
+                                        class="action-btn add_to_cart_btn">
+                                        Buy now
+                                    </a>
 
-                                <button class="wishlist-btn">
-                                    <span class="material-symbols-outlined">favorite</span>
-                                </button>
+                                    <button class="wishlist-btn">
+                                        <span class="material-symbols-outlined">favorite</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 @endforeach
             </div>
         </div>
@@ -215,55 +218,55 @@
 
             <div class="fw_subcategory_grid">
                 <div class="fw_subcategory_grid_left">
-                    @foreach($modernLiving1 as $liv)
-                    <div class="border">
-                        <a href="{{ route('category.show', $liv->slug) }}" class="fw_subcat_card fw_subcat_large">
-                            <img src="{{ $liv->image }}" alt="">
-                            <div class="fw_subcat_content">
-                                <h3>{{ $liv->name }}</h3>
-                                <span>Explore Collection</span>
-                            </div>
-                        </a>
-                    </div>
+                    @foreach ($modernLiving1 as $liv)
+                        <div class="border">
+                            <a href="{{ route('category.show', $liv->slug) }}" class="fw_subcat_card fw_subcat_large">
+                                <img src="{{ $liv->image }}" alt="">
+                                <div class="fw_subcat_content">
+                                    <h3>{{ $liv->name }}</h3>
+                                    <span>Explore Collection</span>
+                                </div>
+                            </a>
+                        </div>
                     @endforeach
                 </div>
-                 
+
 
                 <!-- Wide -->
                 <div class="fw_subcategory_grid_center">
-                    @foreach($modernLiving2 as $liv2)
-                    <div class="border">
-                        <a href="{{ route('category.show', $liv2->slug) }}" class="fw_subcat_card fw_subcat_wide">
-                            <img src="{{ $liv2->image }}" alt="">
-                            <div class="fw_subcat_content">
-                                <h3>{{ $liv2->name }}</h3>
-                                <span>View Collection</span>
-                            </div>
-                        </a>
-                    </div>
-                    @endforeach 
+                    @foreach ($modernLiving2 as $liv2)
+                        <div class="border">
+                            <a href="{{ route('category.show', $liv2->slug) }}" class="fw_subcat_card fw_subcat_wide">
+                                <img src="{{ $liv2->image }}" alt="">
+                                <div class="fw_subcat_content">
+                                    <h3>{{ $liv2->name }}</h3>
+                                    <span>View Collection</span>
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
                 </div>
 
                 <!-- Row 3 -->
                 <div class="fw_subcategory_grid_right">
-                    @foreach($modernLiving3 as $liv3)
-                    <div class="border">
-                        <a href="{{ route('category.show', $liv3->slug) }}" class="fw_subcat_card">
-                            <img src="{{ $liv3->image }}" alt="">
-                            <div class="fw_subcat_content">
-                                <h3>{{ $liv3->name }}</h3>
-                                <span>Explore Collection</span>
-                            </div>
-                        </a>
-                    </div>
-                    @endforeach 
+                    @foreach ($modernLiving3 as $liv3)
+                        <div class="border">
+                            <a href="{{ route('category.show', $liv3->slug) }}" class="fw_subcat_card">
+                                <img src="{{ $liv3->image }}" alt="">
+                                <div class="fw_subcat_content">
+                                    <h3>{{ $liv3->name }}</h3>
+                                    <span>Explore Collection</span>
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>
     </section>
 
     <!-- HOME DECOR -->
-   
+
 
     <section class="fw_home_furnishing pt-60">
         <div class="container-fluid">
@@ -286,25 +289,31 @@
                 <div class="fw_home_frunishing_product_grid">
 
                     <!-- product card -->
-                    @foreach($childCategory->take(11) as $home)
-                        @if(!is_null($home->productName))
-                    <div class="product_card">
-                        <div class="product_card_image">
-                            <a href="{{ route('category.show', $home->slug) }}">
-                                <img src="{{$home->image}}" alt="">
-                            </a>
-                        </div>
-                        <div class="product_content">
-                            <div class="product_title">
-                                <h4>{{ $home->name }}</h4>
+                    @foreach ($childCategory->take(11) as $home)
+                        @if (!is_null($home->productName))
+                            <div class="product_card">
+                                <div class="product_card_image">
+                                    <a href="{{ route('category.show', $home->slug) }}">
+                                        <img src="{{ $home->image }}" alt="">
+                                    </a>
+                                </div>
+                                <div class="product_content">
+                                    <div class="product_title">
+                                        <h4>{{ $home->name }}</h4>
+                                    </div>
+                                    <div class="product_price">
+                                        <a href="{{ route('category.show', $home->slug) }}"
+                                            style="text-decoration: none;color:#000000"><span>Starting Price - ₹
+                                                {{ $home->lowest_selling_price }}</span> <span
+                                                class="strikethrouh"></span></a>
+                                    </div>
+                                    <div class="btn-explore-now">
+                                        <a href="#">Explore Now</a>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="product_price">
-                                <a href="{{ route('category.show', $home->slug) }}" style="text-decoration: none;color:#000000"><span>Starting Price - ₹ {{ $home->lowest_selling_price }}</span> <span class="strikethrouh"></span></a>
-                            </div>
-                        </div>
-                    </div>
-                    @endif 
-                    @endforeach 
+                        @endif
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -339,10 +348,11 @@
                                 <h3>{{ $arrivals->name }}</h3>
                                 <div class="price-wrap">
                                     <span class="price">₹{{ $arrivals->selling_price }}</span>
-                                    <span class="old-price">₹{{ $arrivals->buying_price  }}</span>
+                                    <span class="old-price">₹{{ $arrivals->buying_price }}</span>
                                 </div>
                                 <div class="product-actions">
-                                    <a href="{{ env('WEBSITE_URL') .'product/'. productSlug($arrivals->name) . '.html/' . productSlug($arrivals->sku) }}" class="action-btn add_to_cart_btn">
+                                    <a href="{{ env('WEBSITE_URL') . 'product/' . productSlug($arrivals->name) . '.html/' . productSlug($arrivals->sku) }}"
+                                        class="action-btn add_to_cart_btn">
                                         Buy now
                                     </a>
                                     <button class="wishlist-btn">
@@ -367,29 +377,29 @@
                         <div class="nav_btn_container">
                             <button class="nav-btn prev">
                                 <span class="material-symbols-outlined">
-                                    arrow_back_ios_new
+                                    arrow_back
                                 </span>
                             </button>
 
                             <button class="nav-btn next">
                                 <span class="material-symbols-outlined">
-                                    arrow_forward_ios
+                                    arrow_forward
                                 </span>
                             </button>
                         </div>
-                        <span class="section-tag">
+                        {{-- <span class="section-tag">
                             DESIGN YOUR SPACE
-                        </span>
-                       
-                        <h2 id="catName"></h2>
-                        <p class="fw_content" id="catDescription">
-                            {{-- Explore complete room collections designed to help
+                        </span> --}}
+
+                        {{-- <h2 id="catName"></h2> --}}
+                        <!--p class="fw_content" id="catDescription">
+                                                                                    {{-- Explore complete room collections designed to help
                             you create beautiful and harmonious living
                             environments. --}}
-                        </p>
-                        <a href="#" class="btn-primary" id="catUrl">
+                                                                                </p-->
+                        {{-- <a href="#" class="btn-primary" id="catUrl">
                             <span>Explore Collection</span>
-                        </a>
+                        </a> --}}
                     </div>
 
                     <div class="room-showcase">
@@ -399,12 +409,22 @@
                         </div>
 
                         @php
-                        $icons = ['weekend','bed', 'table_restaurant', 'desk', 'deck', 'toys', 'wall_lamp', 'kitchen'];
+                            $icons = [
+                                'weekend',
+                                'bed',
+                                'table_restaurant',
+                                'desk',
+                                'deck',
+                                'toys',
+                                'wall_lamp',
+                                'kitchen',
+                            ];
                         @endphp
 
                         <div class="room-categories">
-                            @foreach($MainCategory as $index => $cate)
-                                <a href="" data-index="{{ $index }}" class="{{ $index == 0 ? 'active' : '' }}">
+                            @foreach ($MainCategory as $index => $cate)
+                                <a href="" data-index="{{ $index }}"
+                                    class="{{ $index == 0 ? 'active' : '' }}">
                                     <span class="material-symbols-outlined">
                                         {{ $icons[$index] ?? 'category' }}
                                     </span>
@@ -431,50 +451,50 @@
             <div class="nav_btn_container">
                 <button class="nav-btn prev">
                     <span class="material-symbols-outlined">
-                        arrow_back_ios_new
+                        arrow_back
                     </span>
                 </button>
 
                 <button class="nav-btn next">
                     <span class="material-symbols-outlined">
-                        arrow_forward_ios
+                        arrow_forward
                     </span>
                 </button>
             </div>
         </div>
         <div class="product_card_swiper">
             <div class="swiper-wrapper">
-            @forelse($productGallery as $gal)
-                <div class="swiper-slide"
-                    style="background-image:url('{{ url('uploads/categories/' . ($gal->getAttributes()['image'] ?? '')) }}')">
+                @forelse($productGallery as $gal)
+                    <div class="swiper-slide"
+                        style="background-image:url('{{ url('uploads/categories/' . ($gal->getAttributes()['image'] ?? '')) }}')">
 
-                    <div class="info">
-                        <span>
-                            <i class="material-symbols-outlined">chair</i>
-                            {{ $gal->name }}
-                        </span>
+                        <div class="info">
+                            <span>
+                                <i class="material-symbols-outlined">chair</i>
+                                {{ $gal->name }}
+                            </span>
 
-                        @if(!empty($gal->description))
-                            <span>{{ Str::limit($gal->description, 40) }}</span>
-                        @else
-                            <span>Explore our latest collection</span>
-                        @endif
+                            @if (!empty($gal->description))
+                                <span>{{ Str::limit($gal->description, 40) }}</span>
+                            @else
+                                {{-- <span>Explore our latest collection</span> --}}
+                            @endif
 
-                        <a href="{{ route('category.show', $gal->slug) }}" class="btn-accent">
-                            Explore Now
-                            <i class="material-symbols-outlined">arrow_outward</i>
-                        </a>
+                            <a href="{{ route('category.show', $gal->slug) }}" class="btn-accent">
+                                Explore
+                                <i class="material-symbols-outlined">arrow_outward</i>
+                            </a>
+                        </div>
                     </div>
-                </div>
-            @empty
-                <div class="swiper-slide"
-                    style="background-image:url('{{ asset('assets/front/images/collection_01.png') }}')">
-                    <div class="info">
-                        <span>No Categories Found</span>
+                @empty
+                    <div class="swiper-slide"
+                        style="background-image:url('{{ asset('assets/front/images/collection_01.png') }}')">
+                        <div class="info">
+                            <span>No Categories Found</span>
+                        </div>
                     </div>
-                </div>
-            @endforelse
-        </div>
+                @endforelse
+            </div>
         </div>
     </section>
 
@@ -503,10 +523,10 @@
         </div>
 
         <div class="instagram-slider">
-            
+
             <div class="swiper-slide">
                 <a href="#" class="insta-card">
-                    <img src="{{url('assets/front/images/collection_01.png')}}" alt="">
+                    <img src="{{ url('assets/front/images/collection_01.png') }}" alt="">
                     <div class="insta-overlay">
                         <i class="fa-brands fa-instagram"></i>
                     </div>
@@ -514,7 +534,7 @@
             </div>
             <div class="swiper-slide">
                 <a href="#" class="insta-card">
-                    <img src="{{url('assets/front/images/collection_02.png')}}" alt="">
+                    <img src="{{ url('assets/front/images/collection_02.png') }}" alt="">
                     <div class="insta-overlay">
                         <i class="fa-brands fa-instagram"></i>
                     </div>
@@ -522,7 +542,7 @@
             </div>
             <div class="swiper-slide">
                 <a href="#" class="insta-card">
-                    <img src="{{url('assets/front/images/collection_03.png')}}" alt="">
+                    <img src="{{ url('assets/front/images/collection_03.png') }}" alt="">
                     <div class="insta-overlay">
                         <i class="fa-brands fa-instagram"></i>
                     </div>
@@ -530,7 +550,7 @@
             </div>
             <div class="swiper-slide">
                 <a href="#" class="insta-card">
-                    <img src="{{url('assets/front/images/collection_04.png')}}" alt="">
+                    <img src="{{ url('assets/front/images/collection_04.png') }}" alt="">
                     <div class="insta-overlay">
                         <i class="fa-brands fa-instagram"></i>
                     </div>
@@ -538,7 +558,7 @@
             </div>
             <div class="swiper-slide">
                 <a href="#" class="insta-card">
-                    <img src="{{url('assets/front/images/collection_01.png')}}" alt="">
+                    <img src="{{ url('assets/front/images/collection_01.png') }}" alt="">
                     <div class="insta-overlay">
                         <i class="fa-brands fa-instagram"></i>
                     </div>
@@ -546,7 +566,7 @@
             </div>
             <div class="swiper-slide">
                 <a href="#" class="insta-card">
-                    <img src="{{url('assets/front/images/collection_02.png')}}" alt="">
+                    <img src="{{ url('assets/front/images/collection_02.png') }}" alt="">
                     <div class="insta-overlay">
                         <i class="fa-brands fa-instagram"></i>
                     </div>
@@ -554,7 +574,7 @@
             </div>
             <div class="swiper-slide">
                 <a href="#" class="insta-card">
-                    <img src="{{url('assets/front/images/collection_03.png')}}" alt="">
+                    <img src="{{ url('assets/front/images/collection_03.png') }}" alt="">
                     <div class="insta-overlay">
                         <i class="fa-brands fa-instagram"></i>
                     </div>
@@ -566,201 +586,322 @@
     </section>
 
     <!-- CLIENT TESTIMONIAL -->
-    @if(!empty($testimonials) and count($testimonials) > 0)
-    <section class="fw_testimonials">
-        <div class="container-fluid">
-            <div class="section-head">
-                <span>Customer Stories</span>
-                <h2>What Our Customers Say</h2>
-            </div>
-            <div class="testimonial-slider">
-                @php
-                    $classes = ['card-1', 'card-2', 'card-3', 'card-active', 'card-5'];
-                @endphp
-                @foreach($testimonials->chunk(5) as $group)
-                    <div class="slide-item">
-                        <div class="testimonial-stack">
-                            @foreach($group->values() as $index => $row)
-                                <div class="testimonial-card {{ $classes[$index] }}">
-                                    <div class="stars">{{ str_repeat('★', $row->rating) }}{{ str_repeat('☆', 5 - $row->rating) }}</div>
+    @if (!empty($testimonials) and count($testimonials) > 0)
+        <section class="fw_testimonials">
+            <div class="container-fluid">
+                <div class="section-head">
+                    <span>Customer Stories</span>
+                    <h2>What Our Customers Say</h2>
+                </div>
+                <div class="testimonial-slider">
+                    @php
+                        $classes = ['card-1', 'card-2', 'card-3', 'card-active', 'card-5'];
+                    @endphp
+                    @foreach ($testimonials->chunk(5) as $group)
+                        <div class="slide-item">
+                            <div class="testimonial-stack">
+                                @foreach ($group->values() as $index => $row)
+                                    <div class="testimonial-card {{ $classes[$index] }}">
+                                        <div class="stars">
+                                            {{ str_repeat('★', $row->rating) }}{{ str_repeat('☆', 5 - $row->rating) }}
+                                        </div>
 
-                                    <p>{{ $row->description }}</p>
+                                        <p>{{ $row->description }}</p>
 
-                                    <div class="user">
-                                        <img src="{{ asset('uploads/testimonials/'.$row->image) }}" alt="{{ $row->name }}">
-                                        <div>
-                                            <h4>{{ $row->name }}</h4>
-                                            <span>{{ $row->city }}</span>
+                                        <div class="user">
+                                            <img src="{{ asset('uploads/testimonials/' . $row->image) }}"
+                                                alt="{{ $row->name }}">
+                                            <div>
+                                                <h4>{{ $row->name }}</h4>
+                                                <span>{{ $row->city }}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
+                <div class="fw_refresh_arrows">
+                    <button class="fw_prev_02">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                    </button>
+
+                    <button class="fw_next_02">
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </button>
+                </div>
             </div>
-            <div class="fw_refresh_arrows">
-                <button class="fw_prev_02">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                </button>
+        </section>
+    @endif
+    <style>
+        .room-carousel {
+            position: relative;
+            height: 450px;
+            overflow: hidden;
+        }
 
-                <button class="fw_next_02">
-                    <span class="material-symbols-outlined">arrow_forward</span>
-                </button>
-            </div>
-        </div>
-    </section>
-    @endif 
-<script>
-    window.mainCategories = @json($MainCategory);
-</script>
+        .room-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 260px;
+            transition: all 0.6s ease;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(.8);
+            pointer-events: none;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, .15);
+            aspect-ratio: 6 / 8;
+        }
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
+        /* CENTER */
+        .room-card.center {
+            transform: translate(-50%, -50%) scale(1.25);
+            opacity: 1;
+            z-index: 5;
+            pointer-events: auto;
+        }
 
-        const mainCategories = window.mainCategories || [];
-        const catName = document.getElementById('catName');
-        const catDescription = document.getElementById('catDescription');
-        const catUrl = document.getElementById('catUrl');
-        const roomCarousel = document.getElementById('roomCarousel');
-        const categoryTabs = document.querySelectorAll('.room-categories a');
-        const nextButton = document.querySelector('.nav-btn.next');
-        const prevButton = document.querySelector('.nav-btn.prev');
+        /* LEFT */
+        .room-card.left {
+            transform: translate(-155%, -50%) scale(1.1);
+            opacity: 1;
+            z-index: 4;
+            pointer-events: auto;
+        }
 
-        let currentCategory = 0;
+        /* RIGHT */
+        .room-card.right {
+            transform: translate(55%, -50%) scale(1.1);
+            opacity: 1;
+            z-index: 4;
+            pointer-events: auto;
+        }
 
-        let currentSlide = 0;
-        function loadCategory(categoryIndex) {
-            const category = mainCategories[categoryIndex];
-            if (!category) {
-                return;
-            }
-            currentCategory = categoryIndex;
-            currentSlide = 0;
-            catName.innerHTML = category.name || '';
-            catDescription.innerHTML = category.description || '';
+        /* FAR LEFT */
+        .room-card.far-left {
+            transform: translate(-255%, -50%) scale(1);
+            opacity: .8;
+            z-index: 3;
+            pointer-events: auto;
+        }
 
-            if (catUrl) {
-                catUrl.href = category.url || '#';
-            }
+        /* FAR RIGHT */
+        .room-card.far-right {
+            transform: translate(155%, -50%) scale(1);
+            opacity: .8;
+            z-index: 3;
+            pointer-events: auto;
+        }
 
-            const subCategories = category.sub_category || category.subCategory ||[];
-            roomCarousel.innerHTML = '';
-          
-            subCategories.forEach(function (subCategory) {
-                const slugUrl = `${subCategory.slug}`;
-                roomCarousel.insertAdjacentHTML(
-                    'beforeend',
-                    `
+        /* HIDDEN CARDS */
+        .room-card.hidden {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(.8);
+            z-index: 0;
+        }
+    </style>
+
+
+    <script>
+        window.mainCategories = @json($MainCategory);
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const mainCategories = window.mainCategories || [];
+            // const catName = document.getElementById('catName');
+            // const catDescription = document.getElementById('catDescription');
+            // const catUrl = document.getElementById('catUrl');
+            const roomCarousel = document.getElementById('roomCarousel');
+            const categoryTabs = document.querySelectorAll('.room-categories a');
+            const nextButton = document.querySelector('.nav-btn.next');
+            const prevButton = document.querySelector('.nav-btn.prev');
+
+            let currentCategory = 0;
+
+            let currentSlide = 0;
+
+            function loadCategory(categoryIndex) {
+                const category = mainCategories[categoryIndex];
+                if (!category) {
+                    return;
+                }
+                currentCategory = categoryIndex;
+                currentSlide = 0;
+                // catName.innerHTML = category.name || '';
+                // catDescription.innerHTML = category.description || '';
+
+                // if (catUrl) {
+                //     catUrl.href = category.url || '#';
+                // }
+
+                const subCategories = category.sub_category || category.subCategory || [];
+                roomCarousel.innerHTML = '';
+
+                subCategories.forEach(function(subCategory) {
+                    const slugUrl = `${subCategory.slug}`;
+                    roomCarousel.insertAdjacentHTML(
+                        'beforeend',
+                        `
                     <div class="room-card">
                         <img
                             src="${subCategory.image || ''}"
-                            alt="${subCategory.name || ''}"
+                            alt="${subCategory.name || ''}">
                        
 
                         <div class="overlay">
 
-                           <a href="/${slugUrl}" style="text-decoration:none;">  
-                            <h3>
-                                ${subCategory.name || ''}
+                            
+                            <h3><a href="/${slugUrl}" style="text-decoration:none;"> 
+                                ${subCategory.name || ''}</a>
                             </h3>
-                            </a>  
+                             
 
                         </div>
 
                     </div>
                       `
+                    );
+                });
+                console.log(
+                    'Total room cards:',
+                    roomCarousel.querySelectorAll('.room-card').length
                 );
-            });
-            console.log(
-                'Total room cards:',
-                roomCarousel.querySelectorAll('.room-card').length
-            );
-             categoryTabs.forEach(function (tab) {
-                tab.classList.remove('active');
-            });
+                categoryTabs.forEach(function(tab) {
+                    tab.classList.remove('active');
+                });
 
-            if (categoryTabs[categoryIndex]) {
-                categoryTabs[categoryIndex].classList.add('active');
+                if (categoryTabs[categoryIndex]) {
+                    categoryTabs[categoryIndex].classList.add('active');
+                }
+                updateCarousel();
             }
-             updateCarousel();
-        }
-        function updateCarousel() {
-            const cards =
-                roomCarousel.querySelectorAll('.room-card');
-            const total = cards.length;
-            if (total === 0) {
-                return;
-            }
-            if (total === 1) {
 
-                cards[0].className = 'room-card center';
+            // function updateCarousel() {
+            //     const cards =
+            //         roomCarousel.querySelectorAll('.room-card');
+            //     const total = cards.length;
+            //     if (total === 0) {
+            //         return;
+            //     }
+            //     if (total === 1) {
 
-                return;
-            }
-            cards.forEach(function (card) {
-                card.className = 'room-card';
-            });
-            const prev =
-                (currentSlide - 1 + total) % total;
+            //         cards[0].className = 'room-card center';
 
-            const next =
-                (currentSlide + 1) % total;
-            cards[currentSlide].classList.add('center');
-            cards[prev].classList.add('left');
-            cards[next].classList.add('right');
-            cards.forEach(function (card, index) {
-                if (
-                    index !== currentSlide &&
-                    index !== prev &&
-                    index !== next
-                ) {
-                    if (index < currentSlide) {
-                        card.classList.add('hidden-left');
-                    } else {
-                        card.classList.add('hidden-right');
+            //         return;
+            //     }
+            //     cards.forEach(function(card) {
+            //         card.className = 'room-card';
+            //     });
+            //     const prev =
+            //         (currentSlide - 1 + total) % total;
+
+            //     const next =
+            //         (currentSlide + 1) % total;
+            //     cards[currentSlide].classList.add('center');
+            //     cards[prev].classList.add('left');
+            //     cards[next].classList.add('right');
+            //     cards.forEach(function(card, index) {
+            //         if (
+            //             index !== currentSlide &&
+            //             index !== prev &&
+            //             index !== next
+            //         ) {
+            //             if (index < currentSlide) {
+            //                 card.classList.add('hidden-left');
+            //             } else {
+            //                 card.classList.add('hidden-right');
+            //             }
+            //         }
+            //     });
+            // }
+
+            function updateCarousel() {
+                const cards = roomCarousel.querySelectorAll('.room-card');
+                const total = cards.length;
+
+                if (total === 0) return;
+
+                cards.forEach(function(card) {
+                    card.className = 'room-card';
+                });
+
+                if (total === 1) {
+                    cards[0].classList.add('center');
+                    return;
+                }
+
+                const center = currentSlide;
+
+                const left = (currentSlide - 1 + total) % total;
+                const farLeft = (currentSlide - 2 + total) % total;
+
+                const right = (currentSlide + 1) % total;
+                const farRight = (currentSlide + 2) % total;
+
+                cards[center].classList.add('center');
+
+                if (total > 1) {
+                    cards[left].classList.add('left');
+                    cards[right].classList.add('right');
+                }
+
+                if (total > 3) {
+                    cards[farLeft].classList.add('far-left');
+                    cards[farRight].classList.add('far-right');
+                }
+
+                cards.forEach(function(card, index) {
+                    if (
+                        index !== center &&
+                        index !== left &&
+                        index !== right &&
+                        index !== farLeft &&
+                        index !== farRight
+                    ) {
+                        card.classList.add('hidden');
                     }
-                }
+                });
+            }
+            if (nextButton) {
+                nextButton.addEventListener('click', function() {
+                    const cards =
+                        roomCarousel.querySelectorAll('.room-card');
+                    const total = cards.length;
+                    if (total <= 1) {
+                        return;
+                    }
+                    currentSlide =
+                        (currentSlide + 1) % total;
+                    updateCarousel();
+                });
+            }
+            if (prevButton) {
+                prevButton.addEventListener('click', function() {
+                    const cards =
+                        roomCarousel.querySelectorAll('.room-card');
+                    const total = cards.length;
+                    if (total <= 1) {
+                        return;
+                    }
+                    currentSlide =
+                        (currentSlide - 1 + total) % total;
+                    updateCarousel();
+                });
+            }
+            categoryTabs.forEach(function(categoryTab) {
+                categoryTab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const categoryIndex =
+                        parseInt(this.dataset.index);
+                    loadCategory(categoryIndex);
+                });
             });
-        }
-        if (nextButton) {
-            nextButton.addEventListener('click', function () {
-                const cards =
-                    roomCarousel.querySelectorAll('.room-card');
-                const total = cards.length;
-                if (total <= 1) {
-                    return;
-                }
-                currentSlide =
-                    (currentSlide + 1) % total;
-                updateCarousel();
-            });
-        }
-        if (prevButton) {
-            prevButton.addEventListener('click', function () {
-                const cards =
-                    roomCarousel.querySelectorAll('.room-card');
-                const total = cards.length;
-                if (total <= 1) {
-                    return;
-                }
-                currentSlide =
-                    (currentSlide - 1 + total) % total;
-                updateCarousel();
-            });
-        }
-        categoryTabs.forEach(function (categoryTab) {
-            categoryTab.addEventListener('click', function (e) {
-                e.preventDefault();
-                const categoryIndex =
-                    parseInt(this.dataset.index);
-                loadCategory(categoryIndex);
-            });
+            if (mainCategories.length > 0) {
+                loadCategory(0);
+            }
         });
-        if (mainCategories.length > 0) {
-            loadCategory(0);
-        }
-    });
-</script>
+    </script>
 @endsection
-     

@@ -1,102 +1,143 @@
 @extends('front.layouts.app')
 @section('content')
     <!-- page-banner-section -->
-      <section class="site-content myaccount-site-content">      
-      <div class="page-banner-section">
-        <div class="page-banner">
-            <div class="container">
-                <div class="page-banner-wrap">
-                    <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
-                        <ul class="breadcrumb-items">
-                            <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}" rel="home"><span itemprop="name">Home</span></a></li>                          
-                            <li class="breadcrumb-item trail-end"><span itemprop="name">My Purchase</span></li>
-                        </ul>
+    <section class="site-content myaccount-site-content">
+        <div class="page-banner-section">
+            <div class="page-banner">
+                <div class="container">
+                    <div class="page-banner-wrap">
+                        <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
+                            <ul class="breadcrumb-items">
+                                <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}"
+                                        rel="home"><span itemprop="name">Home</span></a></li>
+                                <li class="breadcrumb-item trail-end"><span itemprop="name">My Purchase</span></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-      <!-- page-banner-section -->
-      <div class="content-wrapper">
-        <div class="container">         
-          <div class="content-area">
-            <div class="myaccout-section">
-              <div class="row">
-                <!-- sidebar-section -->
-                @include('front.modules.dashboard.sidebar')
-                <!-- sidebar-section -->
-                
-                <div class="myaccout-content-area col-md-9 col-sm-12 col-12">                 
-                    <div class="page-header">
-                      <h1 class="page-title">My Wishlist</h1>
-                    </div>
-                    <div class="myaccout-content-wrapper">
-                     <div class="my-wishlist-section">
-                        <ul class="products columns-3">
-                            @if($wishlistData)
-                            @foreach($wishlistData as $wishlist)
-                            @php 
-                                $product = $wishlist->getProduct;
-                            @endphp     
-                            <li class="product-item product product-wishlist-item">
-                                <div class="product-wrap">
-                                    <div class="product-wishlist-remove">
-                                    <a href="javascript:void(0)" class="remove remove_from_wishlist removewishlistBtn" data-product-id="{{ $product->id }}" title="Remove this product">
-                                        <span class="icon-top wishlistBtn" data-product-id="{{ $product->id }}">
-                                        <i class="fa-solid fa-xmark"></i>
-                                        </span>
-                                    </a>
-                                    </div>
-                                    <div class="product-image">
-                                    <div class="onsale-trading">
-                                        <span class="onsale-off">Rs {{ $product->selling_price - $product->buying_price }} OFF</span>
-                                    </div>
-                                    <a  href="{{ route('front-product.detail',['product' => 'product','title' =>productSlug($product->name).'.html', 'sku' => $product->sku])}}">
-                                        <div class="product-main-image">
-                                        <img src="{{ $product->images['first']}}" alt="{{ $product->name }}" class="main-image">
-                                        </div>
-                                        <div class="product-hover-image">
-                                        <img src="{{ $product->images['second']}}" alt="{{ $product->name }}" class="hover-image">
-                                        </div>
-                                    </a>
-                                    </div>
-                                    <div class="product-content">
-                                    <h5 class="product-title">
-                                        <a  href="{{ route('front-product.detail',['product' => 'product','title' =>productSlug($product->name).'.html', 'sku' =>$product->sku])}}">{{ $product->name }}</a>
-                                    </h5>
-                                    <div class="product-price">
-                                        <del>₹ {{ floor($product->buying_price) }}</del>
-                                        <ins>₹ {{ floor($product->selling_price) }}</ins>
-                                    </div>
-                                    <div class="product-addtocart-button">
-                                        <a  href="{{ route('front-product.detail',['product' => 'product','title' =>productSlug($product->name).'.html', 'sku' =>$product->sku])}}" class="product-addtocart"> <svg fill="#010101" height="20px" width="20px" version="1.1"
-                                            id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                            viewBox="0 0 483.1 483.1" xml:space="preserve">
-                                            <path
-                                            d="M434.55,418.7l-27.8-313.3c-0.5-6.2-5.7-10.9-12-10.9h-58.6c-0.1-52.1-42.5-94.5-94.6-94.5s-94.5,42.4-94.6,94.5h-58.6
-                                            c-6.2,0-11.4,4.7-12,10.9l-27.8,313.3c0,0.4,0,0.7,0,1.1c0,34.9,32.1,63.3,71.5,63.3h243c39.4,0,71.5-28.4,71.5-63.3
-                                            C434.55,419.4,434.55,419.1,434.55,418.7z M241.55,24c38.9,0,70.5,31.6,70.6,70.5h-141.2C171.05,55.6,202.65,24,241.55,24z
-                                            M363.05,459h-243c-26,0-47.2-17.3-47.5-38.8l26.8-301.7h47.6v42.1c0,6.6,5.4,12,12,12s12-5.4,12-12v-42.1h141.2v42.1
-                                            c0,6.6,5.4,12,12,12s12-5.4,12-12v-42.1h47.6l26.8,301.8C410.25,441.7,389.05,459,363.05,459z" />
-                            
-                                        </svg></a>
-                                    </div>
-                                    <div class="dateadded mt-2">Added on : {{ \Carbon\Carbon::parse($product->updated_at)->format('d M Y H:i A') }}</div>
+        <!-- page-banner-section -->
+        <div class="content-wrapper">
+            <div class="container">
+                <div class="content-area">
+                    <div class="myaccout-section">
+                        <div class="dashboard-inner-row">
+                            <!-- sidebar-section -->
+                            @include('front.modules.dashboard.sidebar')
+                            <!-- sidebar-section -->
+
+                            <div class="myaccout-content-area col-md-9 col-sm-12 col-12">
+                                <div class="page-header">
+                                    <h1 class="page-title">My Wishlist</h1>
+                                </div>
+                                <div class="myaccout-content-wrapper">
+                                    <div class="my-wishlist-section">
+                                        <ul class="products columns-3">
+                                            @if ($wishlistData)
+                                                @foreach ($wishlistData as $wishlist)
+                                                    @php
+                                                        $product = $wishlist->getProduct;
+                                                    @endphp
+                                                    <li class="product-item product product-wishlist-item">
+                                                        <div class="product-wrap">
+                                                            <div class="product-wishlist-remove">
+                                                                <a href="javascript:void(0)"
+                                                                    class="remove remove_from_wishlist removewishlistBtn"
+                                                                    data-product-id="@if (isset($product->id)) {{ $product->id }} @endif"
+                                                                    title="Remove this product">
+                                                                    <span class="icon-top wishlistBtn"
+                                                                        data-product-id="@if (isset($product->id)) {{ $product->id }} @endif">
+                                                                        <i class="fa-solid fa-xmark"></i>
+                                                                    </span>
+                                                                </a>
+                                                            </div>
+                                                            <div class="product-image">
+                                                                <div class="onsale-trading">
+                                                                    <span class="onsale-off">Rs
+                                                                        @if (isset($product) && !empty($product))
+                                                                            {{ $product->selling_price - $product->buying_price }}
+                                                                        @endif
+                                                                        OFF
+                                                                    </span>
+                                                                </div>
+                                                                <a
+                                                                    href="@if (isset($product) && !empty($product)) {{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($product->name) . '.html', 'sku' => $product->sku]) }} @endif">
+                                                                    <div class="product-main-image">
+                                                                        <img
+                                                                            src="@if (isset($product) && !empty($product)) {{ $product->images['first'] }}"
+                                                                            alt="{{ $product->name }}" class="main-image" @endif>
+                                                                    </div>
+                                                                    <div class="product-hover-image">
+                                                                        <img
+                                                                            src="@if (isset($product) && !empty($product)) {{ $product->images['second'] }}"
+                                                                            alt="{{ $product->name }}" class="hover-image" @endif>
+                                                                    </div>
+                                                                </a>
+                                                            </div>
+                                                            <div class="product-content">
+                                                                        <h5 class="product-title">
+                                                                            @if (isset($product) && !empty($product))
+                                                                                <a
+                                                                                    href="{{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($product->name) . '.html', 'sku' => $product->sku]) }}">{{ $product->name }}</a>
+                                                                            @endif
+                                                                        </h5>
+                                                                        <div class="product-price">
+                                                                            @if (isset($product) && !empty($product))
+                                                                                <del>₹
+                                                                                    {{ floor($product->buying_price) }}</del>
+                                                                                <ins>₹
+                                                                                    {{ floor($product->selling_price) }}</ins>
+                                                                            @endif
+                                                                        </div>
+                                                                        <div class="product-addtocart-button">
+                                                                            @if (isset($product) && !empty($product))
+                                                                                <a href="{{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($product->name) . '.html', 'sku' => $product->sku]) }}"
+                                                                                    class="product-addtocart"> <svg
+                                                                                        fill="#010101" height="20px"
+                                                                                        width="20px" version="1.1"
+                                                                                        id="Capa_1"
+                                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                                                        viewBox="0 0 483.1 483.1"
+                                                                                        xml:space="preserve">
+                                                                                        <path
+                                                                                            d="M434.55,418.7l-27.8-313.3c-0.5-6.2-5.7-10.9-12-10.9h-58.6c-0.1-52.1-42.5-94.5-94.6-94.5s-94.5,42.4-94.6,94.5h-58.6
+                                                                    c-6.2,0-11.4,4.7-12,10.9l-27.8,313.3c0,0.4,0,0.7,0,1.1c0,34.9,32.1,63.3,71.5,63.3h243c39.4,0,71.5-28.4,71.5-63.3
+                                                                    C434.55,419.4,434.55,419.1,434.55,418.7z M241.55,24c38.9,0,70.5,31.6,70.6,70.5h-141.2C171.05,55.6,202.65,24,241.55,24z
+                                                                    M363.05,459h-243c-26,0-47.2-17.3-47.5-38.8l26.8-301.7h47.6v42.1c0,6.6,5.4,12,12,12s12-5.4,12-12v-42.1h141.2v42.1
+                                                                    c0,6.6,5.4,12,12,12s12-5.4,12-12v-42.1h47.6l26.8,301.8C410.25,441.7,389.05,459,363.05,459z" />
+
+                                                                                    </svg></a>
+                                                                            @endif
+                                                                        </div>
+                                                                        <div class="dateadded mt-2">Added on :
+                                                                            @if (isset($product) && !empty($product))
+                                                                                {{ \Carbon\Carbon::parse($product->updated_at)->format('d M Y H:i A') }}
+                                                                            @endif
+                                                                        </div>
+                                                                    </div>
+                                                            </div>
+                                                    </li>
+                                                @endforeach
+                                            @else
+                                                <p>No items in wishlist</p>
+                                            @endif
+                                        </ul>
                                     </div>
                                 </div>
-                            </li>
-                            @endforeach
-                                @else
-                                <p>No items in wishlist</p>
-                                @endif
-                        </ul>
-                     </div>
-                    </div>                   
-                </div>  
-                 <!-- myaccout-content-area -->
-                      
+                            </div>
+                            <!-- myaccout-content-area -->
+                        </div>
+                        <!--container-->
+                    </div>
+                    <!--content-wrapper-->
+    </section>
     <!-- page main wrapper end -->
-     
+    <!-- myaccout-content-area -->
+
+    <!-- page main wrapper end -->
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -158,10 +199,10 @@
         });
     </script>
     <script>
-        $(document).on('click', '.removewishlistBtn', function() {   
-           // Delay for 2 seconds (2000 milliseconds)
+        $(document).on('click', '.removewishlistBtn', function() {
+            // Delay for 2 seconds (2000 milliseconds)
             setTimeout(function() {
-            location.reload();
+                location.reload();
             }, 2000);
         });
 
@@ -281,16 +322,18 @@
         });
         $(document).on('click', '.wishlistBtn', function() {
             let that = $(this);
-           let pid = $(this).data('product-id');
+            let pid = $(this).data('product-id');
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                         'content')
-                },                
+                },
                 type: "POST",
                 url: "{{ route('front-addwish') }}",
-                data:{product_id:pid},
-                dataType:"json",
+                data: {
+                    product_id: pid
+                },
+                dataType: "json",
                 success: function(response) {
                     that.parents('.product-card').parent().remove();
                     wishlistItemCount();
@@ -308,62 +351,62 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-      $(document).ready(function() {
-    $('#update-dashboard').on('submit', function(e) {
-        e.preventDefault();
+        $(document).ready(function() {
+            $('#update-dashboard').on('submit', function(e) {
+                e.preventDefault();
 
-        let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
+                let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
 
-        // ✅ Client-side validation
-        if (phoneNumber === '') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Validation Error',
-                text: 'Phone number is required.',
-            });
-            return; // stop the form submission
-        }
-
-        let formData = new FormData(this); // captures all form data including files
-
-        $.ajax({
-            url: "{{ route('front-user.updateProfile') }}",
-            type: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: response.message,
-                    showConfirmButton: false,
-                    timer: 2000
-                }).then(() => {
-                    window.location.href = response.redirect_url;
-                });
-            },
-            error: function(xhr) {
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
-                    let firstError = Object.values(errors)[0][0];
-
+                // ✅ Client-side validation
+                if (phoneNumber === '') {
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: firstError,
+                        icon: 'warning',
+                        title: 'Validation Error',
+                        text: 'Phone number is required.',
                     });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Server Error',
-                        text: 'Something went wrong. Please try again later.',
-                    });
+                    return; // stop the form submission
                 }
-            }
+
+                let formData = new FormData(this); // captures all form data including files
+
+                $.ajax({
+                    url: "{{ route('front-user.updateProfile') }}",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = response.redirect_url;
+                        });
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            let firstError = Object.values(errors)[0][0];
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: firstError,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Server Error',
+                                text: 'Something went wrong. Please try again later.',
+                            });
+                        }
+                    }
+                });
+            });
         });
-    });
-});
 
 
         const img = document.getElementById('preview-image');
@@ -447,7 +490,7 @@
     </script>
 
     <!-- Tabing Order panel -->
-     <style>
+    <style>
         /* Style the tab */
         .tab {
             overflow: hidden;
@@ -475,12 +518,12 @@
 
         /* Change background color of buttons on hover */
         .tab button:hover {
-        background-color: #ddd;
+            background-color: #ddd;
         }
 
         /* Create an active/current tablink class */
         .tab button.active {
-        background-color: #f3eeae;
+            background-color: #f3eeae;
         }
 
         /* Style the tab content */
@@ -490,7 +533,7 @@
             /* border: 1px solid #ccc; */
             /* border-top: none; */
         }
-        </style>
+    </style>
     <script>
         function openOrder(evt, OrderName) {
             var i, tabcontent, tablinks;

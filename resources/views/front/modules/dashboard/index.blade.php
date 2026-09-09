@@ -1,169 +1,177 @@
 @extends('front.layouts.app')
 @section('content')
-    <section class="site-content myaccount-site-content">      
-      <div class="page-banner-section">
-        <div class="page-banner">
-            <div class="container">
-                <div class="page-banner-wrap">
-                    <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
-                        <ul class="breadcrumb-items">
-                            <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}" rel="home"><span itemprop="name">Home</span></a></li>
-                            <li class="breadcrumb-item trail-end"><span itemprop="name">My Account</span></li>
-                        </ul>
+    <section class="site-content myaccount-site-content">
+        <div class="page-banner-section">
+            <div class="page-banner">
+                <div class="container">
+                    <div class="page-banner-wrap">
+                        <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
+                            <ul class="breadcrumb-items">
+                                <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}"
+                                        rel="home"><span itemprop="name">Home</span></a></li>
+                                <li class="breadcrumb-item trail-end"><span itemprop="name">My Account</span></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-      <!-- page-banner-section -->
-      <div class="content-wrapper">
-        <div class="container">         
-          <div class="content-area">
-            <div class="myaccout-section">
-              <div class="row">
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <strong>Success!</strong> {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-                <!-- sidebar-section -->
-                @include('front.modules.dashboard.sidebar')
-                <!-- sidebar-section -->
-                
-                <div class="myaccout-content-area col-md-9 col-sm-12 col-12">                 
-                    <div class="page-header">
-                      <h1 class="page-title">My Account</h1>
-                    </div>
-                    <div class="dashboard-wrapper">
-                      <div class="row">
-                        <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
-                          <div class="dashboard-wrap">
-                            <a href="{{  env('WEBSITE_URL').'mypurchase' }}">
-                              <div class="dashboard-icon">
-                                <img src="{{  env('WEBSITE_URL').'tjap-images/icon-box.svg' }}" alt=""/>
-                              </div>
-                              <div class="dashboard-title">
-                                My Purchase
-                              </div>
-                            </a>
-                          </div>
-                        </div>
-                        <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
-                          <div class="dashboard-wrap">
-                            <a href="{{  env('WEBSITE_URL').'accountsetting' }}">
-                              <div class="dashboard-icon">
-                                <img src="{{  env('WEBSITE_URL').'tjap-images/icon-setting.svg' }}" alt=""/>
-                              </div>
-                              <div class="dashboard-title">
-                                Account Setting
-                              </div>
-                            </a>
-                          </div>
-                        </div>
-                        <!-- <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
-                          <div class="dashboard-wrap">
-                            <a href="{{  env('WEBSITE_URL').'walletpayment' }}">
-                              <div class="dashboard-icon">
-                                <img src="{{  env('WEBSITE_URL').'tjap-images/icon-card.svg' }}" alt=""/>
-                              </div>
-                              <div class="dashboard-title">
-                                Payment
-                              </div>
-                            </a>
-                          </div>
-                        </div> -->
-                        <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
-                          <div class="dashboard-wrap">
-                            <a href="{{  env('WEBSITE_URL').'walletpayment' }}">
-                              <div class="dashboard-icon">
-                                <img src="{{  env('WEBSITE_URL').'tjap-images/icon-points.svg' }}" alt=""/>
-                              </div>
-                              <div class="dashboard-title">
-                                My Wallet & Payment Details
-                              </div>
-                            </a>
-                          </div>
-                        </div>
-                        <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
-                          <div class="dashboard-wrap">
-                            <a href="{{  env('WEBSITE_URL').'wishlist' }}">
-                              <div class="dashboard-icon">
-                                <img src="{{  env('WEBSITE_URL').'tjap-images/icon-heart.svg' }}" alt=""/>
-                              </div>
-                              <div class="dashboard-title">
-                                My Wishlists
-                              </div>
-                            </a>
-                          </div>
-                        </div>
-                        <!-- <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
-                          <div class="dashboard-wrap">
-                            <a href="{{  env('WEBSITE_URL').'rateing-review' }}">
-                              <div class="dashboard-icon">
-                                <img src="{{  env('WEBSITE_URL').'tjap-images/icon-review.svg' }}" alt=""/>
-                              </div>
-                              <div class="dashboard-title">
-                                Rate & Reviews
-                              </div>
-                            </a>
-                          </div>
-                        </div> -->
-                        <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
-                          <div class="dashboard-wrap">
-                            <a href="{{  env('WEBSITE_URL').'contactwithus' }}">
-                              <div class="dashboard-icon">
-                                <img src="{{  env('WEBSITE_URL').'tjap-images/icon-chat.svg' }}" alt=""/>
-                              </div>
-                              <div class="dashboard-title">
-                                Contact Us
-                              </div>
-                            </a>
-                          </div>
-                        </div>
-                        <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
-                          <div class="dashboard-wrap">
-                            <a href="{{  env('WEBSITE_URL').'hesuggestionlp' }}">
-                              <div class="dashboard-icon">
-                                <img src="{{  env('WEBSITE_URL').'tjap-images/icon-help.svg' }}" alt=""/>
-                              </div>
-                              <div class="dashboard-title">
-                                Help Us improve
-                              </div>
-                            </a>
-                          </div>
-                        </div>
-                        <!-- <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
-                          <div class="dashboard-wrap">
-                            <a href="{{  env('WEBSITE_URL').'invite-friends' }}">
-                              <div class="dashboard-icon">
-                                <img src="{{  env('WEBSITE_URL').'tjap-images/icon-invite-friend.svg' }}" alt=""/>
-                              </div>
-                              <div class="dashboard-title">
-                                Invite a friend
-                              </div>
-                            </a>
-                          </div>
-                        </div> -->
+        <!-- page-banner-section -->
+        <div class="content-wrapper dashboard-main-sec">
+            <div class="container">
+                <div class="content-area">
+                    <div class="myaccout-section">
+                        <div class="dashboard-inner-row">
+                            @if (session('success'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>Success!</strong> {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>
+                            @endif
+                            <!-- sidebar-section -->
+                            @include('front.modules.dashboard.sidebar')
+                            <!-- sidebar-section -->
 
-                      </div>
-                    </div>                   
-                </div>  
-                 <!-- myaccout-content-area -->
-              </div>
-              <!-- row -->
+                            <div class="myaccout-content-area col-md-9 col-sm-12 col-12">
+                                <div class="page-header">
+                                    <h1 class="page-title">My Account</h1>
+                                </div>
+                                <div class="dashboard-wrapper">
+                                    <div class="dashboard-wrapper-inner">
+                                        <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
+                                            <div class="dashboard-wrap">
+                                                <a href="{{ env('WEBSITE_URL') . 'mypurchase' }}">
+                                                    <div class="dashboard-icon">
+                                                        <img src="{{ env('WEBSITE_URL') . 'tjap-images/icon-box.svg' }}"
+                                                            alt="" />
+                                                    </div>
+                                                    <div class="dashboard-title">
+                                                        My Purchase
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
+                                            <div class="dashboard-wrap">
+                                                <a href="{{ env('WEBSITE_URL') . 'accountsetting' }}">
+                                                    <div class="dashboard-icon">
+                                                        <img src="{{ env('WEBSITE_URL') . 'tjap-images/icon-setting.svg' }}"
+                                                            alt="" />
+                                                    </div>
+                                                    <div class="dashboard-title">
+                                                        Account Setting
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <!-- <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
+                                          <div class="dashboard-wrap">
+                                            <a href="{{ env('WEBSITE_URL') . 'walletpayment' }}">
+                                              <div class="dashboard-icon">
+                                                <img src="{{ env('WEBSITE_URL') . 'tjap-images/icon-card.svg' }}" alt=""/>
+                                              </div>
+                                              <div class="dashboard-title">
+                                                Payment
+                                              </div>
+                                            </a>
+                                          </div>
+                                        </div> -->
+                                        <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
+                                            <div class="dashboard-wrap">
+                                                <a href="{{ env('WEBSITE_URL') . 'walletpayment' }}">
+                                                    <div class="dashboard-icon">
+                                                        <img src="{{ env('WEBSITE_URL') . 'tjap-images/icon-points.svg' }}"
+                                                            alt="" />
+                                                    </div>
+                                                    <div class="dashboard-title">
+                                                        My Wallet & Payment Details
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
+                                            <div class="dashboard-wrap">
+                                                <a href="{{ env('WEBSITE_URL') . 'wishlist' }}">
+                                                    <div class="dashboard-icon">
+                                                        <img src="{{ env('WEBSITE_URL') . 'tjap-images/icon-heart.svg' }}"
+                                                            alt="" />
+                                                    </div>
+                                                    <div class="dashboard-title">
+                                                        My Wishlists
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <!-- <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
+                                          <div class="dashboard-wrap">
+                                            <a href="{{ env('WEBSITE_URL') . 'rateing-review' }}">
+                                              <div class="dashboard-icon">
+                                                <img src="{{ env('WEBSITE_URL') . 'tjap-images/icon-review.svg' }}" alt=""/>
+                                              </div>
+                                              <div class="dashboard-title">
+                                                Rate & Reviews
+                                              </div>
+                                            </a>
+                                          </div>
+                                        </div> -->
+                                        <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
+                                            <div class="dashboard-wrap">
+                                                <a href="{{ env('WEBSITE_URL') . 'contactwithus' }}">
+                                                    <div class="dashboard-icon">
+                                                        <img src="{{ env('WEBSITE_URL') . 'tjap-images/icon-chat.svg' }}"
+                                                            alt="" />
+                                                    </div>
+                                                    <div class="dashboard-title">
+                                                        Contact Us
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
+                                            <div class="dashboard-wrap">
+                                                <a href="{{ env('WEBSITE_URL') . 'hesuggestionlp' }}">
+                                                    <div class="dashboard-icon">
+                                                        <img src="{{ env('WEBSITE_URL') . 'tjap-images/icon-help.svg' }}"
+                                                            alt="" />
+                                                    </div>
+                                                    <div class="dashboard-title">
+                                                        Help Us improve
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <!-- <div class="dashboard-item col-lg-4 col-md-4 col-sm-2 col-6">
+                                          <div class="dashboard-wrap">
+                                            <a href="{{ env('WEBSITE_URL') . 'invite-friends' }}">
+                                              <div class="dashboard-icon">
+                                                <img src="{{ env('WEBSITE_URL') . 'tjap-images/icon-invite-friend.svg' }}" alt=""/>
+                                              </div>
+                                              <div class="dashboard-title">
+                                                Invite a friend
+                                              </div>
+                                            </a>
+                                          </div>
+                                        </div> -->
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- myaccout-content-area -->
+                        </div>
+                        <!-- row -->
+                    </div>
+                    <!-- myaccout-section -->
+                </div>
+                <!--content-area  -->
             </div>
-            <!-- myaccout-section -->
-          </div>
-         <!--content-area  -->
+            <!--container-->
         </div>
-        <!--container-->
-      </div>
-      <!--content-wrapper-->
+        <!--content-wrapper-->
     </section>
 
-    <div class="modal fade xs-modal" id="logout" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <div class="modal fade xs-modal" id="logout" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+        style="display: none;">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-head">
@@ -359,16 +367,18 @@
         });
         $(document).on('click', '.wishlistBtn', function() {
             let that = $(this);
-           let pid = $(this).data('product-id');
+            let pid = $(this).data('product-id');
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                         'content')
-                },                
+                },
                 type: "POST",
                 url: "{{ route('front-addwish') }}",
-                data:{product_id:pid},
-                dataType:"json",
+                data: {
+                    product_id: pid
+                },
+                dataType: "json",
                 success: function(response) {
                     that.parents('.product-card').parent().remove();
                     wishlistItemCount();
@@ -386,62 +396,62 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-      $(document).ready(function() {
-    $('#update-dashboard').on('submit', function(e) {
-        e.preventDefault();
+        $(document).ready(function() {
+            $('#update-dashboard').on('submit', function(e) {
+                e.preventDefault();
 
-        let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
+                let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
 
-        // ✅ Client-side validation
-        if (phoneNumber === '') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Validation Error',
-                text: 'Phone number is required.',
-            });
-            return; // stop the form submission
-        }
-
-        let formData = new FormData(this); // captures all form data including files
-
-        $.ajax({
-            url: "{{ route('front-user.updateProfile') }}",
-            type: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: response.message,
-                    showConfirmButton: false,
-                    timer: 2000
-                }).then(() => {
-                    window.location.href = response.redirect_url;
-                });
-            },
-            error: function(xhr) {
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
-                    let firstError = Object.values(errors)[0][0];
-
+                // ✅ Client-side validation
+                if (phoneNumber === '') {
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: firstError,
+                        icon: 'warning',
+                        title: 'Validation Error',
+                        text: 'Phone number is required.',
                     });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Server Error',
-                        text: 'Something went wrong. Please try again later.',
-                    });
+                    return; // stop the form submission
                 }
-            }
+
+                let formData = new FormData(this); // captures all form data including files
+
+                $.ajax({
+                    url: "{{ route('front-user.updateProfile') }}",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = response.redirect_url;
+                        });
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            let firstError = Object.values(errors)[0][0];
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: firstError,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Server Error',
+                                text: 'Something went wrong. Please try again later.',
+                            });
+                        }
+                    }
+                });
+            });
         });
-    });
-});
 
 
         const img = document.getElementById('preview-image');
@@ -525,7 +535,7 @@
     </script>
 
     <!-- Tabing Order panel -->
-     <style>
+    <style>
         /* Style the tab */
         .tab {
             overflow: hidden;
@@ -553,12 +563,12 @@
 
         /* Change background color of buttons on hover */
         .tab button:hover {
-        background-color: #ddd;
+            background-color: #ddd;
         }
 
         /* Create an active/current tablink class */
         .tab button.active {
-        background-color: #f3eeae;
+            background-color: #f3eeae;
         }
 
         /* Style the tab content */
@@ -568,7 +578,7 @@
             /* border: 1px solid #ccc; */
             /* border-top: none; */
         }
-        </style>
+    </style>
     <script>
         function openOrder(evt, OrderName) {
             var i, tabcontent, tablinks;

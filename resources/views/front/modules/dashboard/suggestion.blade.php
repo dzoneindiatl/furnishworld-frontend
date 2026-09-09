@@ -1,94 +1,122 @@
 @extends('front.layouts.app')
 @section('content')
     <!-- page-banner-section -->
-      <section class="site-content myaccount-site-content">      
-      <div class="page-banner-section">
-        <div class="page-banner">
-            <div class="container">
-                <div class="page-banner-wrap">
-                    <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
-                        <ul class="breadcrumb-items">
-                            <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}" rel="home"><span itemprop="name">Home</span></a></li>                          
-                            <li class="breadcrumb-item trail-end"><span itemprop="name">My Purchase</span></li>
-                        </ul>
+    <section class="site-content myaccount-site-content">
+        <div class="page-banner-section">
+            <div class="page-banner">
+                <div class="container">
+                    <div class="page-banner-wrap">
+                        <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
+                            <ul class="breadcrumb-items">
+                                <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}"
+                                        rel="home"><span itemprop="name">Home</span></a></li>
+                                <li class="breadcrumb-item trail-end"><span itemprop="name">My Purchase</span></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-      <!-- page-banner-section -->
-      <div class="content-wrapper">
-        <div class="container">         
-          <div class="content-area">
-            <div class="myaccout-section">
-              <div class="row">
-                <!-- sidebar-section -->
-                @include('front.modules.dashboard.sidebar')
-                <!-- sidebar-section -->
-                
-                <div class="myaccout-content-area col-md-9 col-sm-12 col-12">                 
-                    <div class="page-header">
-                      <h1 class="page-title">Help Us improve</h1>
+        <!-- page-banner-section -->
+        <div class="content-wrapper">
+            <div class="container">
+                <div class="content-area">
+                    <div class="myaccout-section">
+                        <div class="dashboard-inner-row">
+                            <!-- sidebar-section -->
+                            @include('front.modules.dashboard.sidebar')
+                            <!-- sidebar-section -->
+
+                            <div class="myaccout-content-area col-md-9 col-sm-12 col-12">
+                                <div class="page-header">
+                                    <h1 class="page-title">Help Us improve</h1>
+                                </div>
+                                <div class="myaccout-content-wrapper">
+                                    <div class="myaccout-box-item">
+                                        <div class="myaccout-box-wrap">
+                                            <div class="myaccout-box-body">
+                                                @if ($errors->any())
+                                                    <div class="alert alert-danger alert-dismissible fade show"
+                                                        role="alert">
+                                                        <strong>Whoops!</strong> There were some problems with your input.
+                                                        <ul class="mt-2 mb-0">
+                                                            @foreach ($errors->all() as $error)
+                                                                <li>{{ $error }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                @endif
+                                                @if (session('success'))
+                                                    <div class="alert alert-success alert-dismissible fade show"
+                                                        role="alert">
+                                                        <strong>Success!</strong> {{ session('success') }}
+                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                @endif
+                                                <h5 class="shipping-add-title">Tell us how to improve us!</h5>
+                                                <form action="{{ route('front-user.contactSuggestionSave') }}"
+                                                    method="post" autocomplete="off">
+                                                    @csrf
+                                                    <input type="hidden" name="type" value="suggestion">
+                                                    <div class="help-us-improve-sec">
+                                                        <div class="form-group col-sm-12 col-12 help-us-improve-title">
+                                                            <label>Title</label><input type="text" name="title"
+                                                                value="" size="40" class="form-control">
+                                                        </div>
+                                                        <div class="help-us-improve-subject">
+                                                            <div class="form-group col-sm-6 col-12">
+                                                                <label>Subject</label><input type="text" name="subject"
+                                                                    value="" size="40" class="form-control">
+                                                            </div>
+                                                            <div class="form-group col-sm-6 col-12">
+                                                                <label>Name</label><input type="text" name="name"
+                                                                    value="<?php echo Auth::user()?->name; ?>" size="40"
+                                                                    class="form-control" readonly>
+                                                            </div>
+                                                            <div class="form-group col-sm-6 col-12">
+                                                                <label>Email</label><input type="email" name="email"
+                                                                    value="<?php echo Auth::user()?->email; ?>" size="40"
+                                                                    class="form-control" readonly>
+                                                            </div>
+                                                            <div class="form-group col-sm-6 col-12">
+                                                                <label>Phone</label><input type="tel"
+                                                                    name="phone_number" value="<?php echo Auth::user()?->phone_number; ?>"
+                                                                    size="40" class="form-control" readonly>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group col-sm-12 col-12 help-us-improve-write">
+                                                            <label>Write here</label>
+                                                            <textarea name="message" cols="40" rows="10" class="form-control"></textarea>
+                                                        </div>
+                                                        <div class="form-submit col-sm-12 col-12">
+                                                            <input type="submit" value="Submit" class="btn btn-secondary">
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- myaccout-content-area -->
+                        </div>
+                        <!-- row -->
                     </div>
-                    <div class="myaccout-content-wrapper">
-                      <div class="myaccout-box-item">
-                        <div class="myaccout-box-wrap">
-                          <div class="myaccout-box-body">
-                            @if ($errors->any())
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <strong>Whoops!</strong> There were some problems with your input.
-                                    <ul class="mt-2 mb-0">
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            @endif
-                            @if (session('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <strong>Success!</strong> {{ session('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            @endif
-                            <h5 class="mb-3">Tell us how to improve us!</h5>
-                            <form action="{{route('front-user.contactSuggestionSave')}}" method="post" autocomplete="off">  
-                            @csrf
-                            <input type="hidden" name="type" value="suggestion">
-                              <div class="row">
-                                <div class="form-group col-sm-12 col-12">
-                                  <label>Title</label><input type="text" name="title" value="" size="40" class="form-control">
-                                </div>
-                                <div class="form-group col-sm-6 col-12">
-                                  <label>Subject</label><input type="text" name="subject" value="" size="40" class="form-control">
-                                </div>
-                                <div class="form-group col-sm-6 col-12">
-                                  <label>Name</label><input type="text" name="name" value="<?php echo Auth::user()?->name;  ?>" size="40" class="form-control" readonly>
-                                </div>
-                                <div class="form-group col-sm-6 col-12">
-                                  <label>Email</label><input type="email" name="email" value="<?php echo Auth::user()?->email;  ?>" size="40" class="form-control" readonly>
-                                </div>
-                                <div class="form-group col-sm-6 col-12">
-                                  <label>Phone</label><input type="tel" name="phone_number" value="<?php echo Auth::user()?->phone_number;  ?>" size="40" class="form-control" readonly>
-                                </div>
-                                
-                                <div class="form-group col-sm-12 col-12">
-                                  <label>Write here</label><textarea name="message" cols="40" rows="10" class="form-control"></textarea>
-                                </div>
-                                <div class="form-submit col-sm-12 col-12">
-                                  <input type="submit" value="Submit" class="btn btn-secondary">
-                                </div>
-                              </div>
-                            </form>
-                          </div>                         
-                        </div>                       
-                      </div>
-                    </div>               
-                </div>  
-                 <!-- myaccout-content-area -->
-                      
+                    <!-- myaccout-section -->
+                </div>
+                <!--content-area  -->
+            </div>
+            <!--container-->
+        </div>
+        <!--content-wrapper-->
+    </section>
+
     <!-- page main wrapper end -->
-     
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -150,10 +178,10 @@
         });
     </script>
     <script>
-        $(document).on('click', '.removewishlistBtn', function() {   
-           // Delay for 2 seconds (2000 milliseconds)
+        $(document).on('click', '.removewishlistBtn', function() {
+            // Delay for 2 seconds (2000 milliseconds)
             setTimeout(function() {
-            location.reload();
+                location.reload();
             }, 2000);
         });
 
@@ -273,16 +301,18 @@
         });
         $(document).on('click', '.wishlistBtn', function() {
             let that = $(this);
-           let pid = $(this).data('product-id');
+            let pid = $(this).data('product-id');
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                         'content')
-                },                
+                },
                 type: "POST",
                 url: "{{ route('front-addwish') }}",
-                data:{product_id:pid},
-                dataType:"json",
+                data: {
+                    product_id: pid
+                },
+                dataType: "json",
                 success: function(response) {
                     that.parents('.product-card').parent().remove();
                     wishlistItemCount();
@@ -300,62 +330,62 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-      $(document).ready(function() {
-    $('#update-dashboard').on('submit', function(e) {
-        e.preventDefault();
+        $(document).ready(function() {
+            $('#update-dashboard').on('submit', function(e) {
+                e.preventDefault();
 
-        let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
+                let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
 
-        // ✅ Client-side validation
-        if (phoneNumber === '') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Validation Error',
-                text: 'Phone number is required.',
-            });
-            return; // stop the form submission
-        }
-
-        let formData = new FormData(this); // captures all form data including files
-
-        $.ajax({
-            url: "{{ route('front-user.updateProfile') }}",
-            type: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: response.message,
-                    showConfirmButton: false,
-                    timer: 2000
-                }).then(() => {
-                    window.location.href = response.redirect_url;
-                });
-            },
-            error: function(xhr) {
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
-                    let firstError = Object.values(errors)[0][0];
-
+                // ✅ Client-side validation
+                if (phoneNumber === '') {
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: firstError,
+                        icon: 'warning',
+                        title: 'Validation Error',
+                        text: 'Phone number is required.',
                     });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Server Error',
-                        text: 'Something went wrong. Please try again later.',
-                    });
+                    return; // stop the form submission
                 }
-            }
+
+                let formData = new FormData(this); // captures all form data including files
+
+                $.ajax({
+                    url: "{{ route('front-user.updateProfile') }}",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = response.redirect_url;
+                        });
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            let firstError = Object.values(errors)[0][0];
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: firstError,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Server Error',
+                                text: 'Something went wrong. Please try again later.',
+                            });
+                        }
+                    }
+                });
+            });
         });
-    });
-});
 
 
         const img = document.getElementById('preview-image');
@@ -439,7 +469,7 @@
     </script>
 
     <!-- Tabing Order panel -->
-     <style>
+    <style>
         /* Style the tab */
         .tab {
             overflow: hidden;
@@ -467,12 +497,12 @@
 
         /* Change background color of buttons on hover */
         .tab button:hover {
-        background-color: #ddd;
+            background-color: #ddd;
         }
 
         /* Create an active/current tablink class */
         .tab button.active {
-        background-color: #f3eeae;
+            background-color: #f3eeae;
         }
 
         /* Style the tab content */
@@ -482,7 +512,7 @@
             /* border: 1px solid #ccc; */
             /* border-top: none; */
         }
-        </style>
+    </style>
     <script>
         function openOrder(evt, OrderName) {
             var i, tabcontent, tablinks;

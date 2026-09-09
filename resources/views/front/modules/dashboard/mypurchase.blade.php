@@ -1,186 +1,225 @@
 @extends('front.layouts.app')
 @section('content')
     <!-- page-banner-section -->
-      <section class="site-content myaccount-site-content">      
-      <div class="page-banner-section">
-        <div class="page-banner">
-            <div class="container">
-                <div class="page-banner-wrap">
-                    <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
-                        <ul class="breadcrumb-items">
-                            <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}" rel="home"><span itemprop="name">Home</span></a></li>                          
-                            <li class="breadcrumb-item trail-end"><span itemprop="name">My Purchase</span></li>
-                        </ul>
+    <section class="site-content myaccount-site-content">
+        <div class="page-banner-section">
+            <div class="page-banner">
+                <div class="container">
+                    <div class="page-banner-wrap">
+                        <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
+                            <ul class="breadcrumb-items">
+                                <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}"
+                                        rel="home"><span itemprop="name">Home</span></a></li>
+                                <li class="breadcrumb-item trail-end"><span itemprop="name">My Purchase</span></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-      <!-- page-banner-section -->
-      <div class="content-wrapper">
-        <div class="container">         
-          <div class="content-area">
-            <div class="myaccout-section">
-              <div class="row">
-                <!-- sidebar-section -->
-                @include('front.modules.dashboard.sidebar')
-                <!-- sidebar-section -->
+        <!-- page-banner-section -->
+        <div class="content-wrapper">
+            <div class="container">
+                <div class="content-area">
+                    <div class="myaccout-section">
+                        <div class="dashboard-inner-row">
+                            <!-- sidebar-section -->
+                            @include('front.modules.dashboard.sidebar')
+                            <!-- sidebar-section -->
 
-                <div class="myaccout-content-area col-md-9 col-sm-12 col-12">                 
-                    <div class="page-header">
-                      <h1 class="page-title">My Purchase</h1>
+                            <div class="myaccout-content-area col-md-9 col-sm-12 col-12">
+                                <div class="page-header">
+                                    <h1 class="page-title">My Purchase</h1>
+                                </div>
+                                <div class="myaccout-content-wrapper">
+                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab"
+                                                data-bs-target="#home" type="button" role="tab" aria-controls="home"
+                                                aria-selected="true">Current Order
+                                                ({{ $active_orders_count }})</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab"
+                                                data-bs-target="#profile" type="button" role="tab"
+                                                aria-controls="profile" aria-selected="false">Delivered Order
+                                                ({{ $delivered_orders_count }})</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="contact-tab" data-bs-toggle="tab"
+                                                data-bs-target="#contact" type="button" role="tab"
+                                                aria-controls="contact" aria-selected="false">Cancelled Order
+                                                ({{ $cancelled_orders_count }})</button>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content" id="myTabContent">
+                                        <div class="tab-pane fade show active" id="home" role="tabpanel"
+                                            aria-labelledby="home-tab">
+                                            @if (!empty($active_orders))
+                                                @foreach ($active_orders as $active_order)
+                                                    <div class="order-table">
+                                                        <div class="tabel-row">
+                                                            <div class="table-cell">Order
+                                                                No.-{{ $active_order['order_number'] }}</div>
+                                                            <div class="table-cell text-end">
+                                                                {{ \Carbon\Carbon::parse($active_order['updated_at'])->format('d M Y H:i A') }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="tabel-row">
+                                                            <div class="table-cell order-img"><a
+                                                                    href="javascript:void(0);"><img
+                                                                        src="{{ @$active_order['product_image'][0] }}"
+                                                                        width="75" height="75"></a></div>
+                                                            <div class="table-cell">
+                                                                <p class="order-title"><a
+                                                                        href="javascript:void(0);">{{ $active_order['product_name'] }}</a>
+                                                                </p>
+                                                                {{-- <p class="order-moreitem"><a href="javascript:void(0);">+2 More Item</a></p> --}}
+                                                                <p class="order-status order-process">
+                                                                    {{ $active_order['status'] }}!</p>
+                                                            </div>
+                                                            <div class="table-cell text-end order-total">
+                                                                <p class="order-price">Rs.
+                                                                    {{ $active_order['selling_price'] }}</p>
+                                                                <p class="order-view"><a
+                                                                        href="{{ env('WEBSITE_URL') . 'mypurchasedetail/' . $active_order['order_id'] }}">View</a>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <?php if ($active_order['id'] == 24) {
+                                                        // @dd($active_order);
+                                                    } ?>
+                                                @endforeach
+                                            @else
+                                                <div class="address-list">
+                                                    <table width="100%">
+                                                        <tr>
+                                                            <h6 class="title-order-not text-center">Order Not Found</h6>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="tab-pane fade" id="profile" role="tabpanel"
+                                            aria-labelledby="profile-tab">
+                                            @if (!empty($delivered_orders))
+                                                @foreach ($delivered_orders as $delivered_order)
+                                                    <div class="order-table">
+                                                        <div class="tabel-row">
+                                                            <div class="table-cell">Order
+                                                                No.-{{ $delivered_order['order_number'] }}</div>
+                                                            <div class="table-cell text-end">
+                                                                {{ \Carbon\Carbon::parse($delivered_order['updated_at'])->format('d M Y H:i A') }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="tabel-row">
+                                                            <div class="table-cell order-img"><a
+                                                                    href="javascript:void(0);"><img
+                                                                        src="{{ @$delivered_order['product_image'][0] }}"
+                                                                        width="75" height="75"></a></div>
+                                                            <div class="table-cell">
+                                                                <p class="order-title"><a
+                                                                        href="javascript:void(0);">{{ $delivered_order['product_name'] }}</a>
+                                                                </p>
+                                                                <p class="order-moreitem"><a href="javascript:void(0);">+2
+                                                                        More Item</a></p>
+                                                                <p class="order-status order-process">
+                                                                    {{ $delivered_order['status'] }}!</p>
+                                                            </div>
+                                                            <div class="table-cell text-end order-total">
+                                                                <p class="order-price">Rs.
+                                                                    {{ $delivered_order['selling_price'] }}</p>
+                                                                <p class="order-view"><a
+                                                                        href="{{ env('WEBSITE_URL') . 'mypurchasedetail/' . $delivered_order['order_id'] }}">View</a>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <div class="address-list">
+                                                    <table width="100%">
+                                                        <tr>
+                                                            <h6 class="title-order-not text-center">Order Not Found</h6>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="tab-pane fade" id="contact" role="tabpanel"
+                                            aria-labelledby="contact-tab">
+                                            @if (!empty($cancelled_orders))
+                                                @foreach ($cancelled_orders as $cancelled_order)
+                                                    <div class="order-table">
+                                                        <div class="tabel-row">
+                                                            <div class="table-cell">Order
+                                                                No.-{{ $cancelled_order['order_number'] }}</div>
+                                                            <div class="table-cell text-end">
+                                                                {{ \Carbon\Carbon::parse($cancelled_order['updated_at'])->format('d M Y H:i A') }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="tabel-row">
+                                                            <div class="table-cell order-img"><a
+                                                                    href="javascript:void(0);"><img
+                                                                        src="{{ @$cancelled_order['product_image'][0] }}"
+                                                                        width="75" height="75"></a></div>
+                                                            <div class="table-cell">
+                                                                <p class="order-title"><a
+                                                                        href="javascript:void(0);">{{ $cancelled_order['product_name'] }}</a>
+                                                                </p>
+                                                                <p class="order-moreitem"><a href="javascript:void(0);">+2
+                                                                        More Item</a></p>
+                                                                <p class="order-status order-process">
+                                                                    {{ $cancelled_order['status'] }}!</p>
+                                                            </div>
+                                                            <div class="table-cell text-end order-total">
+                                                                <p class="order-price">Rs.
+                                                                    {{ $cancelled_order['selling_price'] }}</p>
+                                                                <p class="order-view"><a
+                                                                        href="{{ env('WEBSITE_URL') . 'mypurchasedetail/' . $cancelled_order['order_id'] }}">View</a>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <div class="address-list">
+                                                    <table width="100%">
+                                                        <tr>
+                                                            <h6 class="title-order-not text-center">Order Not Found</h6>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+
+
+
+
+
+
+
+
+
+                                </div>
+                            </div>
+                            <!-- myaccout-content-area -->
+                        </div>
+                        <!-- row -->
                     </div>
-                    <div class="myaccout-content-wrapper"> 
-                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="home-tab"
-                                    data-bs-toggle="tab" data-bs-target="#home" type="button"
-                                    role="tab" aria-controls="home" aria-selected="true">Current Order
-                                    ({{$active_orders_count}})</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="profile-tab" data-bs-toggle="tab"
-                                    data-bs-target="#profile" type="button" role="tab"
-                                    aria-controls="profile" aria-selected="false">Delivered Order
-                                    ({{$delivered_orders_count}})</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="contact-tab" data-bs-toggle="tab"
-                                    data-bs-target="#contact" type="button" role="tab"
-                                    aria-controls="contact" aria-selected="false">Cancelled Order
-                                    ({{$cancelled_orders_count}})</button>
-                            </li>
-                        </ul>
-                        <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade show active" id="home" role="tabpanel"
-                            aria-labelledby="home-tab">
-                            @if(!empty($active_orders))
-                                @foreach($active_orders as $active_order)
-                                    <div class="order-table">
-                                        <div class="tabel-row">
-                                            <div class="table-cell">Order No.-{{ $active_order['order_number'] }}</div>
-                                            <div class="table-cell text-end">{{ \Carbon\Carbon::parse($active_order['updated_at'])->format('d M Y H:i A') }}</div>
-                                        </div>
-                                        <div class="tabel-row">
-                                            <div class="table-cell order-img"><a href="javascript:void(0);"><img src="{{ @$active_order['product_image'][0] }}" width="75" height="75"></a></div>
-                                            <div class="table-cell">
-                                                <p class="order-title"><a href="javascript:void(0);">{{ $active_order['product_name'] }}</a></p>
-                                                {{-- <p class="order-moreitem"><a href="javascript:void(0);">+2 More Item</a></p> --}}
-                                                <p class="order-status order-process">{{ $active_order['status'] }}!</p>
-                                            </div>
-                                            <div class="table-cell text-end order-total">
-                                                <p class="order-price">Rs. {{ $active_order['selling_price'] }}</p>
-                                                <p class="order-view"><a href="{{  env('WEBSITE_URL').'mypurchasedetail/'.$active_order['order_id'] }}">View</a></p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <?php if($active_order['id']==24){
-                                        // @dd($active_order);
-                                    } ?>
-                                 @endforeach
-                            @else
-                                <div class="address-list">
-                                    <table width="100%">
-                                        <tr>
-                                            <h6 class="text-center">Order Not Found</h6>
-                                        </tr>
-                                    </table>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="tab-pane fade" id="profile" role="tabpanel"
-                            aria-labelledby="profile-tab">
-                            @if(!empty($delivered_orders))
-                                @foreach($delivered_orders as $delivered_order)
-                                    <div class="order-table">
-                                        <div class="tabel-row">
-                                            <div class="table-cell">Order No.-{{ $delivered_order['order_number'] }}</div>
-                                            <div class="table-cell text-end">{{ \Carbon\Carbon::parse($delivered_order['updated_at'])->format('d M Y H:i A') }}</div>
-                                        </div>
-                                        <div class="tabel-row">
-                                            <div class="table-cell order-img"><a href="javascript:void(0);"><img src="{{ @$delivered_order['product_image'][0] }}" width="75" height="75"></a></div>
-                                            <div class="table-cell">
-                                                <p class="order-title"><a href="javascript:void(0);">{{ $delivered_order['product_name'] }}</a></p>
-                                                <p class="order-moreitem"><a href="javascript:void(0);">+2 More Item</a></p>
-                                                <p class="order-status order-process">{{ $delivered_order['status'] }}!</p>
-                                            </div>
-                                            <div class="table-cell text-end order-total">
-                                                <p class="order-price">Rs. {{ $delivered_order['selling_price'] }}</p>
-                                                <p class="order-view"><a href="{{  env('WEBSITE_URL').'mypurchasedetail/'.$delivered_order['order_id'] }}">View</a></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            @else
-                                <div class="address-list">
-                                    <table width="100%">
-                                        <tr>
-                                            <h6 class="text-center">Order Not Found</h6>
-                                        </tr>
-                                    </table>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="tab-pane fade" id="contact" role="tabpanel"
-                            aria-labelledby="contact-tab">
-                            @if(!empty($cancelled_orders))
-                                @foreach($cancelled_orders as $cancelled_order)
-                                    <div class="order-table">
-                                        <div class="tabel-row">
-                                            <div class="table-cell">Order No.-{{ $cancelled_order['order_number'] }}</div>
-                                            <div class="table-cell text-end">{{ \Carbon\Carbon::parse($cancelled_order['updated_at'])->format('d M Y H:i A') }}</div>
-                                        </div>
-                                        <div class="tabel-row">
-                                            <div class="table-cell order-img"><a href="javascript:void(0);"><img src="{{ @$cancelled_order['product_image'][0] }}" width="75" height="75"></a></div>
-                                            <div class="table-cell">
-                                                <p class="order-title"><a href="javascript:void(0);">{{ $cancelled_order['product_name'] }}</a></p>
-                                                <p class="order-moreitem"><a href="javascript:void(0);">+2 More Item</a></p>
-                                                <p class="order-status order-process">{{ $cancelled_order['status'] }}!</p>
-                                            </div>
-                                            <div class="table-cell text-end order-total">
-                                                <p class="order-price">Rs. {{ $cancelled_order['selling_price'] }}</p>
-                                                <p class="order-view"><a href="{{  env('WEBSITE_URL').'mypurchasedetail/'.$cancelled_order['order_id'] }}">View</a></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            @else
-                                <div class="address-list">
-                                    <table width="100%">
-                                        <tr>
-                                            <h6 class="text-center">Order Not Found</h6>
-                                        </tr>
-                                    </table>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                    
-
-
-
-
-
-
-                      
-                                
-                    </div>  
-                </div>  
-                 <!-- myaccout-content-area -->
-              </div>
-              <!-- row -->
+                    <!-- myaccout-section -->
+                </div>
+                <!--content-area  -->
             </div>
-            <!-- myaccout-section -->
-          </div>
-         <!--content-area  -->
+            <!--container-->
         </div>
-        <!--container-->
-      </div>
-      <!--content-wrapper-->
-    </section>  
+        <!--content-wrapper-->
+    </section>
     <!-- page main wrapper end -->
-     
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -358,16 +397,18 @@
         });
         $(document).on('click', '.wishlistBtn', function() {
             let that = $(this);
-           let pid = $(this).data('product-id');
+            let pid = $(this).data('product-id');
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                         'content')
-                },                
+                },
                 type: "POST",
                 url: "{{ route('front-addwish') }}",
-                data:{product_id:pid},
-                dataType:"json",
+                data: {
+                    product_id: pid
+                },
+                dataType: "json",
                 success: function(response) {
                     that.parents('.product-card').parent().remove();
                     wishlistItemCount();
@@ -385,62 +426,62 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-      $(document).ready(function() {
-    $('#update-dashboard').on('submit', function(e) {
-        e.preventDefault();
+        $(document).ready(function() {
+            $('#update-dashboard').on('submit', function(e) {
+                e.preventDefault();
 
-        let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
+                let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
 
-        // ✅ Client-side validation
-        if (phoneNumber === '') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Validation Error',
-                text: 'Phone number is required.',
-            });
-            return; // stop the form submission
-        }
-
-        let formData = new FormData(this); // captures all form data including files
-
-        $.ajax({
-            url: "{{ route('front-user.updateProfile') }}",
-            type: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: response.message,
-                    showConfirmButton: false,
-                    timer: 2000
-                }).then(() => {
-                    window.location.href = response.redirect_url;
-                });
-            },
-            error: function(xhr) {
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
-                    let firstError = Object.values(errors)[0][0];
-
+                // ✅ Client-side validation
+                if (phoneNumber === '') {
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: firstError,
+                        icon: 'warning',
+                        title: 'Validation Error',
+                        text: 'Phone number is required.',
                     });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Server Error',
-                        text: 'Something went wrong. Please try again later.',
-                    });
+                    return; // stop the form submission
                 }
-            }
+
+                let formData = new FormData(this); // captures all form data including files
+
+                $.ajax({
+                    url: "{{ route('front-user.updateProfile') }}",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = response.redirect_url;
+                        });
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            let firstError = Object.values(errors)[0][0];
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: firstError,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Server Error',
+                                text: 'Something went wrong. Please try again later.',
+                            });
+                        }
+                    }
+                });
+            });
         });
-    });
-});
 
 
         const img = document.getElementById('preview-image');
@@ -524,7 +565,7 @@
     </script>
 
     <!-- Tabing Order panel -->
-     <style>
+    <style>
         /* Style the tab */
         .tab {
             overflow: hidden;
@@ -552,12 +593,12 @@
 
         /* Change background color of buttons on hover */
         .tab button:hover {
-        background-color: #ddd;
+            background-color: #ddd;
         }
 
         /* Create an active/current tablink class */
         .tab button.active {
-        background-color: #f3eeae;
+            background-color: #f3eeae;
         }
 
         /* Style the tab content */
@@ -567,7 +608,7 @@
             /* border: 1px solid #ccc; */
             /* border-top: none; */
         }
-        </style>
+    </style>
     <script>
         function openOrder(evt, OrderName) {
             var i, tabcontent, tablinks;
@@ -584,4 +625,29 @@
         }
     </script>
     <!-- Tabing Order panel -->
+
+    <script>
+        $(document).ready(function() {
+
+            $('.nav-tabs .nav-link').on('click', function() {
+
+                // Remove active from all tabs
+                $('.nav-tabs .nav-link').removeClass('active');
+
+                // Add active to clicked tab
+                $(this).addClass('active');
+
+                // Get target content
+                var target = $(this).attr('data-bs-target');
+
+                // Hide all tab content
+                $('.tab-content .tab-pane').removeClass('show active');
+
+                // Show clicked tab content
+                $(target).addClass('show active');
+            });
+
+        });
+    </script>
+
 @endsection

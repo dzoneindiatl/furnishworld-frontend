@@ -1,104 +1,129 @@
 @extends('front.layouts.app')
 @section('content')
     <!-- page-banner-section -->
-      <section class="site-content myaccount-site-content">      
-      <div class="page-banner-section">
-        <div class="page-banner">
-            <div class="container">
-                <div class="page-banner-wrap">
-                    <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
-                        <ul class="breadcrumb-items">
-                            <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}" rel="home"><span itemprop="name">Home</span></a></li>                          
-                            <li class="breadcrumb-item trail-end"><span itemprop="name">My Purchase</span></li>
-                        </ul>
+    <section class="site-content myaccount-site-content">
+        <div class="page-banner-section">
+            <div class="page-banner">
+                <div class="container">
+                    <div class="page-banner-wrap">
+                        <div role="navigation" aria-label="Breadcrumbs" class="breadcrumbs">
+                            <ul class="breadcrumb-items">
+                                <li class="breadcrumb-item trail-begin"><a href="{{ env('WEBSITE_URL') }}"
+                                        rel="home"><span itemprop="name">Home</span></a></li>
+                                <li class="breadcrumb-item trail-end"><span itemprop="name">My Purchase</span></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-      <!-- page-banner-section -->
-      <div class="content-wrapper">
-        <div class="container">         
-          <div class="content-area">
-            <div class="myaccout-section">
-              <div class="row">
-                <!-- sidebar-section -->
-                @include('front.modules.dashboard.sidebar')
-                <!-- sidebar-section -->
-                
-                <div class="myaccout-content-area col-md-9 col-sm-12 col-12">                 
-                    <div class="page-header">
-                      <h1 class="page-title">My Wallet</h1>
-                    </div>
-                    <div class="myaccout-content-wrapper">
-                      <div class="points-section">
-                        <div class="point-top col-md-6 col-sm-12 col-12" style="float: left;border-right: 1px solid #ccc;">
-                          <h4>Total Wallet Balance </h4>
-                          <p>{{ @$user->wallet_avl_balance }}</p>
-                        </div> 
-                        <div class="point-top col-md-6 col-sm-12 col-12" style="float: left;border-right: 1px solid #ccc;">
-                          <h4>Total Earn From Refferal </h4>
-                          <p>{{ @$user->referral_wallet }}</p>
-                        </div> 
-                        <div class="point-top col-md-6 col-sm-12 col-12" style="float: left;border-right: 1px solid #ccc;">
-                          <h4>Total Refund</h4>
-                          <p>{{ @$user->refund_wallet }}</p>
-                        </div> 
-                        <div class="point-top col-md-6 col-sm-12 col-12" style="float: left;border-right: 1px solid #ccc;">
-                          <h4>Total RSV Balanace </h4>
-                          <p>{{ @$user->wallet_rsv_balance }}</p>
-                        </div> 
+        <!-- page-banner-section -->
+        <div class="content-wrapper">
+            <div class="container">
+                <div class="content-area">
+                    <div class="myaccout-section">
+                        <div class="dashboard-inner-row">
+                            <!-- sidebar-section -->
+                            @include('front.modules.dashboard.sidebar')
+                            <!-- sidebar-section -->
 
-                      <!-- payment section -->
-                        <div class="page-header">
-                          <h1 class="page-title">Payment</h1>
-                        </div>
-                        <div class="myaccout-content-wrapper">
-                          <div class="payment-section">
-                            <div class="payment-card-row row">
-                              @if($refundRequest)
-                                @foreach($refundRequest as $refund)
-                                  <div class="payment-card-item col-md-4 col-sm-6 col-12">
-                                    <div class="payment-card-wrap">
-                                      <div class="payment-card-top">
-                                        <div class="payment-card-bankname">{{ $refund->bank_name }}</div>
-                                        <div class="payment-card-typeicon">
-                                          <div class="payment-card-icon"><img src="{{ env('WEBSITE_URL').'tjap-images/card-master.png' }}" alt=""/></div>
-                                          <div class="payment-card-type">{{ $refund->account_type }}</div>
-                                        </div>
-                                      </div>
-                                      <div class="payment-card-name "><?php echo Auth::user()?->name;  ?></div>     
-                                      <div class="payment-card-number ">**********<?php echo substr($refund->account_number, -4); ?></div> 
-                                      <div class="payment-card-name ">IFSC : <?php echo $refund->ifsc_code;  ?></div>     
-                                      <!-- <div class="payment-card-button">
-                                        <button class="payment-card-edit">Edit</button>
-                                        <button class="payment-card-remove">Remove Card</button>
-                                      </div> -->
-                                    </div>
-                                  </div>
-                                @endforeach
-                               @else
-                                <div class="payment-card-item col-md-4 col-sm-6 col-12">
-                                  <div class="payment-card-wrap">
-                                    <div class="payment-card-top">
-                                      <div class="payment-card-bankname">No Payment Method Found</div>
-                                    </div>
-                                  </div>
+                            <div class="myaccout-content-area col-md-9 col-sm-12 col-12">
+                                <div class="page-header">
+                                    <h1 class="page-title">My Wallet</h1>
                                 </div>
-                              @endif
-                              
+                                <div class="myaccout-content-wrapper">
+                                    <div class="points-section">
+                                        <div class="point-top col-md-6 col-sm-12 col-12"
+                                            style="float: left;border-right: 1px solid #ccc;">
+                                            <h4>Total Wallet Balance </h4>
+                                            <p>{{ @$user->wallet_avl_balance }}</p>
+                                        </div>
+                                        <div class="point-top col-md-6 col-sm-12 col-12"
+                                            style="float: left;border-right: 1px solid #ccc;">
+                                            <h4>Total Earn From Refferal </h4>
+                                            <p>{{ @$user->referral_wallet }}</p>
+                                        </div>
+                                        <div class="point-top col-md-6 col-sm-12 col-12"
+                                            style="float: left;border-right: 1px solid #ccc;">
+                                            <h4>Total Refund</h4>
+                                            <p>{{ @$user->refund_wallet }}</p>
+                                        </div>
+                                        <div class="point-top col-md-6 col-sm-12 col-12"
+                                            style="float: left;border-right: 1px solid #ccc;">
+                                            <h4>Total RSV Balanace </h4>
+                                            <p>{{ @$user->wallet_rsv_balance }}</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- payment section -->
+                                    <div class="page-header">
+                                        <h1 class="page-title">Payment</h1>
+                                    </div>
+                                    <div class="myaccout-content-wrapper">
+                                        <div class="payment-section">
+                                            <div class="payment-card-row row">
+                                                @if ($refundRequest)
+                                                    @foreach ($refundRequest as $refund)
+                                                        <div class="payment-card-item col-md-4 col-sm-6 col-12">
+                                                            <div class="payment-card-wrap">
+                                                                <div class="payment-card-top">
+                                                                    <div class="payment-card-bankname">
+                                                                        {{ $refund->bank_name }}</div>
+                                                                    <div class="payment-card-typeicon">
+                                                                        <div class="payment-card-icon"><img
+                                                                                src="{{ env('WEBSITE_URL') . 'tjap-images/card-master.png' }}"
+                                                                                alt="" /></div>
+                                                                        <div class="payment-card-type">
+                                                                            {{ $refund->account_type }}</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="payment-card-name "><?php echo Auth::user()?->name; ?>
+                                                                </div>
+                                                                <div class="payment-card-number ">
+                                                                    **********<?php echo substr($refund->account_number, -4); ?></div>
+                                                                <div class="payment-card-name ">IFSC :
+                                                                    <?php echo $refund->ifsc_code; ?></div>
+                                                                <!-- <div class="payment-card-button">
+                                                                <button class="payment-card-edit">Edit</button>
+                                                                <button class="payment-card-remove">Remove Card</button>
+                                                              </div> -->
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                @else
+                                                    <div class="payment-card-item col-md-4 col-sm-6 col-12">
+                                                        <div class="payment-card-wrap">
+                                                            <div class="payment-card-top">
+                                                                <div class="payment-card-bankname">No Payment Method
+                                                                    Found</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- payment section -->
+
+                                </div>
                             </div>
-                          </div>
-                        </div> 
-                        <!-- payment section -->                  
-                
-                      </div>    
-                    </div>                 
-                </div>  
-                <!-- myaccout-content-area -->
-                      
+                        </div>
+                    </div>
+                </div>
+                <!-- myaccout-section -->
+            </div>
+            <!--content-area  -->
+        </div>
+        <!--container-->
+        </div>
+        <!--content-wrapper-->
+    </section>
     <!-- page main wrapper end -->
-     
+    <!-- myaccout-content-area -->
+
+    <!-- page main wrapper end -->
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -276,16 +301,18 @@
         });
         $(document).on('click', '.wishlistBtn', function() {
             let that = $(this);
-           let pid = $(this).data('product-id');
+            let pid = $(this).data('product-id');
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                         'content')
-                },                
+                },
                 type: "POST",
                 url: "{{ route('front-addwish') }}",
-                data:{product_id:pid},
-                dataType:"json",
+                data: {
+                    product_id: pid
+                },
+                dataType: "json",
                 success: function(response) {
                     that.parents('.product-card').parent().remove();
                     wishlistItemCount();
@@ -303,62 +330,62 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-      $(document).ready(function() {
-    $('#update-dashboard').on('submit', function(e) {
-        e.preventDefault();
+        $(document).ready(function() {
+            $('#update-dashboard').on('submit', function(e) {
+                e.preventDefault();
 
-        let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
+                let phoneNumber = $.trim($('#phone_number').val()); // get and trim value
 
-        // ✅ Client-side validation
-        if (phoneNumber === '') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Validation Error',
-                text: 'Phone number is required.',
-            });
-            return; // stop the form submission
-        }
-
-        let formData = new FormData(this); // captures all form data including files
-
-        $.ajax({
-            url: "{{ route('front-user.updateProfile') }}",
-            type: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: response.message,
-                    showConfirmButton: false,
-                    timer: 2000
-                }).then(() => {
-                    window.location.href = response.redirect_url;
-                });
-            },
-            error: function(xhr) {
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
-                    let firstError = Object.values(errors)[0][0];
-
+                // ✅ Client-side validation
+                if (phoneNumber === '') {
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: firstError,
+                        icon: 'warning',
+                        title: 'Validation Error',
+                        text: 'Phone number is required.',
                     });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Server Error',
-                        text: 'Something went wrong. Please try again later.',
-                    });
+                    return; // stop the form submission
                 }
-            }
+
+                let formData = new FormData(this); // captures all form data including files
+
+                $.ajax({
+                    url: "{{ route('front-user.updateProfile') }}",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = response.redirect_url;
+                        });
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            let firstError = Object.values(errors)[0][0];
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: firstError,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Server Error',
+                                text: 'Something went wrong. Please try again later.',
+                            });
+                        }
+                    }
+                });
+            });
         });
-    });
-});
 
 
         const img = document.getElementById('preview-image');
@@ -442,7 +469,7 @@
     </script>
 
     <!-- Tabing Order panel -->
-     <style>
+    <style>
         /* Style the tab */
         .tab {
             overflow: hidden;
@@ -470,12 +497,12 @@
 
         /* Change background color of buttons on hover */
         .tab button:hover {
-        background-color: #ddd;
+            background-color: #ddd;
         }
 
         /* Create an active/current tablink class */
         .tab button.active {
-        background-color: #f3eeae;
+            background-color: #f3eeae;
         }
 
         /* Style the tab content */
@@ -485,7 +512,7 @@
             /* border: 1px solid #ccc; */
             /* border-top: none; */
         }
-        </style>
+    </style>
     <script>
         function openOrder(evt, OrderName) {
             var i, tabcontent, tablinks;
