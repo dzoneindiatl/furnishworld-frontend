@@ -28,4 +28,4 @@
 
 </head>
 
-<body>
+<body class="@stack('body-class')">
