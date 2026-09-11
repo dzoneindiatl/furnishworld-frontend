@@ -25,41 +25,6 @@
         <a href="{{ url('/') }}"><img src="{{ env('WEBSITE_URL') . 'uploads/settings/' . @$siteLogo->value }}"
                 alt="Logo"></a>
     </div>
-    {{-- <nav class="main-nav">
-            <button class="nav-close">
-                <span class="material-symbols-outlined">
-                    close_small
-                </span>
-            </button>
-            <ul>
-                <li>
-                    <a href="{{ url('/') }}">Home</a>
-                </li>
-                @foreach ($categories->whereNull('parent_id')->where('show_on_menu', 1) as $cat)
-                    <li class="has-mega">
-                        <a href="{{ url($cat->slug) }}">
-                            {{ $cat->name }}
-                            <span class="material-symbols-outlined">
-                                expand_more
-                            </span>
-                        </a>
-                        <div class="mega-menu">
-                            @foreach ($subCategories->where('parent_id', $cat->id)->where('show_on_menu', 1) as $subcat)
-                                <div class="mega-col">
-                                    <h4><a href="{{ route('category.show', $subcat->slug) }}">{{ $subcat->name }}</a></h4>
-                                    @foreach ($childCategories->where('parent_id', $subcat->id)->where('show_on_menu', 1) as $childcat)
-                                        <a href="{{ route('category.show', $childcat->slug) }}">
-                                            {{ $childcat->name }}
-                                        </a>
-                                    @endforeach
-                                </div>
-                            @endforeach
-                        </div>
-                    </li>
-                @endforeach
-            </ul>
-        </nav> --}}
-
     <nav class="main-nav">
         <button class="nav-close">
             <span class="material-symbols-outlined">
@@ -68,217 +33,49 @@
         </button>
         <ul>
             <li>
-                <a href="http://127.0.0.1:8004">Home</a>
+                <a href="{{ url('/') }}">Home</a>
             </li>
-            <li class="has-mega">
-                <a href="http://127.0.0.1:8004/living-room">
-                    Living Room
-                    <span class="material-symbols-outlined">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </span>
-                </a>
-                <div class="mega-menu mega-menu-inner" bis_skin_checked="1">
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/sofas">Sofas <span class="material-symbols-outlined">
-                                    chevron_right
-                                </span></a></h4>
-                        <div class="mega-menu-inner-list">
-                            <a href="http://127.0.0.1:8004/1-seater-sofa">
-                                1 Seater Sofa
-                            </a>
-                            <a href="http://127.0.0.1:8004/3-seater-sofa">
-                                3 Seater Sofa
-                            </a>
-                            <a href="http://127.0.0.1:8004/5-seater-sofa">
-                                5 Seater Sofa
-                            </a>
-                        </div>
+            @foreach ($categories->whereNull('parent_id')->where('show_on_menu', 1) as $cat)
+                <li class="has-mega">
+                    <a href="{{ route('category.show', ['path' => $cat->slug]) }}">
+                        {{ $cat->name }}
+                        <span class="material-symbols-outlined">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                    </a>
+                    <div class="mega-menu mega-menu-inner" bis_skin_checked="1">
+                        @foreach ($subCategories->where('parent_id', $cat->id)->where('show_on_menu', 1) as $subcat)
+                            @php
+                                $subChildCategories = $childCategories
+                                    ->where('parent_id', $subcat->id)
+                                    ->where('show_on_menu', 1);
+                            @endphp
+                            <div class="mega-col" bis_skin_checked="1">
+                                <h4>
+                                    <a href="{{ route('category.show', ['path' => $cat->slug . '/' . $subcat->slug ]) }}">{{ $subcat->name }} 
+                                        @if ($subChildCategories->isNotEmpty())
+                                            <span class="material-symbols-outlined">
+                                                chevron_right
+                                            </span>
+                                        @endif
+                                    </a>
+                                </h4>
+                                        @foreach ($childCategories->where('parent_id', $subcat->id)->where('show_on_menu', 1) as $childcat)
+                                <div class="mega-menu-inner-list">
+                                        <a href="{{ route('category.show', [ 'path' => $cat->slug . '/' . $subcat->slug . '/' . $childcat->slug]) }}">
+                                            {{ $childcat->name }}
+                                        </a>
+                                </div>
+                                   @endforeach 
+                            </div>
+                        @endforeach     
                     </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/tv-units">TV Units</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/coffee-table">Coffee Table</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/console-table">Console Table</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/sideboard">Sideboard</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/shoe-rack">Shoe Rack</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/bookshelf">Bookshelf</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/chest-of-drawers">Chest Of Drawers</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/side-end-table">Side End Table</a></h4>
-                    </div>
-                </div>
-            </li>
-            <li class="has-mega">
-                <a href="http://127.0.0.1:8004/bedroom">
-                    Bedroom
-                    <span class="material-symbols-outlined">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </span>
-                </a>
-                <div class="mega-menu mega-menu-inner" bis_skin_checked="1">
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/beds">Beds <span class="material-symbols-outlined">
-                                    chevron_right
-                                </span></a></h4>
-                        <div class="mega-menu-inner-list">
-                            <a href="http://127.0.0.1:8004/king-size-bed">
-                                King Size Bed
-                            </a>
-                            <a href="http://127.0.0.1:8004/queen-size-bed">
-                                Queen Size Bed
-                            </a>
-                            <a href="http://127.0.0.1:8004/single-bed">
-                                Single Bed
-                            </a>
-                            <a href="http://127.0.0.1:8004/poster-bed">
-                                Poster Bed
-                            </a>
-                            <a href="http://127.0.0.1:8004/bunk-bed">
-                                Bunk Bed
-                            </a>
-                        </div>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/bedside-table">Bedside Table</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/wardrobes">Wardrobes</a></h4>
-                    </div>
-                </div>
-            </li>
-            <li class="has-mega">
-                <a href="http://127.0.0.1:8004/dining-and-kitchen">
-                    Dining and Kitchen
-                    <span class="material-symbols-outlined">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </span>
-                </a>
-                <div class="mega-menu mega-menu-inner" bis_skin_checked="1">
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/dining-sets">Dining Sets <span
-                                    class="material-symbols-outlined">
-                                    chevron_right
-                                </span></a></h4>
-                        <div class="mega-menu-inner-list">
-                            <a href="http://127.0.0.1:8004/2-seater-dining-sets">
-                                2 Seater Dining Sets
-                            </a>
-                            <a href="http://127.0.0.1:8004/4-seater-dining-sets">
-                                4 Seater Dining Sets
-                            </a>
-                            <a href="http://127.0.0.1:8004/6-seater-dining-sets">
-                                6 Seater Dining Sets
-                            </a>
-                            <a href="http://127.0.0.1:8004/8-seater-dining-sets">
-                                8 Seater Dining Sets
-                            </a>
-                        </div>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/dining-chairs">Dining Chairs</a></h4>
-                    </div>
-                </div>
-            </li>
-            <li class="has-mega">
-                <a href="http://127.0.0.1:8004/study-and-office">
-                    Study and Office
-                    <span class="material-symbols-outlined">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </span>
-                </a>
-                <div class="mega-menu main-menu-cats" bis_skin_checked="1">
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/study-table">Study Table</a></h4>
-                    </div>
-                </div>
-            </li>
-            <li class="has-mega">
-                <a href="http://127.0.0.1:8004/storage">
-                    Storage
-                    <span class="material-symbols-outlined">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </span>
-                </a>
-                <div class="mega-menu main-menu-cats" bis_skin_checked="1">
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/tv-units-2">TV Units</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/sideboard-2">Sideboard</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/shoe-rack-2">Shoe Rack</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/bookshelf-2">Bookshelf</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/chest-of-drawers-2">Chest Of Drawers</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/wardrobe">wardrobe</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/bedside-table-2">Bedside Table</a></h4>
-                    </div>
-                </div>
-            </li>
-            <li class="has-mega">
-                <a href="http://127.0.0.1:8004/decor-furnishing">
-                    Decor &amp; Furnishing
-                    <span class="material-symbols-outlined">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </span>
-                </a>
-                <div class="mega-menu main-menu-cats" bis_skin_checked="1">
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/home-temples">Home Temples</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/pooja-chouki">Pooja chouki</a></h4>
-                    </div>
-                    <div class="mega-col" bis_skin_checked="1">
-                        <h4><a href="http://127.0.0.1:8004/wall-mirror-2">Wall Mirror</a></h4>
-                    </div>
-                </div>
-            </li>
-
+                </li>
+            @endforeach     
         </ul>
     </nav>
 
@@ -289,27 +86,38 @@
             </span>
         </button>
         <div class="search_icon">
-            <button class="search_button"><span class="material-symbols-outlined">
-                    search
-                </span>
+            <button class="search_button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#377856" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="7"/>
+                        <path d="m20 20-4-4"/>
+                    </svg>
             </button>
         </div>
         <span class="divider">|</span>
         <div class="user-actions">
             @if (Auth::guard('customer')->check())
                 <button class="login_button" onclick="window.location.href='{{ route('user.dashboard') }}'">
-                    <span class="material-symbols-outlined">person</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#1F2926" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="8" r="3.2"/>
+  <path d="M5.5 20c.7-3.4 3-5.2 6.5-5.2s5.8 1.8 6.5 5.2"/>
+</svg>
                     Dashboard
                 </button>
             @else
                 <button class="login_button" onclick="window.location.href='{{ url('/login') }}'">
-                    <span class="material-symbols-outlined">person</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#1F2926" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="8" r="3.2"/>
+  <path d="M5.5 20c.7-3.4 3-5.2 6.5-5.2s5.8 1.8 6.5 5.2"/>
+</svg>
                     Login
                 </button>
             @endif
             <div class="cart-wrapper">
                 <button class="cart_button">
-                    <span class="material-symbols-outlined">shopping_bag</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#1F2926" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 8h14l-1 11H6L5 8Z"/>
+                        <path d="M9 8V6a3 3 0 0 1 6 0v2"/>
+                        </svg>
                     Cart
                     @if (Auth::guard('customer')->check() && $cartTotal != 0 && !empty($cartTotal))
                         <span class="cart-count">{{ $cartTotal }}</span>
@@ -354,12 +162,16 @@
             </div>
             @if (!empty(Auth::guard('customer')->user()->id))
                 <button class="wishlist_button">
-                    <span class="material-symbols-outlined">favorite</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#1F2926" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M20.8 8.8c0 5.5-8.8 10.2-8.8 10.2S3.2 14.3 3.2 8.8A4.7 4.7 0 0 1 12 6.1a4.7 4.7 0 0 1 8.8 2.7Z"/>
+</svg>
                     Wishlist
                 </button>
             @else
                 <button class="wishlist_button">
-                    <span class="material-symbols-outlined">favorite</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#1F2926" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M20.8 8.8c0 5.5-8.8 10.2-8.8 10.2S3.2 14.3 3.2 8.8A4.7 4.7 0 0 1 12 6.1a4.7 4.7 0 0 1 8.8 2.7Z"/>
+</svg>
                     Wishlist
                 </button>
             @endif

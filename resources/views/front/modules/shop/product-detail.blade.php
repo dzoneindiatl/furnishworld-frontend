@@ -30,17 +30,17 @@
                                 <li class="breadcrumb-item"><a href="{{ Url('/') }}">Home</a></li>
                                 @if (!empty($productcat))
                                     <li class="breadcrumb-item"><a
-                                            href="{{ route('category.show', ['slug' => $productcat->slug]) }}">{{ $productcat->name }}</a>
+                                            href="{{ route('category.show', ['path' => $productcat->slug]) }}">{{ $productcat->name }}</a>
                                     </li>
                                 @endif
                                 @if (!empty($productSubCat))
                                     <li class="breadcrumb-item"><a
-                                            href="{{ route('category.show', ['slug' => $productSubCat->slug]) }}">{{ $productSubCat->name }}</a>
+                                            href="{{ route('category.show', ['path' =>$productcat->slug.'/'.$productSubCat->slug]) }}">{{ $productSubCat->name }}</a>
                                     </li>
                                 @endif
                                 @if (!empty($productChildCat))
                                     <li class="breadcrumb-item"><a
-                                            href="{{ route('category.show', ['slug' => $productChildCat->slug]) }}">{{ $productChildCat->name }}</a>
+                                            href="{{ route('category.show', ['path' =>$productcat->slug.'/'.$productSubCat->slug.'/'.$productChildCat->slug]) }}">{{ $productChildCat->name }}</a>
                                     </li>
                                 @endif
                                 <li class="breadcrumb-item active" aria-current="page">{{ $product->name }}</li>
@@ -101,68 +101,23 @@
                                             <div class="product-gallery">
 
                                                 <div class="product-main-slider">
-                                                    <div class="product-slide">
-                                                        <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e19114fe6.webp"
-                                                            alt="Product 1">
-                                                    </div>
-
-                                                    <div class="product-slide">
-                                                        <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e19111c1c.webp"
-                                                            alt="Product 2">
-                                                    </div>
-
-                                                    <div class="product-slide">
-                                                        <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e191126a5.webp"
-                                                            alt="Product 3">
-                                                    </div>
-
-                                                    <div class="product-slide">
-                                                        <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e19113736.webp"
-                                                            alt="Product 4">
-                                                    </div>
-                                                    <div class="product-slide">
-                                                        <img src="https://furnishworlds.com/uploads/products/JUN2026/variant_1_6a23e19114fe6.webp"
-                                                            alt="Product 5">
-                                                    </div>
-                                                    <div class="product-slide">
-                                                        <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e19114fe6.webp"
-                                                            alt="Product 6">
-                                                    </div>
+                                                    @foreach($product->product_main_images as $img)
+                                                        <div class="product-slide">
+                                                            <img src="{{ asset('uploads/products/'.$img->graphic) }}"
+                                                                alt="Product 1">
+                                                        </div>  
+                                                    @endforeach 
                                                 </div>
 
 
-                                                <!-- Thumbnails -->
+                                          
                                                 <div class="product-thumb-slider">
-
+                                                    @foreach($product->product_main_images as $img)
                                                     <div class="thumb">
-                                                        <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e19114fe6.webp"
+                                                        <img src="{{ asset('uploads/products/'.$img->graphic) }}"
                                                             alt="">
                                                     </div>
-
-                                                    <div class="thumb">
-                                                        <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e19111c1c.webp"
-                                                            alt="">
-                                                    </div>
-
-                                                    <div class="thumb">
-                                                        <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e191126a5.webp"
-                                                            alt="">
-                                                    </div>
-
-                                                    <div class="thumb">
-                                                        <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e19113736.webp"
-                                                            alt="">
-                                                    </div>
-
-                                                    <div class="thumb">
-                                                        <img src="https://furnishworlds.com/uploads/products/JUN2026/variant_1_6a23e19114fe6.webp"
-                                                            alt="">
-                                                    </div>
-                                                    <div class="thumb">
-                                                        <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e19114fe6.webp"
-                                                            alt="">
-                                                    </div>
-
+                                                    @endforeach 
                                                 </div>
 
                                             </div>
@@ -176,63 +131,23 @@
 
                                                     <!-- Popup Main Slider -->
                                                     <div class="popup-main-slider">
-
+                                                    @foreach($product->product_main_images as $img)
                                                         <div class="popup-slide">
-                                                            <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e19114fe6.webp"
+                                                            <img src="{{ asset('uploads/products/'.$img->graphic) }}"
                                                                 alt="">
                                                         </div>
-
-                                                        <div class="popup-slide">
-                                                            <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e19111c1c.webp"
-                                                                alt="">
-                                                        </div>
-
-                                                        <div class="popup-slide">
-                                                            <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e191126a5.webp"
-                                                                alt="">
-                                                        </div>
-
-                                                        <div class="popup-slide">
-                                                            <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e19113736.webp"
-                                                                alt="">
-                                                        </div>
-
-                                                        <div class="popup-slide">
-                                                            <img src="https://furnishworlds.com/uploads/products/JUN2026/variant_1_6a23e19114fe6.webp"
-                                                                alt="">
-                                                        </div>
-
-                                                    </div>
+                                                    @endforeach     
+                                                </div>
 
                                                     <!-- Popup Thumbnail Slider -->
                                                     <div class="popup-thumb-slider">
-
-                                                        <div class="popup-thumb">
-                                                            <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e19114fe6.webp"
-                                                                alt="">
-                                                        </div>
-
-                                                        <div class="popup-thumb">
-                                                            <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e19111c1c.webp"
-                                                                alt="">
-                                                        </div>
-
-                                                        <div class="popup-thumb">
-                                                            <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e191126a5.webp"
-                                                                alt="">
-                                                        </div>
-
-                                                        <div class="popup-thumb">
-                                                            <img src="http://127.0.0.1:8004/uploads/products/JUN2026/variant_1_6a23e19113736.webp"
-                                                                alt="">
-                                                        </div>
-
-                                                        <div class="popup-thumb">
-                                                            <img src="https://furnishworlds.com/uploads/products/JUN2026/variant_1_6a23e19114fe6.webp"
-                                                                alt="">
-                                                        </div>
-
-                                                    </div>
+                                                        @foreach($product->product_main_images as $img)
+                                                            <div class="popup-thumb">
+                                                                <img src="{{ asset('uploads/products/'.$img->graphic) }}"
+                                                                    alt="">
+                                                            </div>
+                                                        @endforeach     
+                                                 </div>
 
                                                 </div>
 
@@ -240,38 +155,7 @@
                                                     <button type="button" class="zoom-minus">−</button>
                                                     <button type="button" class="zoom-plus">+</button>
                                                 </div>
-
                                             </div>
-
-                                            <!--div class="onsale-trading">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <!--div class="onsale-off">{{ $discountText }}</div-->
-                                            </div-->
-                                            <!--div class="product-gallery-wrapper product-gallery-slider">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @if ($firstImage)
-    <!--div class="product-gallery-image">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <!--a data-fancybox="gallery" href="javascript:void(0)"><!--img
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    src="{{ asset('uploads/products/' . $firstImage) }}"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    alt=""></a-->
-                                            </div-->
-                                            @endif
-                                            @if (!empty($productImages))
-                                                @foreach ($productImages as $image)
-                                                    <!--div class="product-gallery-image">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <!--a data-fancybox="gallery" href="javascript:void(0)"><!--img
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        src="{{ asset('uploads/products/' . $image) }}"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        alt=""></a>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div-->
-                                                @endforeach
-                                            @endif
-                                            </div-->
-                                            <!--ol class="product-gallery-thumbs">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @if (!empty($productImages))
-    @foreach ($productImages as $image)
-    <!--li><!--img src="{{ asset('uploads/products/' . $image) }}"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    alt=""></li-->
-                                            @endforeach
-                                            @endif
-                                            </ol-->
                                         </div>
                                     </div>
                                 </div>
@@ -330,24 +214,12 @@
                                                                         @foreach ($variant['variant_values'] as $k => $variantValue)
                                                                             @php
                                                                                 $isActive = false;
-                                                                                $image = $variantValue['image']
-                                                                                    ? asset(
-                                                                                        'uploads/products/' .
-                                                                                            $variantValue['image'],
-                                                                                    )
-                                                                                    : asset('img/no-image.jpg');
+                                                                                $image = $variantValue['image'] ? asset('uploads/products/' . $variantValue['image'],): asset('img/no-image.jpg');
                                                                                 $type = $variant['variant_type'];
                                                                                 $color = $variantValue['color_code'];
                                                                                 $name = $variantValue['name'];
                                                                                 $variantName = $variant['variant_name'];
-                                                                                $isActive =
-                                                                                    ($hasMain &&
-                                                                                        $variantValue['is_main'] ==
-                                                                                            1) ||
-                                                                                    (!$hasMain && $k == 0);
-                                                                                info('------variantvalue--------', [
-                                                                                    $variantValue,
-                                                                                ]);
+                                                                                $isActive = ($hasMain && $variantValue['is_main'] ==1) ||(!$hasMain && $k == 0);
                                                                             @endphp
                                                                             <li data-productId = "{{ $variant['product_id'] }}"
                                                                                 data-id="{{ $variantValue['id'] }}"
@@ -366,8 +238,7 @@
                                                                                     <img src="{{ $image }}"
                                                                                         alt="{{ $variantValue['name'] }}">
                                                                                 </div>
-                                                                                <p
-                                                                                    style="margin-top:5px;margin-bottom:5px">
+                                                                                <p style="margin-top:5px;margin-bottom:5px">
                                                                                     {{ $variantValue['name'] }}</p>
                                                                             </li>
                                                                         @endforeach
@@ -424,14 +295,31 @@
                                                 </div> --}}
                                                 <div class="product-action-buttons">
 
-                                                    <button type="button" class="add-cart-btn">
+                                                    <button type="button" class="add-cart-btn addToCartBtn addToCartText" data-id="{{ $product->id }}"
+                                                            data-name="{{ $product->name }}"
+                                                            data-producttype="{{ $product->product_type }}"
+                                                            data-sku="{{ $product->sku }}"
+                                                            data-price="{{ $buying_price }}"
+                                                            data-salePrice="{{ $selling_price }}"
+                                                            data-discountType="Flat"
+                                                            data-discount="{{ $discount_product }}"
+                                                            data-tax-arr="{{ e(json_encode($categoryTaxes)) }}">
                                                         <span class="btn-icon">
                                                             <span class="material-symbols-outlined">shopping_bag</span>
                                                         </span>
                                                         <span class="btn-text">Add to Cart</span>
                                                     </button>
 
-                                                    <button type="button" class="buy-now-btn">
+                                                    <button type="button" class="buy-now-btn" id="buy_now_auto_add_to_cart" data-id="{{ $product->id }}"
+                                                            data-name="{{ $product->name }}"
+                                                            data-producttype="{{ $product->product_type }}"
+                                                            data-sku="{{ $product->sku }}"
+                                                            data-price="{{ $buying_price }}"
+                                                            data-salePrice="{{ $selling_price }}"
+                                                            data-discountType="Flat"
+                                                            data-discount="{{ $discount_product }}"
+                                                            data-image = "{{ $product->images['first'] }}"
+                                                            data-tax-arr="{{ e(json_encode($categoryTaxes)) }}">
                                                         <span class="btn-text">Buy Now</span>
                                                         <span class="btn-icon">
                                                             <i class="fa fa-arrow-right"></i>
@@ -2144,7 +2032,7 @@
                                                 <span class="old-price">₹{{ $bestseller->buying_price }}</span>
                                             </div>
                                             <div class="product-actions">
-                                                <a href="{{ env('WEBSITE_URL') . 'product/' . productSlug($bestseller->name) . '.html/' . productSlug($bestseller->sku) }}"
+                                                <a href="{{ env('WEBSITE_URL') . 'product/product/' . productSlug($bestseller->name) . '.html/' . $bestseller->sku }}"
                                                     class="action-btn add_to_cart_btn">
                                                     Buy now
                                                 </a>

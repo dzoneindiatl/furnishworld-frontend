@@ -33,7 +33,7 @@ use App\Models\FooterSubcategory;
 use App\Models\ProductCollection;
 use App\Models\RecentlyViewed;
 use App\Models\ProductVariantSpecialization; 
-// use App\Models\ProductVariantValue;
+use App\Models\ProductVariantValue;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -57,7 +57,6 @@ class HomeController extends Controller
     // }
     public function index()
     {
-        // $this->specification->syncVariantSpecifications();  
         $cookie = Cookie::get('auto_login');
         if ($cookie) {
             $userId = decrypt($cookie);
@@ -65,11 +64,10 @@ class HomeController extends Controller
             if ($user) {
                 Auth::guard('customer')->login($user);
             } else {
-                // Invalid user ID in cookie — remove cookie
                 Cookie::queue(Cookie::forget('auto_login'));
             }
         }
-        //autologin via cooke end
+
         $isWishlisteddata = [];
         $MainCategory = Category::select('id','slug','description','name','image','image2','image3','thumbnail_image')
         ->whereNull('parent_id')
@@ -81,21 +79,25 @@ class HomeController extends Controller
             }
         ])->get();
         foreach ($MainCategory as $category) {
-            $category->url = route('category.show', $category->slug);
+            $category->url = route('category.show', ['path'=>$category->slug]);
         }
         
         $categoryId = $MainCategory->pluck('id'); 
-        $featureSubCategory=Category::select('id','slug','name','image')->where('is_featured',1)->whereIn('parent_id',$categoryId)->where('is_active',1)->get(); 
+        $featureSubCategory=Category::with('parentcategory:id,slug')->select('id','slug','name','image','parent_id')->where('is_featured',1)->whereIn('parent_id',$categoryId)->where('is_active',1)->get(); 
+        
         $modernLiving1 = $MainCategory->take(2);
         $modernLiving2 = $MainCategory->skip(2)->take(2);  
         $modernLiving3 = $MainCategory->skip(4)->take(2); 
-        $refreshYourRoom = Category::where('parent_id',2)->where('is_active',1)->get();
+        
+        $refreshYourRoom = Category::with('parentcategory:id,slug')->select('id','slug','name','image','parent_id')->where('parent_id',2)->where('is_active',1)->get();
         $parentCategoryId = $MainCategory->whereNull('parent_id')->pluck('id');
+        
         $subCategory = Category::select('id')->whereIn('parent_id',$parentCategoryId)->where('is_active',1)->where('is_deleted',0)->get(); 
         $subCategoryId = $subCategory->pluck('id'); 
+        
         $livingProduct = []; 
 
-        $childCategory = Category::select('id','slug','name','image','image2','image3','thumbnail_image')->whereIn('parent_id',$subCategoryId)->where('is_active',1)->where('is_deleted',0)->get();
+        $childCategory = Category::with(['parentcategory:id,parent_id,slug,name', 'parentcategory.parentcategory:id,slug,name'])->select('id','slug','name','image','image2','image3','thumbnail_image','parent_id')->whereIn('parent_id',$subCategoryId)->where('is_active',1)->where('is_deleted',0)->get();
 
         foreach($childCategory as $ch){
             $livingProduct[$ch->id] = Product::select('name','selling_price','sku')->where('main_child_category_id',$ch->id)->where('is_active',1)->where('is_deleted',0)->get(); 
@@ -108,11 +110,12 @@ class HomeController extends Controller
             $ch->productName = $lowestProduct?->name; 
         }  
 
-        $productGallery = Category::select('id','name','image','slug')->where('parent_id',1)->where('is_active',1)->where('is_deleted',0)->get();
+        $productGallery = Category::with('parentcategory:id,slug')->select('id','name','image','slug','parent_id')->where('parent_id',1)->where('is_active',1)->where('is_deleted',0)->get();
         $allProduct = [];
      
         $testimonials = Testimonial::where(['is_active' => 1])->get();
         $new_arrivals_product = Product::where('is_new_arrivals', 1)->where("is_deleted",  0)->where(['is_active' => 1])->where(['is_new_arrivals' => true, 'draf' => false])->orderBy('id', 'desc')->get();   
+        $trendingProduct = Product::where('trending', 1)->where("is_deleted",  0)->where(['is_active' => 1])->where(['trending' => true, 'draf' => false])->orderBy('id', 'desc')->get();   
 
         $user = Auth::guard('customer')->user();
         if ($user) {
@@ -120,6 +123,7 @@ class HomeController extends Controller
                 ->pluck('product_id')
                 ->toArray();
         }
+        
         $referralCode = '';
         if(request()->referral){
             $r = refCodeExist(request()->referral, true);
@@ -131,8 +135,7 @@ class HomeController extends Controller
         $homeSlider =  Slider::where('is_active', 1)->get();
         $ActiveCoupon =  Coupon::where('is_active', 1)->first();
         $best_seller_products = Product::where('best_seller', 1)->where('is_active',1)->orderBy('id', 'desc')->get();
-        // 'twoCollection', 'thCollection', 'forCollection', 'tfCollection', 'womencategory', 'mencategory','bestproduct','collectionCat','offerbanners','collectionProd','blogs','settings',
-        return view('front.modules.home.index', compact('best_seller_products','ActiveCoupon','homeSlider','MainCategory','testimonials',  'new_arrivals_product','allProduct', 'isWishlisteddata', 'referralCode','featureSubCategory','refreshYourRoom','modernLiving1','modernLiving2','modernLiving3','productGallery','childCategory','subCategory'));
+        return view('front.modules.home.index', compact('best_seller_products','ActiveCoupon','homeSlider','MainCategory','testimonials',  'new_arrivals_product','allProduct', 'isWishlisteddata', 'referralCode','featureSubCategory','refreshYourRoom','modernLiving1','modernLiving2','modernLiving3','productGallery','childCategory','subCategory','trendingProduct'));
     }
     public function indexNew()
     {
@@ -571,119 +574,140 @@ class HomeController extends Controller
 
 
 
-    public function productListing(Request $request, $slug)
+    public function productListing(Request $request, $path)
     {
+        $segments = array_values(array_filter(explode('/', $path)));
+     
+        $category = null;
+        $subCategory = null;
+        $subChildCategory = null;
+        $category = Category::whereNull('parent_id')->where('slug', $segments[0])->firstOrFail();
+        if (count($segments) === 2) {
+            $subCategory = Category::where('parent_id', $category->id)->where('slug', $segments[1])->firstOrFail();
+
+        } elseif (count($segments) === 3) {
+            $subCategory = Category::where('parent_id', $category->id)->where('slug', $segments[1])->firstOrFail();
+            $subChildCategory = Category::where('parent_id', $subCategory->id)->where('slug', $segments[2])->firstOrFail();
+
+        } else {
+            abort(404);
+        }
+
         $isWishlisteddata = [];
         $parent = '';
         $grandParent = '';
 
-        if($request->filled('sub_child_category_id')){
-            $category = Category::where('id',$request->sub_child_category_id)->firstOrFail();
-            $slug = $category->slug;
-        
-        } elseif ($request->filled('sub_category_id')) {
-            $category = Category::where('id',$request->sub_category_id)->firstOrFail();
-            $slug = $category->slug;
-
-        } elseif ($request->filled('category_id')) {
-            $category = Category::where('id',$request->category_id)->firstOrFail();
-            $slug = $category->slug;
-
-        } else {
-            $category = Category::where('slug',$slug)->firstOrFail();
-        }
-
-        $DB = Product::where('is_deleted', 0)
+        $DB = Product::select('id','name','slug','buying_price','selling_price','discount','discount_type','sku')->where('is_deleted', 0)
             ->where('is_active', 1)
             ->where('draf', false);
-
-        $categoryType = "category";
-        $AllMainCategory = Category::select('id','name','slug','parent_id')->whereNull('parent_id')->where('is_active', 1)->where('is_deleted', 0)->get();
-
-        $allSubCategory = Category::select('id','name','slug','parent_id')->where('is_active', 1)->where('is_deleted', 0)->whereIn('parent_id',$AllMainCategory->pluck('id'))->get();
-        $variants = Variant::where('is_active', 1)
-            ->where('is_deleted', 0)
-            ->get();
-
-
-        $variantColor = VariantValue::whereIn('variant_id',$variants->pluck('id'))->get();
-
-        if (is_null($category->parent_id)) {
-            $DB->where('main_category_id',$category->id);
-            $categoriesData = Category::where('is_active',1)->where('is_deleted',0)->where('parent_id',$category->id)->get();
-        } else {
-            $parent = Category::find($category->parent_id);
-            if ($parent && is_null($parent->parent_id)) {
-                $DB->where(function ($q) use ($category) {
-                    $q->where('main_sub_category_id',$category->id)
-                    ->orWhere(function ($query) use ($category) {
-                        $query->whereNotNull('sub_category_id')
-                        ->whereRaw('JSON_VALID(sub_category_id)')
-                        ->whereJsonContains('sub_category_id',(string) $category->id);
-                    });
-                });
-
-                $categoriesData = Category::where('is_active', 1)->where('is_deleted',0)->where('parent_id',$category->id)->get();
+        $hasCategoryFilter = $request->filled('category_id') || $request->filled('sub_category_id') ||  $request->filled('sub_child_category_id');
+        if(!$hasCategoryFilter){
+            if (is_null($category->parent_id)) {
+                $DB->where('main_category_id',$category->id);
+                $categoriesData = Category::where('is_active',1)->where('is_deleted',0)->where('parent_id',$category->id)->get();
             } else {
-                $grandParent = $parent ? Category::find($parent->parent_id): null;
-                $DB->where(function ($q) use ($category,$parent,$grandParent) {
-                    $q->where('main_child_category_id',$category->id)
-                    ->orWhere(function ($query) use ($category) {
-
-                        $query->whereNotNull('child_category_id')
-                        ->whereRaw('JSON_VALID(child_category_id)')
-                        ->whereJsonContains('child_category_id',(string) $category->id);
-                    });
-                    if ($parent) {
-                        $q->where(function ($qq) use ($parent) {
-
-                            $qq->where('main_sub_category_id',$parent->id)
-                            ->orWhereJsonContains('sub_category_id',(string) $parent->id);
+                $parent = Category::find($category->parent_id);
+                if ($parent && is_null($parent->parent_id)) {
+                    $DB->where(function ($q) use ($category) {
+                        $q->where('main_sub_category_id',$category->id)
+                        ->orWhere(function ($query) use ($category) {
+                            $query->whereNotNull('sub_category_id')
+                            ->whereRaw('JSON_VALID(sub_category_id)')
+                            ->whereJsonContains('sub_category_id',(string) $category->id);
                         });
-                    }
+                    });
 
-                    if ($grandParent) {
-                        $q->where('main_category_id',$grandParent->id);
-                    }
-                });
-                $categoriesData = collect();
+                    $categoriesData = Category::where('is_active', 1)->where('is_deleted',0)->where('parent_id',$category->id)->get();
+                } else {
+                    $grandParent = $parent ? Category::find($parent->parent_id): null;
+                    $DB->where(function ($q) use ($category,$parent,$grandParent) {
+                        $q->where('main_child_category_id',$category->id)
+                        ->orWhere(function ($query) use ($category) {
+
+                            $query->whereNotNull('child_category_id')
+                            ->whereRaw('JSON_VALID(child_category_id)')
+                            ->whereJsonContains('child_category_id',(string) $category->id);
+                        });
+                        if ($parent) {
+                            $q->where(function ($qq) use ($parent) {
+
+                                $qq->where('main_sub_category_id',$parent->id)
+                                ->orWhereJsonContains('sub_category_id',(string) $parent->id);
+                            });
+                        }
+
+                        if ($grandParent) {
+                            $q->where('main_category_id',$grandParent->id);
+                        }
+                    });
+                    $categoriesData = collect();
+                }
             }
+        }else{
+            $categoriesData = collect();
         }
-        if ($request->filled('variantValuesColor')) {
-                $selectedVariantValuesColor =$request->input('variantValuesColor');
-                $DB->whereHas('getProductVariantValue',function ($query) use ($selectedVariantValuesColor) {
-                    $query->where('variant_value_id',$selectedVariantValuesColor);
+        $categoryIds = (array) $request->input('category_id', []);
+
+        if (!empty($categoryIds)) {
+            $DB->whereIn('main_category_id', $categoryIds);
+        }
+
+        $subCategoryIds = (array) $request->input('sub_category_id', []);
+        if (!empty($subCategoryIds)) {
+            $DB->where(function ($q) use ($subCategoryIds) {
+                $q->whereIn('main_sub_category_id',$subCategoryIds);
+                foreach ($subCategoryIds as $id) {
+                    $q->orWhereJsonContains('sub_category_id',(string) $id);
+                }
+            });
+        }
+
+        $subChildCategoryIds = (array) $request->input('sub_child_category_id',[]);
+        if (!empty($subChildCategoryIds)) {
+            $DB->where(function ($q) use ($subChildCategoryIds) {
+                $q->whereIn('main_child_category_id',$subChildCategoryIds);
+                foreach ($subChildCategoryIds as $id) {
+                    $q->orWhereJsonContains('child_category_id',(string) $id);
+                }
+            });
+        }
+        $selectedVariantValuesColor = (array) $request->input('variantValuesColor',[]);
+        if (!empty($selectedVariantValuesColor)) {
+            $DB->whereHas('getProductVariantValue',function ($query) use ($selectedVariantValuesColor) {
+                    $query->whereIn('variant_value_id',$selectedVariantValuesColor);
                 }
             );
         }
         if ($request->filled('price_range')) {
 
-            $range = explode('-',$request->price_range);
-            if (count($range) == 2) {
+            $range = explode('-',$request->input('price_range'));
+            if (count($range) === 2) {
 
                 $min = (int) $range[0];
                 $max = (int) $range[1];
-                $DB->whereBetween('selling_price',[$min,$max]);
+
+                if ($min <= $max) {
+                    $DB->whereBetween('selling_price',[$min, $max]);
+                }
             }
         }
         switch ($request->input('sortBy')) {
 
             case 'new_arrivals':
-                $DB->where('is_new_arrivals',1);
+                $DB->where('is_new_arrivals', 1);
                 break;
 
             case 'best_seller':
-                $DB->where('best_seller',1);
+                $DB->where('best_seller', 1);
                 break;
 
             case 'featured':
-                $DB->where('is_featured',1);
+                $DB->where('is_featured', 1);
                 break;
 
             case 'trending':
-                $DB->where('trending',1);
+                $DB->where('trending', 1);
                 break;
-
             case 'low_high':
                 $DB->orderBy('selling_price','asc');
                 break;
@@ -696,70 +720,49 @@ class HomeController extends Controller
                 $DB->orderBy('product_order','asc');
                 break;
         }
-        $offset = (int) $request->input('offset',0);
+
+        $offset = (int) $request->input('offset', 0);
         $limit = (int) $request->input('limit',config('Reading.records_per_page'));
         $totalResults = (clone $DB)->count();
         $results = $DB->offset($offset)->limit($limit)->get();
-
         $hasMore = ($offset + $results->count()) < $totalResults;
+        
         if ($category->parent_id !== null) {
-
             $parent = Category::find($category->parent_id);
             $grandParent = $parent ? Category::find($parent->parent_id): null;
-            $catAttributeIds = CategoryAttribute::where('category_id',$category->parent_id);
-
+            $catAttributeIds = CategoryAttribute::where( 'category_id', $category->parent_id);
             if ($grandParent) {
                 $catAttributeIds->orWhere('category_id',$grandParent->id);
             }
             $catAttributeIds = $catAttributeIds->pluck('attribute_id');
-
         } else {
-            $catAttributeIds =CategoryAttribute::where('category_id',$category->id)->pluck('attribute_id');
+            $catAttributeIds = CategoryAttribute::where('category_id',$category->id)->pluck('attribute_id');
         }
 
-
         $attributes = Attribute::whereIn('id',$catAttributeIds)->where('is_active', 1)->where('is_deleted', 0)->get();
+        $AllMainCategory = Category::select('id','name','slug','parent_id')->whereNull('parent_id')->where('is_active', 1)->where('is_deleted', 0)->get();
+        $allSubCategory = Category::select('id','name','slug','parent_id')->where('is_active', 1)->where('is_deleted', 0)->whereIn('parent_id',$AllMainCategory->pluck('id'))->get();
+        $allChildCategory = Category::select('id','name','slug','parent_id')->where('is_active',1)->where('is_deleted',0)->whereIn('parent_id',$allSubCategory->pluck('id'))->get(); 
+
+        $variants = Variant::where('is_active', 1)
+            ->where('is_deleted', 0)
+            ->get();
+        $variantColor = VariantValue::whereIn('variant_id',$variants->pluck('id'))->get();
         $user = Auth::guard('customer')->user();
 
         if ($user) {
             $isWishlisteddata =Wishlist::where('user_id',$user->id)->pluck('product_id')->toArray();
         }
-
+         
         if ($request->ajax()) {
-
             return response()->json([
-
-                'html' => view(
-                    'front.modules.shop.load_more_data',
-                    compact('results','isWishlisteddata','totalResults','category','grandParent','parent','categoryType','categoriesData','slug','variants','attributes','limit','allSubCategory','AllMainCategory','variantColor'))->render(),
+                'html' => view('front.modules.shop.load_more_data',compact('results','isWishlisteddata','totalResults','category','grandParent','parent','categoriesData','variants','attributes','limit','allSubCategory','AllMainCategory','variantColor','path'))->render(),
                 'totalResults' => $totalResults,
                 'hasMore' => $hasMore,
-                'nextOffset' =>
-                    $offset + $results->count(),
+                'nextOffset' => $offset + $results->count(),
             ]);
-        }
-
-        return view(
-            'front.modules.shop.index',
-            compact(
-                'results',
-                'categoriesData',
-                'totalResults',
-                'slug',
-                'variants',
-                'attributes',
-                'limit',
-                'category',
-                'categoryType',
-                'isWishlisteddata',
-                'parent',
-                'grandParent',
-                'AllMainCategory',
-                'allSubCategory',
-                'variantColor',
-                'hasMore'
-            )
-        );
+        } 
+        return view('front.modules.shop.index',compact('results','categoriesData','totalResults','variants','attributes','limit','category','isWishlisteddata','parent','grandParent','AllMainCategory','allSubCategory','variantColor','hasMore','allChildCategory','path'));
     }
 
     public function collectionListing(Request $request, $slug)
@@ -924,7 +927,6 @@ class HomeController extends Controller
         ));
     }
 
-
     function getFrontBackImages($product_id)
     {
         $graphics = ProductGraphics::where('product_id', $product_id)->where('status', 1)->get();
@@ -972,13 +974,17 @@ class HomeController extends Controller
         }
 
         $productcat = Category::where('id', $product->main_category_id)->first();
+
         $productDetailId = explode(',',$productcat->product_detail_manager); 
         $productDetailManager = ProductDetailManager::whereIn('id',$productDetailId)->select('id','section_name','content','order')->orderBy('order','asc')->get(); 
-        $productSubCat = Category::where('id', $product->main_sub_category_id)->first();
+        $productSubCat = Category::where('id', $product->main_sub_category_id)->first(); 
+        
         $productChildCat = Category::where('id', $product->main_child_category_id)->first();
+        
         $productreview = Product::with(['reviews.user'])->where('sku', $sku)->where('is_active', 1)->first();
         $reviews = $productreview->reviews()->latest()->get();
         $productVariantSpecification = ProductVariantSpecialization::where('product_id',$product->id)->get(); 
+
         $productvariants = ProductVariant::with([
             'variant:id,name,type',
             'variantValues.variant_value:id,name,color_code',
@@ -1081,7 +1087,8 @@ class HomeController extends Controller
         $instagram = Setting::select('id','value')->where('key','Social.instagram')->first(); 
         $pinterst = Setting::select('id','value')->where('key','Social.pinterest')->first(); 
         $youtube = Setting::select('id','value')->where('key','Social.youtube')->first(); 
-
+    
+      
         return view('front.modules.shop.product-detail', compact('product','productChildCat', 'productcat', 'productSubCat', 'productvariants', 'related_products', 'bestproduct', 'releatedProduct', 'returnexchangeProduct', 'contactDetails', 'productVarientCom', 'isWishlisted', 'isWishlisteddata', 'categoryTaxes', 'reviews', 'productreview', 'recentlyViewedProducts','productVariantSpecification','facebook','instagram','pinterst','youtube','productDetailManager', 'best_seller_products'));
     }
 
@@ -1539,5 +1546,33 @@ class HomeController extends Controller
     {   
         Cart::where('user_id',auth()->guard('customer')->user()->id)->where('product_id',$request->productId)->where('product_variant_combination_id',$request->variantCombinationId)->delete();
         return true ;
+    }
+
+    public function getProductVariantImages(Request $request)
+    {
+        $productId = $request->product_id; 
+        $variantValueId = $request->variant_value_id;       
+        $productVariant = ProductVariantValue::where('product_id', $productId)
+        ->where('variant_value_id', $variantValueId)
+        ->first();
+        if (!$productVariant) {
+            return response()->json([
+                'first_image' => null,
+                'second_image' => null,
+            ]);
+        }
+
+        $graphics = ProductGraphics::where('product_id', $productId)
+            ->where('variant_id', $productVariant->variant_value_id)
+            ->where('graphic_type', 'image')
+            ->where('is_front',1)
+            ->get();
+
+        $images = $graphics->pluck('graphic')->filter()->values();      
+        return response()->json([
+            'first_image' => isset($images[0])
+                ? asset('uploads/products/' . $images[0])
+                : null,
+        ]);
     }
 }

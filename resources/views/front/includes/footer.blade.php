@@ -159,9 +159,9 @@
             </div>
         </div>
     @endif
-    <script></script>
     <script>
         $(document).ready(function() {
+            alert(1); 
             updateCartData();
             $('.close-product').on('click', function() {
                 var button = $(this);
@@ -226,9 +226,10 @@
 
         setLoginCartItems();
         window.isCustomerLoggedIn = @json(Auth::guard('customer')->check());
-        if (!window.isCustomerLoggedIn) {
+        if (!window.isCustomerLoggedIn) {     
             displayGuestCart();
         }
+       
 
         function updateCartTotal(cartItems) {
             let total = 0;

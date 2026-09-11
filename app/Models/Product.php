@@ -61,19 +61,28 @@ class Product extends Model
 
     public function getColorOptionsAttribute()
     {
-        $colors = collect();
+        return $this->productVariants
+            ->flatMap(function ($productVariant) {
+                return $productVariant->variantValues
+                    ->map(function ($productVariantValue) {
+                        $variantValue = $productVariantValue->variant_value;
 
-        foreach ($this->productVariants as $productVariant) {
-            foreach ($productVariant->variantValues as $variantValue) {
-                if ($variantValue->variant_value && $variantValue->variant_value->variant_id == 1) {
-                    $colors->push($variantValue->variant_value);
-                }
-            }
-        }
+                        if ($variantValue && $variantValue->variant_id == 1) {
+                            return [
+                                'id' => $variantValue->id,
+                                'variant_id'=>$variantValue->variant_id,
+                                'name' => $variantValue->name,
+                                'color_code' => $variantValue->color_code,
+                            ];
+                        }
 
-        return $colors->unique('id')->values();
+                        return null;
+                    });
+            })
+            ->filter()
+            ->unique('id')
+            ->values();
     }
-
 
 
     public function category()

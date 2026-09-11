@@ -15,10 +15,8 @@ class ProductVariantValue extends Eloquent {
     ];
     
 	public function variant_value() {
-        return $this->belongsTo(VariantValue::class, 'variant_value_id')->select(['id', 'variant_id','name']);
+        return $this->belongsTo(VariantValue::class, 'variant_value_id')->select(['id', 'variant_id','name','color_code']);
     }
-
- 
     public function first_image()
     {
        /*  $primaryImage  = $this->hasOne(ProductGraphics::class, 'variant_id', 'variant_value_id')

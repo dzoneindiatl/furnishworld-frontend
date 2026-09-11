@@ -143,9 +143,11 @@ Route::name('front-')->group(function () {
 
     Route::get('get/sub/child/category',[HomeController::class,'getSubAndChildCategory'])->name('get-category'); 
     Route::post('/remove-cart-product',[HomeController::class,'removeCartProduct'])->name('remove-cart-product'); 
+
+    Route::get('get-product-variant-image',[HomeController::class,'getProductVariantImages'])->name('product-variant-image'); 
     });
     
 Route::post('/checkVarientStock', [App\Http\Controllers\Front\HomeController::class, 'variantStockCheck'])->name('variant.stock.check');
 Route::get('product/collection/{slug}', [HomeController::class, 'collectionListing'])->name('collections.show');
-Route::get('{slug}', [HomeController::class, 'productListing'])->name('category.show');
+Route::get('{path}', [HomeController::class, 'productListing'])->where('path', '.*')->name('category.show');
 

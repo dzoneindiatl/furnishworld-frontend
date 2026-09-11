@@ -294,16 +294,16 @@
 		   
 	// display Product View
 	$('.product-display-mode #grid').click(function(){    
-		$('.products').addClass('columns-3');  
-		$('.products').removeClass('columns-4'); 
-		$('.product-display-mode #grid').toggleClass('active');  
-		$('.product-display-mode #grid_large').toggleClass('active');  			
+		$('.products').addClass('columns-2');  
+		$('.products').removeClass('columns-3'); 
+		$('.product-display-mode #grid').addClass('active');  
+		$('.product-display-mode #grid_large').removeClass('active');  			
 	});
 	$('.product-display-mode #grid_large').click(function(){    
-		$('.products').addClass('columns-4');  
-		$('.products').removeClass('columns-3'); 	
-		$('.product-display-mode #grid').toggleClass('active');  
-		$('.product-display-mode #grid_large').toggleClass('active');  		
+		$('.products').addClass('columns-3');  
+		$('.products').removeClass('columns-2'); 	
+		$('.product-display-mode #grid').removeClass('active');  
+		$('.product-display-mode #grid_large').addClass('active');  		
 	});
 
 	// Widget Open hide

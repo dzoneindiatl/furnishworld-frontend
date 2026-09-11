@@ -87,7 +87,7 @@
             <div class="fw_category_grid">
                 @if (!empty($featureSubCategory))
                     @foreach ($featureSubCategory->take(14) as $category)
-                        <a href="{{ route('category.show', $category->slug) }}" class="fw_category_card">
+                        <a href="{{ route('category.show', ['path' => $category->parentCategory->slug.'/'.$category->slug]) }}" class="fw_category_card">
                             <div class="fw_category_image">
                                 <img src="{{ url('uploads/categories/' . ($category->getAttributes()['image'] ?? '')) }}"
                                     alt="{{ $category->name }}{{ $category->image }}">
@@ -134,7 +134,7 @@
                         @foreach ($refreshYourRoom as $category)
                             <div class="fw_collection_card">
                                 <div class="image">
-                                    <a href="{{ route('category.show', $category->slug) }}">
+                                    <a href="{{ route('category.show',['path' => $category->parentCategory->slug.'/'.$category->slug]) }}">
                                         <img src="{{ $category->image ?? asset('assets/front/images/collection_01.png') }}"
                                             alt="{{ $category->name }}">
                                     </a>
@@ -220,7 +220,7 @@
                 <div class="fw_subcategory_grid_left">
                     @foreach ($modernLiving1 as $liv)
                         <div class="border">
-                            <a href="{{ route('category.show', $liv->slug) }}" class="fw_subcat_card fw_subcat_large">
+                            <a href="{{ route('category.show',['path'=> $liv->slug]) }}" class="fw_subcat_card fw_subcat_large">
                                 <img src="{{ $liv->image }}" alt="">
                                 <div class="fw_subcat_content">
                                     <h3>{{ $liv->name }}</h3>
@@ -236,7 +236,7 @@
                 <div class="fw_subcategory_grid_center">
                     @foreach ($modernLiving2 as $liv2)
                         <div class="border">
-                            <a href="{{ route('category.show', $liv2->slug) }}" class="fw_subcat_card fw_subcat_wide">
+                            <a href="{{ route('category.show', ['path'=> $liv2->slug]) }}" class="fw_subcat_card fw_subcat_wide">
                                 <img src="{{ $liv2->image }}" alt="">
                                 <div class="fw_subcat_content">
                                     <h3>{{ $liv2->name }}</h3>
@@ -251,7 +251,7 @@
                 <div class="fw_subcategory_grid_right">
                     @foreach ($modernLiving3 as $liv3)
                         <div class="border">
-                            <a href="{{ route('category.show', $liv3->slug) }}" class="fw_subcat_card">
+                            <a href="{{ route('category.show', ['path'=> $liv3->slug]) }}" class="fw_subcat_card">
                                 <img src="{{ $liv3->image }}" alt="">
                                 <div class="fw_subcat_content">
                                     <h3>{{ $liv3->name }}</h3>
@@ -287,13 +287,11 @@
                     <img src="{{ asset('assets/images/home_furnishing.jpg') }}" alt="">
                 </div>
                 <div class="fw_home_frunishing_product_grid">
-
-                    <!-- product card -->
                     @foreach ($childCategory->take(11) as $home)
                         @if (!is_null($home->productName))
                             <div class="product_card">
                                 <div class="product_card_image">
-                                    <a href="{{ route('category.show', $home->slug) }}">
+                                    <a href="{{ route('category.show',['path'=>$home->parentCategory->parentCategory->slug.'/'.$home->parentCategory->slug.'/'.$home->slug] ) }}">
                                         <img src="{{ $home->image }}" alt="">
                                     </a>
                                 </div>
@@ -337,21 +335,21 @@
             </div>
 
             <div class="fw_product_grid">
-                @foreach ($new_arrivals_product as $arrivals)
+                @foreach ($trendingProduct as $trending)
                     <div class="product-card">
                         <div class="product-image">
-                            <img class="default" src="{{ $arrivals->images['first'] }}" alt="">
-                            <img src="{{ $arrivals->images['second'] }}" class="hover" alt="">
+                            <img class="default" src="{{ $trending->images['first'] }}" alt="">
+                            <img src="{{ $trending->images['second'] }}" class="hover" alt="">
                         </div>
                         <div class="hover-panel">
                             <div class="hover-content">
-                                <h3>{{ $arrivals->name }}</h3>
+                                <h3>{{ $trending->name }}</h3>
                                 <div class="price-wrap">
-                                    <span class="price">₹{{ $arrivals->selling_price }}</span>
-                                    <span class="old-price">₹{{ $arrivals->buying_price }}</span>
+                                    <span class="price">₹{{ $trending->selling_price }}</span>
+                                    <span class="old-price">₹{{ $trending->buying_price }}</span>
                                 </div>
                                 <div class="product-actions">
-                                    <a href="{{ env('WEBSITE_URL') . 'product/' . productSlug($arrivals->name) . '.html/' . productSlug($arrivals->sku) }}"
+                                    <a href="{{ env('WEBSITE_URL') . 'product/product' . productSlug($trending->name) . '.html/' .$trending->sku }}"
                                         class="action-btn add_to_cart_btn">
                                         Buy now
                                     </a>
@@ -387,19 +385,6 @@
                                 </span>
                             </button>
                         </div>
-                        {{-- <span class="section-tag">
-                            DESIGN YOUR SPACE
-                        </span> --}}
-
-                        {{-- <h2 id="catName"></h2> --}}
-                        <!--p class="fw_content" id="catDescription">
-                                                                                    {{-- Explore complete room collections designed to help
-                            you create beautiful and harmonious living
-                            environments. --}}
-                                                                                </p-->
-                        {{-- <a href="#" class="btn-primary" id="catUrl">
-                            <span>Explore Collection</span>
-                        </a> --}}
                     </div>
 
                     <div class="room-showcase">
@@ -409,16 +394,7 @@
                         </div>
 
                         @php
-                            $icons = [
-                                'weekend',
-                                'bed',
-                                'table_restaurant',
-                                'desk',
-                                'deck',
-                                'toys',
-                                'wall_lamp',
-                                'kitchen',
-                            ];
+                            $icons = ['weekend','bed','table_restaurant','desk','deck','toys','wall_lamp','kitchen',];
                         @endphp
 
                         <div class="room-categories">
@@ -480,7 +456,7 @@
                                 {{-- <span>Explore our latest collection</span> --}}
                             @endif
 
-                            <a href="{{ route('category.show', $gal->slug) }}" class="btn-accent">
+                            <a href="{{ route('category.show',['path'=>$gal->parentCategory->slug.'/'.$gal->slug] ) }}" class="btn-accent">
                                 Explore
                                 <i class="material-symbols-outlined">arrow_outward</i>
                             </a>
@@ -711,9 +687,6 @@
         document.addEventListener('DOMContentLoaded', function() {
 
             const mainCategories = window.mainCategories || [];
-            // const catName = document.getElementById('catName');
-            // const catDescription = document.getElementById('catDescription');
-            // const catUrl = document.getElementById('catUrl');
             const roomCarousel = document.getElementById('roomCarousel');
             const categoryTabs = document.querySelectorAll('.room-categories a');
             const nextButton = document.querySelector('.nav-btn.next');
@@ -730,37 +703,20 @@
                 }
                 currentCategory = categoryIndex;
                 currentSlide = 0;
-                // catName.innerHTML = category.name || '';
-                // catDescription.innerHTML = category.description || '';
-
-                // if (catUrl) {
-                //     catUrl.href = category.url || '#';
-                // }
-
                 const subCategories = category.sub_category || category.subCategory || [];
                 roomCarousel.innerHTML = '';
-
                 subCategories.forEach(function(subCategory) {
-                    const slugUrl = `${subCategory.slug}`;
+                const slugUrl = `${category.slug}/${subCategory.slug}`;
                     roomCarousel.insertAdjacentHTML(
                         'beforeend',
                         `
                     <div class="room-card">
-                        <img
-                            src="${subCategory.image || ''}"
-                            alt="${subCategory.name || ''}">
-                       
-
+                        <a href="/${slugUrl}" style="text-decoration:none;">
+                            <img src="${subCategory.image || ''}" alt="${subCategory.name || ''}">
+                        </a>  
                         <div class="overlay">
-
-                            
-                            <h3><a href="/${slugUrl}" style="text-decoration:none;"> 
-                                ${subCategory.name || ''}</a>
-                            </h3>
-                             
-
+                            <h3><a href="/${slugUrl}" style="text-decoration:none;">${subCategory.name || ''}</a></h3>
                         </div>
-
                     </div>
                       `
                     );
@@ -778,46 +734,6 @@
                 }
                 updateCarousel();
             }
-
-            // function updateCarousel() {
-            //     const cards =
-            //         roomCarousel.querySelectorAll('.room-card');
-            //     const total = cards.length;
-            //     if (total === 0) {
-            //         return;
-            //     }
-            //     if (total === 1) {
-
-            //         cards[0].className = 'room-card center';
-
-            //         return;
-            //     }
-            //     cards.forEach(function(card) {
-            //         card.className = 'room-card';
-            //     });
-            //     const prev =
-            //         (currentSlide - 1 + total) % total;
-
-            //     const next =
-            //         (currentSlide + 1) % total;
-            //     cards[currentSlide].classList.add('center');
-            //     cards[prev].classList.add('left');
-            //     cards[next].classList.add('right');
-            //     cards.forEach(function(card, index) {
-            //         if (
-            //             index !== currentSlide &&
-            //             index !== prev &&
-            //             index !== next
-            //         ) {
-            //             if (index < currentSlide) {
-            //                 card.classList.add('hidden-left');
-            //             } else {
-            //                 card.classList.add('hidden-right');
-            //             }
-            //         }
-            //     });
-            // }
-
             function updateCarousel() {
                 const cards = roomCarousel.querySelectorAll('.room-card');
                 const total = cards.length;
