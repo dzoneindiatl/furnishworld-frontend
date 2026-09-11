@@ -1103,7 +1103,7 @@ class HomeController extends Controller
     }
 
     public function viewBag()
-    {   
+    {       
         try {
             $isWishlisted = [];
             $cartItems = [];
@@ -1117,7 +1117,8 @@ class HomeController extends Controller
                     if ($product) {
                         $cartItems[] = [
                             'product' => $product,
-                            'quantity' => $cart->quantity
+                            'quantity' => $cart->quantity,
+                            'card_id' => $cart->id 
                         ];
                     }
                 }
@@ -1131,7 +1132,59 @@ class HomeController extends Controller
         
              $bestproduct = Product::where('best_seller', 1)->where("is_deleted",  0)->where(['best_seller' => true, 'draf' => false])->orderBy('id', 'desc')->get();
              $recentViewproduct = RecentlyViewed::with('product')->get(); 
-            return view('front.modules.products.viewbag', compact('cartItems', 'bestproduct', 'isWishlisted','recentViewproduct'));
+     
+            $cart = Cart::with('product')
+                    ->where('user_id', Auth::guard('customer')->id())
+                    ->get();
+
+                $cart->each(function ($cartItem) {
+
+                $combination = ProductVariantCombination::find(
+                    $cartItem->product_variant_combination_id
+                );
+
+                info("----combination----", [$combination]);
+
+                $selectedVariants = [];
+
+                if ($combination && $combination->primary_variant_value_id) {
+
+                    $variantValue = VariantValue::with('variant')
+                        ->find($combination->primary_variant_value_id);
+
+                    info("---------variantValue---------", [
+                        $variantValue
+                    ]);
+
+                    if ($variantValue && $variantValue->variant) {
+
+                        $selectedVariants[
+                            strtolower($variantValue->variant->name)
+                        ] = $variantValue->name;
+                    }
+                }
+
+                $cartItem->selectedVariants = $selectedVariants;
+                $cartItem->sku = $combination->sku ; 
+                $cartItem->productType = $cartItem->product_type; 
+                $cartItem->sellingPrice = $combination->selling_price ?? 0;
+                $cartItem->discountAmount = $combination->discount ?? 0;
+                $cartItem->discountType = $combination->discount_type ?? '';
+                $cartItem->quantity = $cartItem->quantity ?? 1;
+                $cartItem->price = $combination->price ?? 0; 
+                $cartItem->name = $cartItem->product->name; 
+                $productCategoryId = $cartItem->product->main_category_id ?? 0;
+
+                $categoryTaxes = CategoryTax::where(
+                    'category_taxes.category_id',
+                    $productCategoryId
+                )->get();
+
+                $cartItem->rawTaxArr = $categoryTaxes->toJson();
+               
+            });
+
+            return view('front.modules.products.viewbag', compact('cartItems', 'bestproduct', 'isWishlisted','recentViewproduct','cart'));
         } catch (\Exception $e) {
             Log::error($e);
             return redirect()->back()->with(['error' => 'Unable to load cart', 'error_msg' => $e->getMessage()]);

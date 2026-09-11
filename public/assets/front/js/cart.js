@@ -272,11 +272,17 @@ function updateHeaderCart() {
 
 function displayCartItems(notRequiredQtyAjaxClickonQtyBtn) {
    
-    let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+     let cartItems = [];
+
+    if (isLoggedIn) {
+        cartItems = window.dbCartItems || [];
+    } else {
+        cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+    }
     let productListContainer = $('.productListContainer');
     let productListCartPageContainer = $('.productListCartPageContainer');
 
-
+    console.log("cart ITem ----",cartItems); 
     productListContainer.empty();
     
     $('.center-main').html(cartItems.length);
@@ -299,7 +305,6 @@ function displayCartItems(notRequiredQtyAjaxClickonQtyBtn) {
 
     
     cartItems.forEach(function (item, index) {
-        console.log("----complete item-------",item); 
         let variants = item.selectedVariants || {};
         let product_sku = item.sku.toLowerCase();
         console.log("-----variants-------",variants); 
@@ -511,6 +516,37 @@ function priceCalculation() {
             image:window.buyNowData.image,
             rawTaxArr:window.buyNowData.tax_arr,
         }];
+    }
+    else if (isLoggedIn) {
+            cartItems = (window.dbCartItems || []).map(item => ({
+
+            ...item,
+
+                product_id: item.product_id,
+
+                name: item.name || '',
+
+                sku: item.sku || '',
+
+                productType: item.productType || '',
+
+                selectedVariants: item.selectedVariants || {},
+
+                price: parseFloat(item.price) || 0,
+
+                sellingPrice: parseFloat(item.sellingPrice) || 0,
+
+                discountAmount: parseFloat(item.discountAmount) || 0,
+
+                discountType: item.discountType || '',
+
+                quantity: parseInt(item.quantity) || 1,
+
+                image: item.image || item.product?.image || '',
+
+                rawTaxArr: item.rawTaxArr || item.product?.tax_arr || ''
+
+        }));
     }
     else{
         cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];

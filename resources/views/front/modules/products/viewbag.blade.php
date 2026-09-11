@@ -1,16 +1,6 @@
 @extends('front.layouts.app')
 @section('content')
-
-    <!-- CSS Files -->
-    <link rel="shortcut icon" href="{{ asset('assets/front/cartdesign/img/favicon.png') }}" type="image/x-icon" />
-    <link href="{{ asset('assets/front/cartdesign/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/front/cartdesign/css/font-awesome.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/front/cartdesign/css/ionicons.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/front/cartdesign/css/helper.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/front/cartdesign/css/plugins.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/front/cartdesign/css/style.css') }}" rel="stylesheet">
-
-    <!--  Cart Section -->
+<!--  Cart Section -->
     <section class="site-content">
         <div class="page-banner-section">
             <div class="page-banner">
@@ -67,7 +57,7 @@
                                                                 <ins>₹ {{ $item['product']['selling_price'] }}</ins>
                                                             </span>
                                                             <a href="#" data-index="{{ $key }}"
-                                                                class="remove remove_from_cart_button trash-icon close-product">Remove</a>
+                                                                class="remove remove_from_cart_button trash-icon close-product" data-cartid ="{{ $item['card_id'] }}">Remove</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -95,9 +85,9 @@
                                                 value="Apply coupon">Apply</button>
                                         </div>
                                         <div class="view-more-link">
-                                            <button class="offer_coupon_btn" id="openCoupon">
+                                            {{-- <button class="offer_coupon_btn" id="openCoupon">
                                                 🎁 Offers & Coupons Codes
-                                            </button>
+                                            </button> --}}
 
                                             <!-- Overlay -->
                                             <div class="coupon_overlay" id="couponOverlay"></div>
@@ -238,227 +228,19 @@
                                             alt="payments method" />
                                     </div>
                                 </div>
-                                {{-- </div> --}}
                             </div>
                         </div>
                     </div>
                     <!--content-area-->
                 </div>
             </div>
-            <!--content-wrapper -->
-
-            {{-- @if (!empty($bestproduct) && count($bestproduct) > 0)
-                <div class="product-section section">
-                    <div class="container">
-                        <div class="section-header text-center">
-                            <h2 class="section-title">Best Product</h2>
-                        </div>
-                        <div class="products-wrapper">
-                            <div class="products-area">
-                                <ul class="products product-carousel">
-                                    @foreach ($bestproduct as $pro => $best)
-                                        <li class="product-item product">
-                                            <div class="product-wrap">
-                                                <div class="product-image">
-                                                    <div class="onsale-trading">
-                                                        @php
-                                                            $discount = '';
-                                                            if (
-                                                                !empty($best->discount_type) &&
-                                                                !is_null($best->discount_type)
-                                                            ) {
-                                                                if ($best->discount_type == 'percentage') {
-                                                                    $discount = $best->discount . ' OFF';
-                                                                }
-                                                                if ($best->discount_type == 'flat') {
-                                                                    $discount = '₹ ' . $best->discount . 'OFF';
-                                                                }
-                                                            }
-                                                        @endphp
-                                                        <span class="onsale-off">{{ $discount }}</span>
-                                                    </div>
-                                                    <a
-                                                        href="{{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($best->name) . '.html', 'sku' => $best->sku]) }}">
-                                                        <div class="product-main-image">
-                                                            <img src="{{ $best->images['first'] }}" alt=""
-                                                                class="main-image">
-                                                        </div>
-                                                        <div class="product-hover-image">
-                                                            <img src="{{ $best->images['second'] }}" alt=""
-                                                                class="hover-image">
-                                                        </div>
-                                                    </a>
-                                                    <div class="product-wishlist wishlist">
-                                                        <a href="#" class="add-to-wishlist">
-                                                            <i class="far fa-heart"></i>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="product-options">
-                                                        <div class="product-option-item">
-                                                            <div class="product-option-title">Size</div>
-                                                            <div class="product-option-wrap">
-                                                                <fieldset class="product-option-list product-option-size">
-                                                                    <input id="xs" type="radio" name="Size"
-                                                                        value="XS" form="product-form-1">
-                                                                    <label for="xs">XS</label>
-                                                                    <input id="s" type="radio" name="Size"
-                                                                        value="S" form="product-form-1">
-                                                                    <label for="s">S</label>
-                                                                    <input id="m" type="radio" name="Size"
-                                                                        value="M/L" form="product-form-1"
-                                                                        checked="checked">
-                                                                    <label for="m">M</label>
-                                                                    <input id="l" type="radio" name="Size"
-                                                                        value="L" form="product-form-1">
-                                                                    <label for="l">L</label>
-                                                                    <input id="xl" type="radio" name="Size"
-                                                                        value="XL" form="product-form-1">
-                                                                    <label for="xl" class="disabled">XL</label>
-                                                                </fieldset>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content">
-                                                    <h5 class="product-title">
-                                                        <a
-                                                            href="{{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($best->name) . '.html', 'sku' => productSlug($best->sku)]) }}">{{ $best->name }}</a>
-                                                    </h5>
-                                                    <div class="product-price">
-                                                        <del>₹ {{ $best->buying_price }}</del>
-                                                        <ins>₹ {{ $best->selling_price }}</ins>
-                                                    </div>
-                                                    <div class="product-addtocart-button">
-                                                        <a href="{{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($best->name) . '.html', 'sku' => productSlug($best->sku)]) }}"
-                                                            class="product-addtocart"> <svg fill="#010101" height="20px"
-                                                                width="20px" version="1.1" id="Capa_1"
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                                viewBox="0 0 483.1 483.1" xml:space="preserve">
-                                                                <path
-                                                                    d="M434.55,418.7l-27.8-313.3c-0.5-6.2-5.7-10.9-12-10.9h-58.6c-0.1-52.1-42.5-94.5-94.6-94.5s-94.5,42.4-94.6,94.5h-58.6
-                                                                                      c-6.2,0-11.4,4.7-12,10.9l-27.8,313.3c0,0.4,0,0.7,0,1.1c0,34.9,32.1,63.3,71.5,63.3h243c39.4,0,71.5-28.4,71.5-63.3
-                                                                                      C434.55,419.4,434.55,419.1,434.55,418.7z M241.55,24c38.9,0,70.5,31.6,70.6,70.5h-141.2C171.05,55.6,202.65,24,241.55,24z
-                                                                                          M363.05,459h-243c-26,0-47.2-17.3-47.5-38.8l26.8-301.7h47.6v42.1c0,6.6,5.4,12,12,12s12-5.4,12-12v-42.1h141.2v42.1
-                                                                                      c0,6.6,5.4,12,12,12s12-5.4,12-12v-42.1h47.6l26.8,301.8C410.25,441.7,389.05,459,363.05,459z" />
-
-                                                            </svg></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif --}}
-
-
-            <!--=====================================================
-                                                                  Related Products Section End
-                                                  =========================================================-->
-            {{-- @if (!empty($recentViewproduct) && count($recentViewproduct) > 0)
-      <div class="product-section section">
-          <div class="container">
-              <div class="section-header text-center">
-                  <h2 class="section-title">Recent Viewed</h2>                       
-              </div>
-              <div class="products-wrapper">
-                  <div class="products-area">
-                      <ul class="products product-carousel">
-                        @foreach ($recentViewproduct as $recent)
-                          <li class="product-item product">
-                              <div class="product-wrap">
-                                  <div class="product-image">
-                                      <div class="onsale-trading">   
-                                         @php 
-                                            $discount = ""; 
-                                            if(!empty($recent->discount_type) && !is_null($recent->discount_type)){
-                                                if($recent->discount_type == "percentage"){
-                                                    $discount = $recent->discount." OFF" ; 
-                                                }
-                                                if($recent->discount_type == "flat"){
-                                                    $discount = "₹ ".$recent->discount. "OFF"; 
-                                                }
-                                            }
-                                        @endphp                                                            
-                                          <span class="onsale-off">{{ $discount }}</span>
-                                      </div>
-                                      <a href="product-detail.html">
-                                          <div class="product-main-image">
-                                              <img src="{{ $recent->product->images['first'] }}" alt="" class="main-image">
-                                          </div>
-                                          <div class="product-hover-image">
-                                              <img src="{{ $recent->product->images['second'] }}" alt="" class="hover-image">
-                                          </div>    
-                                      </a>                                           
-                                      <div class="product-wishlist wishlist">
-                                          <a href="#" class="add-to-wishlist">
-                                              <i class="far fa-heart"></i>
-                                          </a>
-                                      </div>
-                                      
-                                      <div class="product-options">                                             
-                                          <div class="product-option-item">
-                                              <div class="product-option-title">Size</div>
-                                              <div class="product-option-wrap">
-                                              <fieldset class="product-option-list product-option-size">                                                    
-                                                  <input id="xs" type="radio" name="Size" value="XS" form="product-form-1" >
-                                                  <label for="xs">XS</label>                                                      
-                                                  <input id="s" type="radio" name="Size" value="S" form="product-form-1">
-                                                  <label for="s">S</label>                                                   
-                                                  <input id="m" type="radio" name="Size" value="M/L" form="product-form-1" checked="checked">
-                                                  <label for="m">M</label>                                                   
-                                                  <input id="l" type="radio" name="Size" value="L" form="product-form-1">
-                                                  <label for="l">L</label>                                                     
-                                                  <input id="xl" type="radio" name="Size" value="XL" form="product-form-1">
-                                                  <label for="xl" class="disabled" >XL</label>  
-                                              </fieldset>
-                                              </div>
-                                          </div>                                                
-                                          </div>
-                                  </div>
-                                  <div class="product-content">
-                                      <h5 class="product-title">
-                                          <a href="{{ route('front-product.detail', ['product' => 'product','title' =>productSlug($recent->name).'.html', 'sku' => productSlug($recent->product->sku)]) }}">{{ $recent->product->name }}</a>
-                                      </h5>
-                                      <div class="product-price">
-                                          <del>₹ {{ $recent->product->buying_price }}</del>
-                                          <ins>₹ {{ $recent->product->selling_price }}</ins>
-                                      </div>   
-                                      <div class="product-addtocart-button">
-                                          <a href="{{ route('front-product.detail', ['product' => 'product','title' =>productSlug($recent->name).'.html', 'sku' => productSlug($recent->product->sku)]) }}" class="product-addtocart"> <svg fill="#010101" height="20px" width="20px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 483.1 483.1" xml:space="preserve">                                          
-                                              <path d="M434.55,418.7l-27.8-313.3c-0.5-6.2-5.7-10.9-12-10.9h-58.6c-0.1-52.1-42.5-94.5-94.6-94.5s-94.5,42.4-94.6,94.5h-58.6
-                                                  c-6.2,0-11.4,4.7-12,10.9l-27.8,313.3c0,0.4,0,0.7,0,1.1c0,34.9,32.1,63.3,71.5,63.3h243c39.4,0,71.5-28.4,71.5-63.3
-                                                  C434.55,419.4,434.55,419.1,434.55,418.7z M241.55,24c38.9,0,70.5,31.6,70.6,70.5h-141.2C171.05,55.6,202.65,24,241.55,24z
-                                                      M363.05,459h-243c-26,0-47.2-17.3-47.5-38.8l26.8-301.7h47.6v42.1c0,6.6,5.4,12,12,12s12-5.4,12-12v-42.1h141.2v42.1
-                                                  c0,6.6,5.4,12,12,12s12-5.4,12-12v-42.1h47.6l26.8,301.8C410.25,441.7,389.05,459,363.05,459z"/>
-                                          
-                                          </svg></a>
-                                      </div>                                        
-                                  </div>
-                              </div>
-                          </li>
-                        @endforeach   
-                      </ul>
-                  </div>
-              </div>
-          </div>
-      </div>
-      @endif  --}}
-            <!--=====================================================
-                                                                          Also View Section End
-                                                  =========================================================-->
-
     </section>
-
-    <!--  Cart Section -->
 @endsection
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+window.dbCartItems = @json($cart ?? []); 
+</script>
 
 <script>
     $(document).ready(function() {
@@ -622,15 +404,6 @@
             });
         }
 
-        // document.getElementById('pincodeInput').addEventListener('input', function() {
-        //     // Allow only numbers
-        //     this.value = this.value.replace(/\D/g, '');
-        //     if (this.value.length === 6) {
-        //         calculateDelivery();
-        //     }
-        // });
-
-
         function calculateDelivery() {
             const pincode = document.getElementById('pincodeInput').value.trim();
             const deliveryTimeEl = document.getElementById('delivery_time');
@@ -664,38 +437,7 @@
                 }
             });
         }
-
-        // const options = {
-        //     weekday: 'short',
-        //     day: 'numeric',
-        //     month: 'short'
-        // };
-        // const formattedDate = today.toLocaleDateString('en-US', options);
-
-        //     const svgImage = `<svg
-    //     class="me-2"
-    //     xmlns="http://www.w3.org/2000/svg"
-    //     width="20"
-    //     height="20"
-    //     viewBox="0 0 512 512"
-    //     style="enable-background: new 0 0 512 512;"
-    //     xml:space="preserve">
-    //     <g>
-    //         <path d="M386.689 304.403c-35.587 0-64.538 28.951-64.538 64.538s28.951 64.538 64.538 64.538c35.593 0 64.538-28.951 64.538-64.538s-28.951-64.538-64.538-64.538zm0 96.807c-17.796 0-32.269-14.473-32.269-32.269s14.473-32.269 32.269-32.269 32.269 14.473 32.269 32.269c0 17.797-14.473 32.269-32.269 32.269zM166.185 304.403c-35.587 0-64.538 28.951-64.538 64.538s28.951 64.538 64.538 64.538 64.538-28.951 64.538-64.538-28.951-64.538-64.538-64.538zm0 96.807c-17.796 0-32.269-14.473-32.269-32.269s14.473-32.269 32.269-32.269c17.791 0 32.269 14.473 32.269 32.269 0 17.797-14.473 32.269-32.269 32.269zM430.15 119.675a16.143 16.143 0 0 0-14.419-8.885h-84.975v32.269h75.025l43.934 87.384 28.838-14.5-48.403-96.268z"
-    //             fill="#fc2424"></path>
-    //         <path d="M216.202 353.345h122.084v32.269H216.202zM117.781 353.345H61.849c-8.912 0-16.134 7.223-16.134 16.134 0 8.912 7.223 16.134 16.134 16.134h55.933c8.912 0 16.134-7.223 16.134-16.134 0-8.912-7.223-16.134-16.135-16.134zM508.612 254.709l-31.736-40.874a16.112 16.112 0 0 0-12.741-6.239H346.891V94.655c0-8.912-7.223-16.134-16.134-16.134H61.849c-8.912 0-16.134 7.223-16.134 16.134s7.223 16.134 16.134 16.134h252.773V223.73c0 8.912 7.223 16.134 16.134 16.134h125.478l23.497 30.268v83.211h-44.639c-8.912 0-16.134 7.223-16.134 16.134 0 8.912 7.223 16.134 16.134 16.134h60.773c8.912 0 16.134-7.223 16.135-16.134V264.605c0-3.582-1.194-7.067-3.388-9.896zM116.706 271.597H42.487c-8.912 0-16.134 7.223-16.134 16.134 0 8.912 7.223 16.134 16.134 16.134h74.218c8.912 0 16.134-7.223 16.134-16.134.001-8.911-7.222-16.134-16.133-16.134zM153.815 208.134H16.134C7.223 208.134 0 215.357 0 224.269s7.223 16.134 16.134 16.134h137.681c8.912 0 16.134-7.223 16.134-16.134s-7.222-16.135-16.134-16.135z"
-    //             fill="#fc2424"></path>
-    //         <path d="M180.168 144.672H42.487c-8.912 0-16.134 7.223-16.134 16.134 0 8.912 7.223 16.134 16.134 16.134h137.681c8.912 0 16.134-7.223 16.134-16.134.001-8.911-7.222-16.134-16.134-16.134z"
-    //             fill="#fc2424"></path>
-    //     </g>
-    // </svg>`;
-
-        //     // Set the content
-        //     deliveryTimeEl.innerHTML = `${svgImage} Get it by <b>9:00 PM on ${formattedDate}</b>`;
-        // }
-
-
-        $(function() { // Best Sellers Products
+        $(function() { 
             const $s = $("#best-seller-slider"),
                 c = $s.find(".item").length > 4;
             if ($s.find(".item").length > 4) {
