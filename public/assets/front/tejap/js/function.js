@@ -306,6 +306,18 @@
 		$('.product-display-mode #grid_large').addClass('active');  		
 	});
 
+	$('.mobile-view-mode #grid').click(function(){    
+		$('.products').addClass('columns-1');  
+		$('.products').removeClass('columns-2'); 
+		$('.mobile-view-mode #grid').addClass('active');  
+		$('.mobile-view-mode #grid_large').removeClass('active');  			
+	});
+	$('.mobile-view-mode #grid_large').click(function(){    
+		$('.products').addClass('columns-2');  
+		$('.products').removeClass('columns-1'); 	
+		$('.mobile-view-mode #grid').removeClass('active');  
+		$('.mobile-view-mode #grid_large').addClass('active');  		
+	});
 	// Widget Open hide
 	// $('.product-widget-title').click(function(){  
 	// 	$( this ).toggleClass('open');	

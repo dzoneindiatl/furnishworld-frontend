@@ -3,7 +3,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 <script src="{{asset('assets/front/js/swiper-bundle.min.js')}}"></script>
 <script src="{{asset('assets/front/js/function.js')}}"></script>
-<script src="{{asset('assets/front/js/custom-home.js')}}"></script>
+{{-- <script src="{{asset('assets/front/js/custom-home.js')}}"></script> --}}
 <script src="{{asset('assets/front/js/custom.js')}}"></script>   
 
 <script src="{{asset('assets/front/js/show-password.js')}}"></script>

@@ -5,7 +5,7 @@
                 <div class="user-icon"> <img src="{{ 'tjap-images/profile-pic.svg' }}" alt=""> </div>
                 <div class="user-info">
                     <small>Hello,</small>
-                    <p><?php echo Auth::user()?->name; ?></p>
+                    <p>{{ Auth::guard('customer')->user()->name }}</p>
                 </div>
             </div>
             <?php
@@ -61,7 +61,7 @@
         </div>
     </div>
 </div>
-
+    <script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
 <script>
     $(document).ready(function() {
 

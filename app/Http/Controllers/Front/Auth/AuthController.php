@@ -368,13 +368,13 @@ class AuthController extends Controller
             'email' => [
                 'required',
                 'email',
-                'unique:users,email', // assumes you're using the 'users' table
+                'unique:users,email', 
             ],
             'phone_number' => [
                 'required',
                 'numeric',
                 'digits:10',
-                'unique:users,phone_number', // assumes you're using the 'users' table
+                'unique:users,phone_number', 
             ],
             'referral' => [
                 'nullable',
@@ -413,6 +413,7 @@ class AuthController extends Controller
             $user->is_verified = 0;
             $user->is_active = 1;
             $user->is_approved = 1;
+            $user->email_verified_at = now();
             $user->save();
 
             $lastId = $user->id;
@@ -479,7 +480,7 @@ class AuthController extends Controller
             //     'CUSTOMER_NAME' => $fullName,
             //     'OTP' => $otp,
             // ];
-            // $template = EmailHelper::getProcessedTemplate('email_verify', $data);
+            // $template = EmailHelper::getProcessedTemplate('verify-your-account', $data);
             // Mail::to($request->email)->send(new emailVerify($template['subject'], $template['body']));
             
             // Auth::guard('customer')->login(User::findOrFail($lastId));

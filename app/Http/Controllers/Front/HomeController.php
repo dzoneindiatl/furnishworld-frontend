@@ -575,17 +575,23 @@ class HomeController extends Controller
 
 
     public function productListing(Request $request, $path)
-    {
+    {   
         $segments = array_values(array_filter(explode('/', $path)));
-     
+    
         $category = null;
         $subCategory = null;
         $subChildCategory = null;
-        $category = Category::whereNull('parent_id')->where('slug', $segments[0])->firstOrFail();
-        if (count($segments) === 2) {
+        
+        if(count($segments) === 1){
+            $category = Category::whereNull('parent_id')->where('slug', $segments[0])->firstOrFail();
+        }
+        elseif (count($segments) === 2) {
+            $category = Category::whereNull('parent_id')->where('slug', $segments[0])->firstOrFail();
             $subCategory = Category::where('parent_id', $category->id)->where('slug', $segments[1])->firstOrFail();
 
-        } elseif (count($segments) === 3) {
+        } 
+        elseif (count($segments) === 3) {
+            $category = Category::whereNull('parent_id')->where('slug', $segments[0])->firstOrFail();
             $subCategory = Category::where('parent_id', $category->id)->where('slug', $segments[1])->firstOrFail();
             $subChildCategory = Category::where('parent_id', $subCategory->id)->where('slug', $segments[2])->firstOrFail();
 
@@ -601,49 +607,52 @@ class HomeController extends Controller
             ->where('is_active', 1)
             ->where('draf', false);
         $hasCategoryFilter = $request->filled('category_id') || $request->filled('sub_category_id') ||  $request->filled('sub_child_category_id');
-        if(!$hasCategoryFilter){
-            if (is_null($category->parent_id)) {
-                $DB->where('main_category_id',$category->id);
-                $categoriesData = Category::where('is_active',1)->where('is_deleted',0)->where('parent_id',$category->id)->get();
-            } else {
-                $parent = Category::find($category->parent_id);
-                if ($parent && is_null($parent->parent_id)) {
-                    $DB->where(function ($q) use ($category) {
-                        $q->where('main_sub_category_id',$category->id)
-                        ->orWhere(function ($query) use ($category) {
-                            $query->whereNotNull('sub_category_id')
-                            ->whereRaw('JSON_VALID(sub_category_id)')
-                            ->whereJsonContains('sub_category_id',(string) $category->id);
-                        });
-                    });
+        if (!$hasCategoryFilter) {
 
-                    $categoriesData = Category::where('is_active', 1)->where('is_deleted',0)->where('parent_id',$category->id)->get();
-                } else {
-                    $grandParent = $parent ? Category::find($parent->parent_id): null;
-                    $DB->where(function ($q) use ($category,$parent,$grandParent) {
-                        $q->where('main_child_category_id',$category->id)
-                        ->orWhere(function ($query) use ($category) {
-
-                            $query->whereNotNull('child_category_id')
-                            ->whereRaw('JSON_VALID(child_category_id)')
-                            ->whereJsonContains('child_category_id',(string) $category->id);
-                        });
-                        if ($parent) {
-                            $q->where(function ($qq) use ($parent) {
-
-                                $qq->where('main_sub_category_id',$parent->id)
-                                ->orWhereJsonContains('sub_category_id',(string) $parent->id);
-                            });
-                        }
-
-                        if ($grandParent) {
-                            $q->where('main_category_id',$grandParent->id);
-                        }
-                    });
-                    $categoriesData = collect();
-                }
+            // Main Category
+            if (count($segments) === 1) {
+                $DB->where('main_category_id', $category->id);
+                $categoriesData = Category::where('is_active', 1)
+                    ->where('is_deleted', 0)
+                    ->where('parent_id', $category->id)
+                    ->get();
             }
-        }else{
+
+                // Sub Category
+            elseif (count($segments) === 2) {
+
+                $DB->where(function ($q) use ($subCategory) {
+                    $q->where('main_sub_category_id', $subCategory->id)
+                        ->orWhere(function ($query) use ($subCategory) {
+                            $query->whereNotNull('sub_category_id')
+                                ->whereRaw('JSON_VALID(sub_category_id)')
+                                ->whereJsonContains('sub_category_id', (string) $subCategory->id);
+                        });
+                });
+
+                $categoriesData = Category::where('is_active', 1)
+                    ->where('is_deleted', 0)
+                    ->where('parent_id', $subCategory->id)
+                    ->get();
+            }
+
+            // Sub Child Category
+            elseif (count($segments) === 3) {
+
+                $DB->where(function ($q) use ($subChildCategory) {
+                    $q->where('main_child_category_id', $subChildCategory->id)
+                        ->orWhere(function ($query) use ($subChildCategory) {
+                            $query->whereNotNull('child_category_id')
+                                ->whereRaw('JSON_VALID(child_category_id)')
+                                ->whereJsonContains('child_category_id', (string) $subChildCategory->id);
+                        });
+                });
+
+                $categoriesData = collect();
+            }
+
+        } else {
+
             $categoriesData = collect();
         }
         $categoryIds = (array) $request->input('category_id', []);
@@ -1083,13 +1092,14 @@ class HomeController extends Controller
                 ->toArray();
         }
         $best_seller_products = Product::where('best_seller', 1)->where('is_active', 1)->orderBy('id', 'desc')->get();
+
         $facebook = Setting::select('id','value')->where('key','Social.facebook')->first();
         $instagram = Setting::select('id','value')->where('key','Social.instagram')->first(); 
         $pinterst = Setting::select('id','value')->where('key','Social.pinterest')->first(); 
         $youtube = Setting::select('id','value')->where('key','Social.youtube')->first(); 
-    
-      
-        return view('front.modules.shop.product-detail', compact('product','productChildCat', 'productcat', 'productSubCat', 'productvariants', 'related_products', 'bestproduct', 'releatedProduct', 'returnexchangeProduct', 'contactDetails', 'productVarientCom', 'isWishlisted', 'isWishlisteddata', 'categoryTaxes', 'reviews', 'productreview', 'recentlyViewedProducts','productVariantSpecification','facebook','instagram','pinterst','youtube','productDetailManager', 'best_seller_products'));
+        $twitter = Setting::select('id','value')->where('key','Social.twitter')->first();        
+
+        return view('front.modules.shop.product-detail', compact('product','productChildCat', 'productcat', 'productSubCat', 'productvariants', 'related_products', 'bestproduct', 'releatedProduct', 'returnexchangeProduct', 'contactDetails', 'productVarientCom', 'isWishlisted', 'isWishlisteddata', 'categoryTaxes', 'reviews', 'productreview', 'recentlyViewedProducts','productVariantSpecification','facebook','instagram','pinterst','youtube','twitter','productDetailManager', 'best_seller_products'));
     }
 
     public function viewBag()
@@ -1543,9 +1553,24 @@ class HomeController extends Controller
     }
 
     public function removeCartProduct(Request $request)
-    {   
-        Cart::where('user_id',auth()->guard('customer')->user()->id)->where('product_id',$request->productId)->where('product_variant_combination_id',$request->variantCombinationId)->delete();
-        return true ;
+    {
+        $cart = Cart::where('id', $request->cartId)
+            ->where('user_id', auth()->guard('customer')->id())
+            ->first();
+
+        if (!$cart) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cart item not found'
+            ], 404);
+        }
+
+        $cart->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product removed from cart'
+        ]);
     }
 
     public function getProductVariantImages(Request $request)

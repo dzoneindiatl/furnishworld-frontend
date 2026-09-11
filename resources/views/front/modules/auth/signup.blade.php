@@ -1,6 +1,11 @@
 @extends('front.layouts.app', ['page' => 'login'])
 
 @section('content')
+<style>
+    .invalid-feedback {
+    color: #dc3545 !important;
+}
+</style>
     <form action="{{ route('front-user.postSignup') }}" method="post" autocomplete="off">
         @csrf
         <section class="site-content">
@@ -32,7 +37,12 @@
                                     <h3>Register</h3>
                                     <p>Create an account to latest Update.</p>
                                 </div>
-                                @if ($errors->any())
+                                @if (session('success'))
+                                    <div class="alert alert-success">
+                                        {{ session('success') }}
+                                    </div>
+                                @endif
+                                {{-- @if ($errors->any())
                                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                         <strong>Whoops!</strong> There were some problems with your input.
                                         <ul class="mt-2 mb-0">
@@ -43,7 +53,7 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="alert"
                                             aria-label="Close"></button>
                                     </div>
-                                @endif
+                                @endif --}}
                                 @if (session('success'))
                                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                                         <strong>Success!</strong> {{ session('success') }}
@@ -68,7 +78,7 @@
                                         <div class="form-group  col-12">
                                             <label class="label-focus" for="email">Email <span
                                                     class="required">*</span></label>
-                                            <input type="email" class="form-control" name="email" id="email"
+                                            <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" id="email"
                                                 placeholder="" required />
                                             @if ($errors->has('email'))
                                                 <div class=" invalid-feedback">
@@ -79,7 +89,7 @@
                                         <div class="form-group  col-12">
                                             <label class="label-focus" for="phone_number">Phone <span
                                                     class="required">*</span></label>
-                                            <input type="tel" class="form-control" name="phone_number" id="phone_number"
+                                            <input type="tel" class="form-control @error('phone_number') is-invalid @enderror" name="phone_number" id="phone_number"
                                                 placeholder="" required />
                                             @if ($errors->has('phone_number'))
                                                 <div class=" invalid-feedback">
@@ -91,7 +101,7 @@
                                             <label class="label-focus" for="password">Password <span
                                                     class="required">*</span></label>
                                             <div class="password-group">
-                                                <input type="password" class="form-control password-input" name="password"
+                                                <input type="password" class="form-control password-input @error('password') is-invalid @enderror" name="password"
                                                     id="password" placeholder="" required />
                                                 @if ($errors->has('password'))
                                                     <div class=" invalid-feedback">
@@ -105,7 +115,7 @@
                                             <label class="label-focus" for="password">Confirm Password <span
                                                     class="required">*</span></label>
                                             <div class="password-group">
-                                                <input type="password" class="form-control password-input"
+                                                <input type="password" class="form-control password-input @error('confirm_password') is-invalid @enderror"
                                                     name="confirm_password" id="confirm_password" placeholder="" required />
                                                 @if ($errors->has('confirm_password'))
                                                     <div class=" invalid-feedback">

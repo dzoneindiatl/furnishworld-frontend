@@ -32,7 +32,7 @@
             <div class="footer-grid">
                 <!-- About -->
                 <div class="footer-about">
-                    <img src="https://furnishworlds.com/uploads/settings/JUL2026/1783430878-settings.png"
+                    <img src="{{ env('WEBSITE_URL') . 'uploads/settings/' . @$siteLogo->value }}"
                         alt="Furniture Store" class="footer-logo">
 
                     @if (!empty($fifthCategory))
@@ -134,13 +134,9 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-    {{-- @if (request()->route()->getName() == 'front-home.index' || request()->route()->getName() == 'home.index') --}}
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="{{ asset('assets/js/custom.js') }}"></script>
-    {{-- @else --}}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('assets/js/custom.js') }}"></script>
-    {{-- @endif --}}
+
     @if (url()->current() == url('/'))
     @else
         <script src="{{ 'assets/front/homepage/js/main.js' }}"></script>
@@ -160,34 +156,18 @@
         </div>
     @endif
     <script>
-        $(document).ready(function() {
-            alert(1); 
-            updateCartData();
-            $('.close-product').on('click', function() {
-                var button = $(this);
-                var index = $(this).data('index');
-                const cartData = @json($cart);
-                console.log("-----cart data------", cartData);
-                if (isLoggedIn) {
-                    cartData.forEach(function(value) {
-                        let product_id = value.product_id;
-                        let quantity = value.quantity;
-                        let variantCombinationId = value.product_variant_combination_id;
-                        removeProductCartFromDB(product_id, quantity, variantCombinationId);
-                    });
-                }
-                var cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-                if (cartItems[index]) {
-                    cartItems.splice(index, 1);
-                    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-                    button.closest('.cart-item').remove();
-                    updateCartTotal(cartItems);
-                    displayGuestCart();
-                    localStorage.setItem('applied_coupon', []);
-                    localStorage.setItem('coupon_discount', 0);
-                    showFlashMessage("Product removed from cart", "warning");
-                }
-            });
+       $(document).ready(function() {
+            window.isCustomerLoggedIn = @json(Auth::guard('customer')->check());
+            console.log('========== CART INIT ==========');
+            console.log('Customer logged in:', window.isCustomerLoggedIn);
+            console.log('Local cart:', JSON.parse(localStorage.getItem('cartItems') || '[]'));
+            if (window.isCustomerLoggedIn) {
+                updateCartData();
+            } else {
+                displayGuestCart();
+            }
+
+            setLoginCartItems();
         });
         $('#loginForm').on('submit', function() {
             setLoginCartItems();
@@ -197,31 +177,39 @@
             );
         });
 
-        function removeProductCartFromDB(productId, quantity, variantCombinationId) {
-            if (isLoggedIn) {
+        function removeProductCartFromDB(cartId) {
+            if (!window.isCustomerLoggedIn) {
+                return;
+            }
+
+            $.ajax({
                 url: "{{ route('front-remove-cart-product') }}",
-                method: "GET",
+                type: "POST",
                 data: {
-                    productId,
-                    quantity,
-                    variantCombinationId
+                    cartId: cartId
                 },
                 success: function(response) {
-                    console.log(response);
+                    console.log('Remove cart response:', response);
+
+                    if (response.success) {
+                        $('.cart-item[data-cartid="' + cartId + '"]').remove();
+
+                        let count = parseInt($('#cartCount').text()) || 0;
+                        $('#cartCount').text(Math.max(0, count - 1));
+
+                        showFlashMessage("Product removed from cart", "warning");
+                    }
                 },
-                error: function(err) {
-                    console.log(err);
+                error: function(error) {
+                    console.log('Remove cart error:', error);
                 }
-            }
+            });
         }
 
         function setLoginCartItems() {
-            let cartItems =
-                JSON.parse(localStorage.getItem('cartItems')) || [];
+            let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
 
-            $('#loginCartItems').val(
-                JSON.stringify(cartItems)
-            );
+            $('#loginCartItems').val(JSON.stringify(cartItems));
         }
 
         setLoginCartItems();
@@ -233,81 +221,123 @@
 
         function updateCartTotal(cartItems) {
             let total = 0;
+
             cartItems.forEach(function(item) {
                 let price = parseFloat(item.sellingPrice) || 0;
                 let quantity = parseInt(item.quantity) || 0;
 
                 total += price * quantity;
             });
+
             $('#cartTotal').text('₹' + total);
         }
-
         function displayGuestCart() {
-
             let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-            console.log("-------cart items data from footer---", cartItems);
+
+            console.log('Guest cart:', cartItems);
+
             let cartCount = cartItems.length;
             let container = $('#headerCartItems');
+
             container.empty();
-            $("#cartCount").text(cartCount);
+
+            $('#cartCount').text(cartCount);
+
             if (cartItems.length === 0) {
                 container.html(`
-                <div class="empty-cart">
-                    Your cart is empty.
-                </div>
-            `);
+                    <div class="empty-cart">
+                        Your cart is empty.
+                    </div>
+                `);
 
                 $('#cartTotal').text('₹0');
+
                 return;
             }
 
             cartItems.slice(0, 4).forEach(function(item, index) {
                 container.append(`
-                <div class="cart-item">
-                    <img src="${item.image}"alt="${item.name}">
-                    <div class="cart-info">
-                        <h5>${item.name}</h5>
-                        <span>
-                            Qty: ${item.quantity}
-                        </span>
-                        <strong>
-                            ₹${item.sellingPrice}
-                        </strong>
+                    <div class="cart-item">
+                        <img src="${item.image}" alt="${item.name}">
+
+                        <div class="cart-info">
+                            <h5>${item.name}</h5>
+
+                            <span>
+                                Qty: ${item.quantity}
+                            </span>
+
+                            <strong>
+                                ₹${item.sellingPrice}
+                            </strong>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="remove-item close-product"
+                            data-index="${index}">
+
+                            <span class="material-symbols-outlined">
+                                close
+                            </span>
+
+                        </button>
                     </div>
-                    <button
-                        type="button"
-                        class="remove-item close-product"
-                        data-index="${index}">
-                        <span class="material-symbols-outlined">
-                            close
-                        </span>
-                    </button>
-                </div>
-            `);
+                `);
             });
+
             updateCartTotal(cartItems);
         }
-
         function updateCartData() {
+            if (!window.isCustomerLoggedIn) {
+                return;
+            }
 
-            var productIds = [];
-            const cartData = @json($cart);
-            const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-            cartData.forEach(function(val) {
-                productIds.push(val.product_id);
-            });
-            cartItems.forEach(function(item) {
-                if (!productIds.includes(item.productId)) {
-                    if (isLoggedIn) {
-                        let productId = item.productId;
-                        let quantity = item.quantity;
-                        let selectedVariants = item.selectedVariants;
-                        isLoginUser(productId, quantity, selectedVariants);
-                    }
-                }
-            });
+            let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+
+            if (!cartItems.length) {
+                console.log('No guest cart items to migrate.');
+                return;
+            }
+
+            console.log('Guest cart items to migrate:', cartItems);
+
+            migrateGuestCart(cartItems);
         }
+        function migrateGuestCart(cartItems) {
+            let requests = [];
 
+            cartItems.forEach(function(item) {
+                requests.push(
+                    $.ajax({
+                        url: addToCart,
+                        type: 'POST',
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                            product_id: item.productId,
+                            quantity: item.quantity,
+                            selected_variants: item.selectedVariants || {},
+                            addType: null
+                        }
+                    })
+                );
+            });
+
+            $.when.apply($, requests)
+                .done(function() {
+                    console.log('All guest cart products migrated successfully.');
+
+                    localStorage.removeItem('cartItems');
+
+                    localStorage.removeItem('applied_coupon');
+                    localStorage.removeItem('coupon_discount');
+
+                    console.log('Guest cartItems cleared from localStorage.');
+                })
+                .fail(function(error) {
+                    console.log('Guest cart migration failed:', error);
+                });
+        }
         function isLoginUser(productId, quantity, selectedVariants, type = null) {
             if (isLoggedIn) {
                 $.ajax({
@@ -331,6 +361,46 @@
 
         }
     </script>
+    <script>
+        document.addEventListener('click', function(e) {
+        let button = e.target.closest('.close-product');
+
+        if (!button) {
+            return;
+        }
+
+        e.preventDefault();
+
+        console.log('🔥 CLOSE PRODUCT CLICKED');
+        console.log('Button:', button);
+        console.log('Cart ID:', button.dataset.cartid);
+        console.log('Index:', button.dataset.index);
+
+        if (!window.isCustomerLoggedIn) {
+            let index = parseInt(button.dataset.index);
+            let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+
+            if (cartItems[index]) {
+                cartItems.splice(index, 1);
+
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+                displayGuestCart();
+
+                showFlashMessage("Product removed from cart", "warning");
+            }
+
+            return;
+        }
+
+        let cartId = button.dataset.cartid;
+
+        if (cartId) {
+            console.log('Removing DB cart:', cartId);
+            removeProductCartFromDB(cartId);
+        }
+    }, true);
+</script>
     </body>
 
     </html>

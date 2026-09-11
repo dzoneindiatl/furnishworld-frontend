@@ -202,8 +202,7 @@ Class MailService
         );
         info("-----subject----body----userData-------",[$subject,$body,$userData]);     
         $this->sendMail($email,$subject,$body); 
-    }
-    
+    }    
     public function orderAccepted($order,$productDetail){
 
         \Log::info("cart Item =----",[$productDetail]); 

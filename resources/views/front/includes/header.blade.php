@@ -64,13 +64,15 @@
                                         @endif
                                     </a>
                                 </h4>
+                                @if ($subChildCategories->isNotEmpty())
+                                    <div class="mega-menu-inner-list">
                                         @foreach ($childCategories->where('parent_id', $subcat->id)->where('show_on_menu', 1) as $childcat)
-                                <div class="mega-menu-inner-list">
-                                        <a href="{{ route('category.show', [ 'path' => $cat->slug . '/' . $subcat->slug . '/' . $childcat->slug]) }}">
-                                            {{ $childcat->name }}
-                                        </a>
-                                </div>
-                                   @endforeach 
+                                            <a href="{{ route('category.show', [ 'path' => $cat->slug . '/' . $subcat->slug . '/' . $childcat->slug]) }}">
+                                                {{ $childcat->name }}
+                                            </a>
+                                            @endforeach 
+                                    </div>
+                                @endif   
                             </div>
                         @endforeach     
                     </div>
@@ -128,10 +130,9 @@
                 <div class="cart-dropdown">
                     @if (Auth::guard('customer')->check())
                         <div id="headerCartItems">
-                            @foreach ($carts->take(4) as $index => $cart)
+                            @foreach ($carts->take(2) as $index => $cart)
                                 <div class="cart-item" data-cartid = "{{ $cart->id }}">
-                                    <a
-                                        href="{{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($cart->product->name) . '.html', 'sku' => $cart->product->sku]) }}"><img
+                                    <a href="{{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($cart->product->name) . '.html', 'sku' => $cart->product->sku]) }}"><img
                                             src="{{ $cart->product->images['first'] }}" alt=""></a>
                                     <div class="cart-info">
                                         <h5>{{ $cart->product->name }}</h5>
@@ -190,7 +191,7 @@
             <div class="popular-searches">
                 <h4>POPULAR CHOICES</h4>
                 @foreach ($subCategories->take(12) as $subcat)
-                    <a href="{{ url($subcat->slug) }}">{{ $subcat->name }}</a>
+                    <a href="{{ route('category.show',['path'=>$subcat->parentCategory->slug.'/'.$subcat->slug]) }}">{{ $subcat->name }}</a>
                 @endforeach
             </div>
             <div class="search-products" id="searching-product">

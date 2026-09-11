@@ -1,7 +1,7 @@
 @extends('front.layouts.app')
 @section('content')
 
-
+    
     <script>
         var getVarient = "{{ route('variant.combination.prices') }}";
         window.csrfToken = "{{ csrf_token() }}";
@@ -96,43 +96,36 @@
                                     ?>
                                     <div class="product-gallery">
                                         <div class="product-gallery-area product-gallery-with-images">
-
                                             <!-- Main Slider -->
                                             <div class="product-gallery">
-
                                                 <div class="product-main-slider">
                                                     @foreach($product->product_main_images as $img)
-                                                        <div class="product-slide">
+                                                        <div class="product-slide" data-variant-id="{{ $img->variant_id }}">
                                                             <img src="{{ asset('uploads/products/'.$img->graphic) }}"
                                                                 alt="Product 1">
                                                         </div>  
                                                     @endforeach 
                                                 </div>
 
-
-                                          
                                                 <div class="product-thumb-slider">
                                                     @foreach($product->product_main_images as $img)
-                                                    <div class="thumb">
+                                                    <div class="thumb" data-variant-id="{{ $img->variant_id }}">
                                                         <img src="{{ asset('uploads/products/'.$img->graphic) }}"
                                                             alt="">
                                                     </div>
                                                     @endforeach 
                                                 </div>
-
                                             </div>
 
                                             <!-- Popup Gallery -->
                                             <div class="gallery-popup">
-
                                                 <button class="gallery-close">&times;</button>
-
                                                 <div class="popup-gallery-wrap">
 
                                                     <!-- Popup Main Slider -->
                                                     <div class="popup-main-slider">
                                                     @foreach($product->product_main_images as $img)
-                                                        <div class="popup-slide">
+                                                        <div class="popup-slide" data-variant-id="{{ $img->variant_id }}">
                                                             <img src="{{ asset('uploads/products/'.$img->graphic) }}"
                                                                 alt="">
                                                         </div>
@@ -142,13 +135,12 @@
                                                     <!-- Popup Thumbnail Slider -->
                                                     <div class="popup-thumb-slider">
                                                         @foreach($product->product_main_images as $img)
-                                                            <div class="popup-thumb">
+                                                            <div class="popup-thumb" data-variant-id="{{ $img->variant_id }}">
                                                                 <img src="{{ asset('uploads/products/'.$img->graphic) }}"
                                                                     alt="">
                                                             </div>
                                                         @endforeach     
                                                  </div>
-
                                                 </div>
 
                                                 <div class="zoom-controls">
@@ -226,7 +218,7 @@
                                                                                 data-type="{{ $variant['variant_name'] }}"
                                                                                 data-value="{{ $variantValue['name'] }}"
                                                                                 data-vid="{{ $variantValue['variant_value_id'] }}"
-                                                                                onclick="selectVariant(this); checkVariantStock(this);updateVariantSpecification(this);"
+                                                                                onclick="selectVariant(this); checkVariantStock(this);updateVariantSpecification(this); updateVariantImages({{ $variantValue['variant_value_id'] }})"
                                                                                 class="s-variant activeVarientLi {{ $isActive ? 'active' : '' }}"
                                                                                 style="padding:5px; cursor: pointer;">
                                                                                 <input class="attribute-input"
@@ -446,56 +438,10 @@
                                                 </ul>
                                             </div>
 
-                                            <div class="right-specification-txt">
+                                            <div class="right-specification-txt" id="productSpecificationBox" style="display:none">
                                                 <h5 class="spec-pro-txt">Product Specifications</h5>
-                                                <table>
-                                                    <tbody>
-                                                        <tr>
-                                                            <th>Feature</th>
-                                                            <th>Details</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Material</td>
-                                                            <td>Solid Sheesham Wood</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Finish</td>
-                                                            <td>Natural Finish</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Ideal For</td>
-                                                            <td>Living Room</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Dimensions 1 Seater</td>
-                                                            <td>30"L x 28"W x 30"H</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Dimensions 3 Seater</td>
-                                                            <td>74"L x 28"W x 30"H</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Country of Origin</td>
-                                                            <td>India</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Brand Name</td>
-                                                            <td>Furnishworlds</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>SKU</td>
-                                                            <td>FW-VHT-0279</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Net Quantity</td>
-                                                            <td>03</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Assembly Required</td>
-                                                            <td>Yes</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                                <div id="productSpecificationContent"></div>
+                                               
                                             </div>
 
                                             {{-- <div class="product-share">
@@ -509,42 +455,6 @@
                                                             class="fab fa-whatsapp"></i></a>
                                                     <a class="envelope" href="{{ $youtube->value }}" target="_blank"><i
                                                             class="far fa-envelope"></i></a>
-                                                </div>
-                                            </div> --}}
-
-                                            {{-- <div class="social-share">
-                                                <span class="share-title">Share On :</span>
-
-                                                <div class="share-buttons">
-
-                                                    <!-- Facebook -->
-                                                    <a href="#" class="share-icon facebook"
-                                                        aria-label="Share on Facebook">
-                                                        <i class="fa-brands fa-facebook-f"></i>
-                                                        <!--span>Facebook</span-->
-                                                    </a>
-
-                                                    <!-- Twitter / X -->
-                                                    <a href="#" class="share-icon twitter"
-                                                        aria-label="Share on Twitter">
-                                                        <i class="fa-brands fa-twitter"></i>
-                                                        <!--span>Twitter</span-->
-                                                    </a>
-
-                                                    <!-- WhatsApp -->
-                                                    <a href="#" class="share-icon whatsapp"
-                                                        aria-label="Share on WhatsApp">
-                                                        <i class="fa-brands fa-whatsapp"></i>
-                                                        <!--span>WhatsApp</span-->
-                                                    </a>
-
-                                                    <!-- Email -->
-                                                    <a href="#" class="share-icon email"
-                                                        aria-label="Share by Email">
-                                                        <i class="fa-regular fa-envelope"></i>
-                                                        <!--span>Email</span-->
-                                                    </a>
-
                                                 </div>
                                             </div> --}}
 
@@ -569,8 +479,8 @@
                                             <div class="containSocial-txt">
                                                 <h5>Share On</h5>
                                                 <div class="containSocial">
-
-                                                    <svg class="facebook-svg" xmlns="http://www.w3.org/2000/svg"
+                                                    <a href="{{ $facebook->value }}">
+                                                         <svg class="facebook-svg" xmlns="http://www.w3.org/2000/svg"
                                                         style="isolation:isolate" viewBox="0 0 400 400" width="400pt"
                                                         height="400pt">
                                                         <circle class="fb-logoCircle" vector-effect="non-scaling-stroke"
@@ -582,9 +492,11 @@
                                                         <path class="fb-ring"
                                                             d="M49.716 200c0-82.944 67.34-150.284 150.284-150.284 82.944 0 150.284 67.34 150.284 150.284 0 82.944-67.34 150.284-150.284 150.284-82.944 0-150.284-67.34-150.284-150.284zm6 0c0-79.633 64.651-144.284 144.284-144.284S344.284 120.367 344.284 200 279.633 344.284 200 344.284 55.716 279.633 55.716 200z"
                                                             fill-rule="evenodd" fill="#3F51B5" />
-                                                    </svg>
-
-                                                    <svg class="instagram-svg" xmlns="http://www.w3.org/2000/svg"
+                                                        </svg>
+                                                    </a>
+                                                   
+                                                    <a href="{{ $instagram->value }}">
+                                                        <svg class="instagram-svg" xmlns="http://www.w3.org/2000/svg"
                                                         style="isolation:isolate" viewBox="0 0 400 400" width="400pt"
                                                         height="400pt">
                                                         <circle class="ig-logoCircle" vector-effect="non-scaling-stroke"
@@ -596,9 +508,11 @@
                                                         <path
                                                             d="M168.208 122.817c-24.916 0-45.391 20.447-45.391 45.391v63.584c0 24.916 20.447 45.391 45.391 45.391h63.584c24.916 0 45.391-20.447 45.391-45.391v-63.577c0-24.923-20.447-45.398-45.391-45.398h-63.584zm0 14.034h63.584c8.32-.012 16.302 3.289 22.185 9.172 5.883 5.883 9.184 13.865 9.172 22.185v63.584c.012 8.32-3.289 16.302-9.172 22.185-5.883 5.883-13.865 9.184-22.185 9.172h-63.577c-8.321.013-16.305-3.286-22.19-9.169-5.885-5.883-9.186-13.867-9.174-22.188v-63.577c-.013-8.321 3.286-16.305 9.169-22.19 5.883-5.885 13.867-9.186 22.188-9.174zm73.232 15.352c-1.688-.008-3.31.66-4.503 1.854-1.194 1.193-1.862 2.815-1.854 4.503 0 3.536 2.821 6.357 6.357 6.357 1.69.009 3.313-.657 4.508-1.851 1.195-1.194 1.864-2.817 1.856-4.506.008-1.69-.661-3.312-1.856-4.506-1.195-1.194-2.818-1.86-4.508-1.851zM200 157.9c-23.155 0-42.1 18.945-42.1 42.1s18.945 42.1 42.1 42.1 42.1-18.945 42.1-42.1-18.945-42.1-42.1-42.1zm0 14.034c15.598 0 28.066 12.468 28.066 28.066 0 15.598-12.468 28.066-28.066 28.066-15.598 0-28.066-12.468-28.066-28.066 0-15.598 12.468-28.066 28.066-28.066z"
                                                             fill="#FFF" />
-                                                    </svg>
-
-                                                    <svg class="twitter-svg" xmlns="http://www.w3.org/2000/svg"
+                                                        </svg>    
+                                                    </a>
+                                                    
+                                                    <a href="{{ $twitter->value }}">
+                                                        <svg class="twitter-svg" xmlns="http://www.w3.org/2000/svg"
                                                         style="isolation:isolate" viewBox="0 0 400 400" width="400pt"
                                                         height="400pt">
                                                         <circle class="tw-logoCircle" vector-effect="non-scaling-stroke"
@@ -610,9 +524,11 @@
                                                         <path class="tw-ring"
                                                             d="M49.716 200c0-82.944 67.34-150.284 150.284-150.284 82.944 0 150.284 67.34 150.284 150.284 0 82.944-67.34 150.284-150.284 150.284-82.944 0-150.284-67.34-150.284-150.284zm6 0c0-79.633 64.651-144.284 144.284-144.284S344.284 120.367 344.284 200 279.633 344.284 200 344.284 55.716 279.633 55.716 200z"
                                                             fill-rule="evenodd" fill="#03A9F4" />
-                                                    </svg>
-
-                                                    <svg class="youTube-svg" xmlns="http://www.w3.org/2000/svg"
+                                                        </svg>     
+                                                    </a>
+                                                    
+                                                    <a href="{{ $youtube->value }}">
+                                                        <svg class="youTube-svg" xmlns="http://www.w3.org/2000/svg"
                                                         style="isolation:isolate" viewBox="0 0 400 400" width="400pt"
                                                         height="400pt">
                                                         <circle class="yt-logoCircle" vector-effect="non-scaling-stroke"
@@ -624,9 +540,11 @@
                                                         <path
                                                             d="M274.001 161.812c-1.447-8.001-8.35-13.82-16.366-15.639-11.988-2.546-34.18-4.364-58.191-4.364-23.993 0-46.539 1.818-58.545 4.364-8.001 1.819-14.918 7.274-16.366 15.639-1.466 9.092-2.913 21.822-2.913 38.188 0 16.366 1.447 29.096 3.266 38.188 1.466 8.001 8.369 13.82 16.366 15.639 12.73 2.546 34.551 4.364 58.563 4.364 24.011 0 45.832-1.818 58.562-4.364 7.997-1.819 14.9-7.274 16.366-15.639 1.448-9.092 3.266-22.193 3.637-38.188-.742-16.366-2.56-29.096-4.379-38.188zm-94.19 63.647v-50.918L224.182 200l-44.371 25.459z"
                                                             fill="#FFF" />
-                                                    </svg>
-
-                                                    <svg class="pinterest-svg" xmlns="http://www.w3.org/2000/svg"
+                                                        </svg>
+                                                    </a>
+                                                    
+                                                    <a href="{{ $pinterst->value }}">
+                                                        <svg class="pinterest-svg" xmlns="http://www.w3.org/2000/svg"
                                                         style="isolation:isolate" viewBox="0 0 400 400" width="400pt"
                                                         height="400pt">
                                                         <circle class="pt-logoCircle" vector-effect="non-scaling-stroke"
@@ -638,28 +556,18 @@
                                                         <path
                                                             d="M157.254 305.505c-.197-4.003-.172-24.75 14.264-86.676 1.931-20.661-.772-27.984-.772-36.565 0-19.494 10.118-23.591 16.053-23.591 8.408 0 20.049 3.233 20.049 16.824 0 15.546-12.677 19.636-12.677 19.636s-.913 3.979-1.974 15.016c-1.037 11.086 3.374 23.06 21.419 23.06 28.97 0 33.424-40.192 33.424-51.253 0-15.281-11.178-46.294-45.954-46.294-46.361 0-54.338 41.543-54.338 52.623 0 4.732 1.321 13.091 2.215 16.657 8.748 1.419 7.835 13.424 4.096 16.823-4.17 3.733-25.54 8.193-25.54-38.754 0-44.702 39.828-67.738 74.82-67.738 33.282 0 69.551 22.968 69.551 67.232 0 39.501-28.415 70.587-58.225 70.587-17.903 0-27.397-14.744-27.397-14.744 0 13.8-25.374 61.278-28.625 67.306"
                                                             fill="#FFF" />
-                                                    </svg>
+                                                        </svg>
+                                                    </a>
+                                                    
 
-                                                    <svg class="codepen-svg" xmlns="http://www.w3.org/2000/svg"
-                                                        style="isolation:isolate" viewBox="0 0 400 400" width="400pt"
-                                                        height="400pt">
-                                                        <circle class="cp-logoCircle" vector-effect="non-scaling-stroke"
-                                                            cx="200" cy="200" r="134.28405491"
-                                                            fill="#2E2E2E" />
-                                                        <path class="cp-ring"
-                                                            d="M49.716 200c0-82.944 67.34-150.284 150.284-150.284 82.944 0 150.284 67.34 150.284 150.284 0 82.944-67.34 150.284-150.284 150.284-82.944 0-150.284-67.34-150.284-150.284zm6 0c0-79.633 64.651-144.284 144.284-144.284S344.284 120.367 344.284 200 279.633 344.284 200 344.284 55.716 279.633 55.716 200z"
-                                                            fill-rule="evenodd" fill="#2E2E2E" />
-                                                        <path
-                                                            d="M200.034 115.414l-84.552 55.844-.034 57.484 84.518 55.844 84.552-55.844.034-57.484-84.518-55.844zm0 101.503L174.658 200l25.376-16.917L225.409 200l-25.375 16.917zm8.458-48.535v-27.093l52.731 34.824-20.58 13.703-32.151-21.434zm-16.917 0l-32.185 21.442-20.554-13.711 52.739-34.824v27.093zM144.165 200l-11.8 7.866.034-15.699L144.165 200zm15.225 10.176l32.185 21.442v27.127l-52.764-34.85 20.579-13.719zm49.102 21.442l32.143-21.442 20.554 13.677-52.73 34.824v-27.059h.033zM255.903 200l11.732-7.833-.034 15.632L255.903 200z"
-                                                            fill="#FFF" />
-                                                    </svg>
+                                                    
 
                                                 </div>
                                             </div>
 
                                         </div>
                                     </div>
-                                    <div class="size-chart">
+                                 {{--  <div class="size-chart">
                                         <div class="modal fade" id="sizeModal">
                                             <div class="modal-dialog modal-dialog-centered modal-lg">
                                                 <div class="modal-content">
@@ -1054,7 +962,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -1165,128 +1073,51 @@
                         <div class="single-product-description">
                             <div class="container">
                                 <div class="single-product-tabs">
-
-                                    <!-- Tab Navigation -->
                                     <div class="product-tab-nav">
-                                        <button class="product-tab-btn active" data-tab="description">
-                                            Product Description
-                                        </button>
-
-                                        <button class="product-tab-btn" data-tab="details">
-                                            Product Details
-                                        </button>
-
-                                        <button class="product-tab-btn" data-tab="return">
-                                            Return & Refund
-                                        </button>
-
-                                        <button class="product-tab-btn" data-tab="cancellation">
-                                            Cancellation Policy
-                                        </button>
-
-                                        <button class="product-tab-btn" data-tab="warranty">
-                                            Warranty & Care Instructions
-                                        </button>
-
-                                        <button class="product-tab-btn" data-tab="reviews">
-                                            Reviews
-                                        </button>
+                                        @php 
+                                            $i = 1;
+                                            $tabNameArray = []; 
+                                            $tabname="" ;   
+                                        @endphp 
+                                        @foreach($productDetailManager as $manager)
+                                            @php 
+                                               
+                                                $tabname = Str::snake(str_replace('&', 'and', $manager->section_name)); 
+                                            @endphp 
+                                            @if($manager->section_name != "Specification")
+                                                @php  $tabNameArray[] = $tabname; @endphp 
+                                                <button class="product-tab-btn @if($i == 1) active @endif" data-tab="{{ $tabname }}">
+                                                    {{ $manager->section_name }}
+                                                </button>
+                                                @php $i++ @endphp   
+                                            @endif   
+                                        @endforeach
                                     </div>
 
+                                    <div class="product-tab-content active" id="{{ $tabNameArray[0] ?? ""}}">
+                                       {!! $product->content_2 ?? "" !!}
+                                    </div>
 
-                                    <!-- Tab Content -->
-
-                                    <div class="product-tab-content active" id="description">
-
-                                        <p>
-                                            Bring elegance and comfort to your living room with this beautifully
-                                            designed <strong>Solid Wood 5 Seater Sofa Set Without Coffee Table</strong>.
-                                            Crafted from premium-quality solid wood, this sofa set includes a
-                                            spacious <strong>3-seater sofa and two comfortable single-seater
-                                                chairs</strong>.
-                                        </p>
-
-                                        <p>
-                                            The modern design features stylish <strong>cane detailing</strong>,
-                                            curved wooden armrests, and soft comfortable cushions.
-                                        </p>
+                                    <div class="product-tab-content" id="{{ $tabNameArray[1] ?? "" }}">
+                                        {!! $product->content_3 ?? "" !!}
 
                                     </div>
 
+                                    <div class="product-tab-content" id="{{ $tabNameArray[2] ?? "" }}">
+                                        {!! $product->content_4 ?? "" !!}
+                                    </div>
 
-                                    <div class="product-tab-content" id="details">
-
-                                        <ul>
-                                            <li>Premium quality solid wood construction</li>
-                                            <li>5 seater configuration: 3-seater + 2 single chairs</li>
-                                            <li>Elegant cane design on chairs and center table</li>
-                                            <li>Strong, durable, and long-lasting wooden frame</li>
-                                            <li>Comfortable cushioned seating and back support</li>
-                                            <li>Modern curved armrest design</li>
-                                            <li>Perfect for living room and home interiors</li>
-                                            <li>Stylish blend of traditional and contemporary design</li>
-                                        </ul>
+                                    <div class="product-tab-content" id="{{ $tabNameArray[3] ?? "" }}">
+                                        {!! $product->content_5 ?? "" !!}
 
                                     </div>
 
-
-                                    <div class="product-tab-content" id="return">
-
-                                        <ul>
-                                            <li>
-                                                <strong>Return</strong> - To be eligible for a return if you
-                                                receive different, damaged, or broken items.
-                                            </li>
-
-                                            <li>
-                                                <strong>Refund</strong> - After pickup, the refund will be
-                                                released within 72 hrs.
-                                            </li>
-
-                                            <li>
-                                                <strong>Replacement</strong> - We only replace items if they
-                                                are defective or damaged.
-                                            </li>
-                                        </ul>
-
+                                    <div class="product-tab-content" id="{{ $tabNameArray[4] ?? "" }}">
+                                        {!! $product->content_6 ?? "" !!}
                                     </div>
 
-
-                                    <div class="product-tab-content" id="cancellation">
-
-                                        <ul>
-                                            <li>
-                                                If you cancel before the product is shipped, cancellation
-                                                will be accepted with applicable processing charges.
-                                            </li>
-
-                                            <li>
-                                                If the product has already been shipped, cancellation will
-                                                not be accepted.
-                                            </li>
-                                        </ul>
-
-                                    </div>
-
-
-                                    <div class="product-tab-content" id="warranty">
-
-                                        <strong>Warranty:</strong>
-
-                                        <ul>
-                                            <li>This product comes with a <strong>30-Months Warranty</strong>.</li>
-                                            <li>Free replacement or repair for manufacturing defects.</li>
-                                        </ul>
-
-                                        <strong>Care Instructions:</strong>
-
-                                        <ul>
-                                            <li>Avoid direct exposure to sunlight.</li>
-                                            <li>Always use coasters or mats.</li>
-                                            <li>Clean with a slightly damp, non-abrasive sponge.</li>
-                                            <li>Wipe with a soft, dry, lint-free cloth.</li>
-                                        </ul>
-
+                                    <div class="product-tab-content" id="{{ $tabNameArray[5] ?? "" }}">
+                                         {!! $product->content_7 ?? "" !!}
                                     </div>
 
                                     <div class="product-tab-content" id="reviews">
@@ -2062,6 +1893,7 @@
         <script>
             $(document).ready(function() {
 
+                initProductSliders();
                 /* =========================
                    PRODUCT MAIN SLIDER
                 ========================= */
@@ -2314,40 +2146,16 @@
             });
         </script>
 
-        {{-- <script>
-            $(document).ready(function() {
-
-                $('.diwali-slider-banner').slick({
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                    arrows: false,
-                    fade: true,
-                    infinite: false
-                });
-            });
-        </script> --}}
-
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
         <script>
             $(document).ready(function() {
-
                 $('.product-tab-btn').on('click', function() {
-
                     var tabId = $(this).data('tab');
-
-                    // Remove active from all buttons
                     $('.product-tab-btn').removeClass('active');
-
-                    // Add active to clicked button
                     $(this).addClass('active');
-
-                    // Hide all contents
                     $('.product-tab-content').removeClass('active');
-
-                    // Show selected content
                     $('#' + tabId).addClass('active');
-
                 });
 
             });
@@ -2719,46 +2527,193 @@
 
                 const variantValueId = $(element).data('vid');
 
-                // Find selected variant specification
                 const specification = productVariantSpecification.find(
                     item => String(item.variant_value_id) === String(variantValueId)
                 );
 
+                // Default product specification
                 let content = productDefaultSpecification || '';
 
                 if (specification) {
 
-                    // Example:
-                    // variantValueId = 1  => content_1
-                    // variantValueId = 14 => content_14
                     const contentKey = 'content_' + variantValueId;
-
                     const variantContent = specification[contentKey] ?? '';
 
-                    // Variant content has priority
+                    // Variant specification ko priority
                     if (
                         variantContent &&
-                        String(variantContent).replace(/<[^>]*>/g, '').trim() !== ''
+                        String(variantContent)
+                            .replace(/<[^>]*>/g, '')
+                            .trim() !== ''
                     ) {
                         content = variantContent;
                     }
                 }
 
-                if (
+                // Check final content
+                const hasContent =
                     content &&
-                    String(content).replace(/<[^>]*>/g, '').trim() !== ''
-                ) {
+                    String(content)
+                        .replace(/<[^>]*>/g, '')
+                        .trim() !== '';
+
+                if (hasContent) {
+
                     $('#productSpecificationContent').html(content);
                     $('#productSpecificationBox').show();
+
                 } else {
+
                     $('#productSpecificationContent').html('');
                     $('#productSpecificationBox').hide();
+
                 }
+            }
+            function updateVariantImages(variantId) {
+
+                console.log('variant_id', variantId);
+
+                const mainSlider = $('.product-main-slider');
+                const thumbSlider = $('.product-thumb-slider');
+
+                /*
+                * IMPORTANT:
+                * Existing Slick destroy karo
+                */
+
+                if (mainSlider.hasClass('slick-initialized')) {
+                    mainSlider.slick('unslick');
+                }
+
+                if (thumbSlider.hasClass('slick-initialized')) {
+                    thumbSlider.slick('unslick');
+                }
+
+
+                /*
+                * Product ki saari images
+                */
+
+                const allImages = @json($product->product_main_images);
+
+
+                /*
+                * Selected variant ki images
+                */
+
+                const variantImages = allImages.filter(function (image) {
+
+                    return String(image.variant_id) === String(variantId);
+
+                });
+
+
+                console.log('variant images', variantImages);
+
+
+                /*
+                * Main slider HTML
+                */
+
+                let slideRow = '';
+
+                /*
+                * Thumbnail HTML
+                */
+
+                let thumbnailRow = '';
+
+
+                variantImages.forEach(function (image, index) {
+
+                    const imageUrl =
+                        "{{ asset('uploads/products') }}/" + image.graphic;
+
+
+                    slideRow += `
+                        <div class="product-slide">
+                            <img src="${imageUrl}" alt="">
+                        </div>
+                    `;
+
+
+                    thumbnailRow += `
+                        <div class="thumb">
+                            <img src="${imageUrl}" alt="${index}">
+                        </div>
+                    `;
+
+                });
+
+
+                console.log('thumbnailRow', thumbnailRow);
+                console.log('slideRow', slideRow);
+
+
+                /*
+                * New HTML set karo
+                */
+
+                mainSlider.html(slideRow);
+                thumbSlider.html(thumbnailRow);
+
+
+                /*
+                * Slick dobara initialize
+                */
+
+                initProductSliders();
+
+            }
+            function initProductSliders() {
+
+                /* =========================
+                PRODUCT MAIN SLIDER
+                ========================= */
+
+                $('.product-main-slider').slick({
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    arrows: true,
+                    fade: true,
+                    infinite: false,
+                    asNavFor: '.product-thumb-slider'
+                });
+
+
+                /* =========================
+                PRODUCT THUMB SLIDER
+                ========================= */
+
+                $('.product-thumb-slider').slick({
+                    slidesToShow: 5,
+                    slidesToScroll: 1,
+                    arrows: false,
+                    infinite: false,
+                    focusOnSelect: true,
+                    asNavFor: '.product-main-slider',
+
+                    responsive: [
+                        {
+                            breakpoint: 991,
+                            settings: {
+                                slidesToShow: 3
+                            }
+                        },
+                        {
+                            breakpoint: 767,
+                            settings: {
+                                slidesToShow: 3
+                            }
+                        }
+                    ]
+                });
             }
         </script>
     @endif
     <script>
         var checkoutUrl = "{{ route('front-product.checkoutBag') }}";
+        var goTocartUrl = "{{ route('product.viewBag') }}"; 
         $(document).ready(function() {
             $("#buy_now_auto_add_to_cart").click(function() {
                 localStorage.setItem('oldCartItems', JSON.stringify([]));
