@@ -1,4 +1,4 @@
-@foreach($products as $product)
+@foreach($products->take(12) as $product)
                         <div class="product-card">
                             <div class="product-image">
                                 <img src="{{$product->images['first']}}" alt="">

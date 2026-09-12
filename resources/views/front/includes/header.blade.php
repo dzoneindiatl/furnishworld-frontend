@@ -190,7 +190,7 @@
         <div class="search-content">
             <div class="popular-searches">
                 <h4>POPULAR CHOICES</h4>
-                @foreach ($subCategories->take(12) as $subcat)
+                @foreach ($subCategories->take(15) as $subcat)
                     <a href="{{ route('category.show',['path'=>$subcat->parentCategory->slug.'/'.$subcat->slug]) }}">{{ $subcat->name }}</a>
                 @endforeach
             </div>

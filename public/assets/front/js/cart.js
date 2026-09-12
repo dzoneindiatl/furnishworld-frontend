@@ -504,111 +504,123 @@ function decodeHtml(html) {
 
 function priceCalculation() {
     let couponDiscount = parseFloat(localStorage.getItem('coupon_discount')) || 0;
-    let cartItems; 
-    if(window.buyNowData){
+    let cartItems;
+
+    if (window.buyNowData) {
         cartItems = [{
             product_id: window.buyNowData.product_id,
-            name: window.buyNowData.product_name,
-            sku: window.buyNowData.sku,
+            name: window.buyNowData.product_name || '',
+            sku: window.buyNowData.sku || '',
             price: parseFloat(window.buyNowData.price) || 0,
             sellingPrice: parseFloat(window.buyNowData.selling_price) || 0,
             quantity: parseInt(window.buyNowData.quantity) || 1,
-            image:window.buyNowData.image,
-            rawTaxArr:window.buyNowData.tax_arr,
+            image: window.buyNowData.image || '',
+            rawTaxArr: window.buyNowData.tax_arr || ''
         }];
-    }
-    else if (isLoggedIn) {
-            cartItems = (window.dbCartItems || []).map(item => ({
-
+    } else if (isLoggedIn) {
+        cartItems = (window.dbCartItems || []).map(item => ({
             ...item,
-
-                product_id: item.product_id,
-
-                name: item.name || '',
-
-                sku: item.sku || '',
-
-                productType: item.productType || '',
-
-                selectedVariants: item.selectedVariants || {},
-
-                price: parseFloat(item.price) || 0,
-
-                sellingPrice: parseFloat(item.sellingPrice) || 0,
-
-                discountAmount: parseFloat(item.discountAmount) || 0,
-
-                discountType: item.discountType || '',
-
-                quantity: parseInt(item.quantity) || 1,
-
-                image: item.image || item.product?.image || '',
-
-                rawTaxArr: item.rawTaxArr || item.product?.tax_arr || ''
-
+            product_id: item.product_id,
+            name: item.name || '',
+            sku: item.sku || '',
+            productType: item.productType || '',
+            selectedVariants: item.selectedVariants || {},
+            price: parseFloat(item.price) || 0,
+            sellingPrice: parseFloat(item.sellingPrice) || 0,
+            discountAmount: parseFloat(item.discountAmount) || 0,
+            discountType: item.discountType || '',
+            quantity: parseInt(item.quantity) || 1,
+            image: item.image || item.product?.image || '',
+            rawTaxArr: item.rawTaxArr || item.product?.tax_arr || ''
         }));
-    }
-    else{
+    } else {
         cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
     }
-     
-    const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    const totalQuantity = cartItems.reduce((sum, item) => sum + (parseInt(item.quantity) || 0), 0);
+
     let cartData = cartItems.map(item => {
-        var rawTaxArr = item.rawTaxArr;
-        let decodedJson = decodeHtml(rawTaxArr);
-        let taxArr = JSON.parse(decodedJson) || [];
+        let rawTaxArr = item.rawTaxArr || '';
+        let taxArr = [];
+
+        try {
+            if (rawTaxArr) {
+                let decodedJson = decodeHtml(rawTaxArr);
+                taxArr = JSON.parse(decodedJson) || [];
+            }
+        } catch (error) {
+            console.error("Tax JSON Parse Error:", error);
+            taxArr = [];
+        }
+
         let tax_price_total = 0;
         let tax_option = "inclusive";
         let tax_id = "";
         let tax_rate = 0;
-        let tax_type = 'flat';
-        var netPrice = 0;
-        var finalTax = 0;
-        if (couponDiscount > 0) {
-            netPrice = (item.sellingPrice) - (couponDiscount / totalQuantity);
-        } else {
-            netPrice = item.sellingPrice;
+        let tax_type = "flat";
+        let sellingPrice = parseFloat(item.sellingPrice) || 0;
+        let netPrice = sellingPrice;
+
+        if (couponDiscount > 0 && totalQuantity > 0) {
+            netPrice = sellingPrice - (couponDiscount / totalQuantity);
         }
+
+        if (netPrice < 0) {
+            netPrice = 0;
+        }
+
         if (taxArr.length > 0) {
-            taxArr.forEach((tax) => {
-                let taxprice = 0;
-                let tax_price = 0;
-                tax_type = tax.tax_type;
+            taxArr.forEach(tax => {
+                tax_type = tax.tax_type || "flat";
+                tax_option = tax.tax_option || "inclusive";
+                tax_id = tax.id || "";
 
-                if (tax.tax_type === "flat") {
-                    tax_option = tax.tax_option;
+                if (
+                    tax.tax_rate === null ||
+                    tax.tax_rate === undefined ||
+                    String(tax.tax_rate).trim().toLowerCase() === "no tax"
+                ) {
+                    tax_rate = 0;
+                } else {
+                    tax_rate = parseFloat(tax.tax_rate) || 0;
+                }
 
-                    tax_id = tax.id;
-                    tax_rate = (tax.tax_rate > 0 || String(tax.tax_rate).toLowerCase() !== "no tax") ? tax.tax_rate : 0;
-                    if (tax_option == "inclusive") {
-                        taxprice = 1 + (tax_rate / 100);
-                        tax_price = tax_rate ? (netPrice / taxprice) : 0;
-                        tax_price_total = netPrice - tax_price;
-                    } else {
-                        tax_price_total = tax_rate ? ((netPrice * tax_rate) / 100) : 0;
-                    }
-                } else if (tax.tax_type === "floating") {
-                    tax_option = tax.tax_option;
-
-                    tax_id = tax.id;
-
-                    if ((parseInt(netPrice) >= parseInt(tax.tax_from)) && (parseInt(netPrice) <= parseInt(tax.tax_to))) {
-                        tax_rate = (tax.tax_rate > 0 || String(tax.tax_rate).toLowerCase() !== "no tax") ? tax.tax_rate : 0;
-                        if (tax_option == "inclusive") {
-                            taxprice = 1 + (tax_rate / 100);
-
-                            tax_price = tax_rate > 0 ? (netPrice / taxprice) : 0;
-
-                            tax_price_total = netPrice - tax_price;
-
+                if (tax_type === "flat") {
+                    if (tax_option === "inclusive") {
+                        if (tax_rate > 0) {
+                            let taxMultiplier = 1 + (tax_rate / 100);
+                            let priceWithoutTax = netPrice / taxMultiplier;
+                            tax_price_total = netPrice - priceWithoutTax;
                         } else {
-                            tax_price_total = tax_rate > 0 ? ((netPrice * tax_rate) / 100) : 0;
+                            tax_price_total = 0;
+                        }
+                    } else if (tax_option === "exclusive") {
+                        tax_price_total = tax_rate > 0 ? (netPrice * tax_rate) / 100 : 0;
+                    }
+                } else if (tax_type === "floating") {
+                    let taxFrom = parseFloat(tax.tax_from) || 0;
+                    let taxTo = parseFloat(tax.tax_to) || 0;
+
+                    if (netPrice >= taxFrom && netPrice <= taxTo) {
+                        if (tax_option === "inclusive") {
+                            if (tax_rate > 0) {
+                                let taxMultiplier = 1 + (tax_rate / 100);
+                                let priceWithoutTax = netPrice / taxMultiplier;
+                                tax_price_total = netPrice - priceWithoutTax;
+                            } else {
+                                tax_price_total = 0;
+                            }
+                        } else if (tax_option === "exclusive") {
+                            tax_price_total = tax_rate > 0 ? (netPrice * tax_rate) / 100 : 0;
                         }
                     }
                 }
             });
         }
-        finalTax = item.quantity * tax_price_total;
+
+        let quantity = parseInt(item.quantity) || 1;
+        let finalTax = quantity * tax_price_total;
+
         return {
             ...item,
             tax_id: tax_id,
@@ -616,78 +628,101 @@ function priceCalculation() {
             tax_rate: tax_rate,
             tax_option: tax_option,
             tax_type: tax_type,
-            rawTaxArr: rawTaxArr,
+            rawTaxArr: rawTaxArr
         };
     });
-    
-    if(window.buyNowData){
-         cartItems = cartData; 
-    }
-    else{
+
+    if (window.buyNowData) {
+        cartItems = cartData;
+    } else if (isLoggedIn) {
+        cartItems = cartData;
+    } else {
         localStorage.setItem('cartItems', JSON.stringify(cartData));
         cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
     }
-    
+    console.log("---------cartItem logs---------------",cartItems); 
     let totalMrp = 0;
     let totalDiscount = 0;
     let totalTaxPrice = 0;
     let totalSelling = 0;
     let taxOption = 'inclusive';
-    cartItems.forEach(function (item) {
-        totalMrp += item.price * item.quantity;
-        totalSelling += item.sellingPrice * item.quantity;
-        taxOption = item.tax_option;
-        totalTaxPrice += item.tax_price;
-    });
 
-    console.log("------cartItem------data------",cartItems); 
-    console.log("---total Mrp------",totalMrp); 
-    console.log("-----total Selling------",totalSelling); 
-    console.log("---------taxOption---------",taxOption); 
-    console.log("--------------totalTaxPrice---------",totalTaxPrice); 
+    cartItems.forEach(function(item) {
+        let quantity = parseInt(item.quantity) || 1;
+        let price = parseFloat(item.price) || 0;
+        console.log("----price------",price); 
+
+        let sellingPrice = parseFloat(item.sellingPrice) || 0;
+        console.log("-----sellingPrice----------",sellingPrice); 
+        let taxPrice = parseFloat(item.tax_price) || 0;
+
+        totalMrp += price * quantity;
+        totalSelling += sellingPrice * quantity;
+        totalTaxPrice += taxPrice;
+
+        if (item.tax_option) {
+            taxOption = item.tax_option;
+        }
+    });
+    console.log("----------totalMrp----------",totalMrp); 
+    console.log("----------total selling-----------",totalSelling);
+
     totalDiscount = totalMrp - totalSelling;
+    console.log("------------totalDiscount---------",totalDiscount); 
     let subTotal = totalMrp - totalDiscount;
+    console.log("-------------subTotal----------",subTotal); 
     let grandTotal = subTotal - couponDiscount;
+    console.log("===========grandTotal========",grandTotal); 
+    if (grandTotal < 0) {
+        grandTotal = 0;
+    }
+
     let taxableAmount = grandTotal;
-    if (taxOption == 'inclusive') {
+
+    if (taxOption === 'inclusive') {
         taxableAmount = grandTotal - totalTaxPrice;
-    } else if (taxOption == 'exclusive') {
+    } else if (taxOption === 'exclusive') {
         taxableAmount = grandTotal;
     }
+
     let finalAmount = grandTotal;
-    // Update Summary
+
     if (totalMrp > 0) {
         $("#totalMrp").html(`₹${Math.floor(totalMrp)}`).show();
     } else {
-        $("#totalMrp").html("0"); // Or use .text('') depending on your layout
+        $("#totalMrp").html("0");
     }
+
     if (totalDiscount > 0) {
         $("#totalDiscount").html(`-₹${totalDiscount.toFixed(2)}`).show();
     } else {
-        $("#totalDiscount").html("0"); // Or use .text('') depending on your layout
+        $("#totalDiscount").html("0");
     }
-    $('#subTotal').html(`₹${(subTotal).toFixed(2)}`);
+
+    $('#subTotal').html(`₹${subTotal.toFixed(2)}`);
+
     if (couponDiscount > 0) {
         $("#couponDiscount").html(`-₹${couponDiscount.toFixed(2)}`).show();
     } else {
-        $("#couponDiscount").html("0"); // Or use .text('') depending on your layout
+        $("#couponDiscount").html("0");
     }
-    $('#grandTotal').html(`₹${(grandTotal).toFixed(2)}`);
-    $('#taxableAmount').html(`₹${(taxableAmount).toFixed(2)}`);
-    if (taxOption == 'inclusive') {
-        $("#taxPrice").html(`+₹${totalTaxPrice.toFixed(2)}`).show();
-    } else if (taxOption == 'exclusive') {
+
+    $('#grandTotal').html(`₹${grandTotal.toFixed(2)}`);
+    $('#taxableAmount').html(`₹${taxableAmount.toFixed(2)}`);
+
+    if (taxOption === 'inclusive' || taxOption === 'exclusive') {
         $("#taxPrice").html(`+₹${totalTaxPrice.toFixed(2)}`).show();
     } else {
-        $("#taxPrice").html("0"); // Or use .text('') depending on your layout
+        $("#taxPrice").html("0");
     }
+
     if (finalAmount > 0) {
-        //$('.finalAmount').html(`₹${finalAmount.toFixed(2)}`);
-        if (taxOption == 'inclusive') {
-            $('.finalAmount').html(`₹${(Math.floor(finalAmount))}`);
-        } else if (taxOption == 'exclusive') {
-            $('.finalAmount').html(`₹${(Math.floor(finalAmount + totalTaxPrice))}`);
+        if (taxOption === 'inclusive') {
+            $('.finalAmount').html(`₹${Math.floor(finalAmount)}`);
+        } else if (taxOption === 'exclusive') {
+            $('.finalAmount').html(`₹${Math.floor(finalAmount + totalTaxPrice)}`);
         }
+
         $('.checkoutButton').removeClass('disabled-link');
     } else {
         $('.finalAmount').html(`₹0`);

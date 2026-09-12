@@ -658,12 +658,13 @@ function renderCart() {
     cartItems.forEach(function (item) {
         qty = item.quantity;
         
-        totalMrp += item.sellingPrice * item.quantity;
-        if (item.discountType == "flat") {
-            totalDiscount += parseInt(item.discountAmount);
-        } else if (item.discountType == "percentage") {
-            totalDiscount += ((parseInt(item.discountAmount) * totalMrp) / 100);
-        }
+        totalMrp += item.price * item.quantity;
+        // if (item.discountType == "flat") {
+        //     totalDiscount += parseInt(item.discountAmount);
+        // } else if (item.discountType == "percentage") {
+        //     totalDiscount += ((parseInt(item.discountAmount) * totalMrp) / 100);
+        // }
+        totalDiscount += item.price - item.sellingPrice ;  
         taxOption = item.tax_option;
         totalTaxPrice += item.tax_price;
         output += `

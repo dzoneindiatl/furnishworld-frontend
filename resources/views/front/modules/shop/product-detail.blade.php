@@ -99,20 +99,20 @@
                                             <!-- Main Slider -->
                                             <div class="product-gallery">
                                                 <div class="product-main-slider">
-                                                    @foreach($product->product_main_images as $img)
-                                                        <div class="product-slide" data-variant-id="{{ $img->variant_id }}">
-                                                            <img src="{{ asset('uploads/products/'.$img->graphic) }}"
-                                                                alt="Product 1">
-                                                        </div>  
+                                                    @foreach($product->product_main_images->sortByDesc('is_front') as $img)
+                                                            <div class="product-slide" data-variant-id="{{ $img->variant_id }}">
+                                                                <img src="{{ asset('uploads/products/'.$img->graphic) }}"
+                                                                    alt="Product 1">
+                                                            </div>  
                                                     @endforeach 
                                                 </div>
 
                                                 <div class="product-thumb-slider">
-                                                    @foreach($product->product_main_images as $img)
-                                                    <div class="thumb" data-variant-id="{{ $img->variant_id }}">
-                                                        <img src="{{ asset('uploads/products/'.$img->graphic) }}"
-                                                            alt="">
-                                                    </div>
+                                                      @foreach($product->product_main_images->sortByDesc('is_front') as $img)
+                                                            <div class="thumb" data-variant-id="{{ $img->variant_id }}">
+                                                                <img src="{{ asset('uploads/products/'.$img->graphic) }}"
+                                                                    alt="">
+                                                            </div>
                                                     @endforeach 
                                                 </div>
                                             </div>
@@ -124,17 +124,17 @@
 
                                                     <!-- Popup Main Slider -->
                                                     <div class="popup-main-slider">
-                                                    @foreach($product->product_main_images as $img)
+                                                     @foreach($product->product_main_images->sortByDesc('is_front') as $img)
                                                         <div class="popup-slide" data-variant-id="{{ $img->variant_id }}">
                                                             <img src="{{ asset('uploads/products/'.$img->graphic) }}"
                                                                 alt="">
                                                         </div>
-                                                    @endforeach     
+                                                  @endforeach 
                                                 </div>
 
                                                     <!-- Popup Thumbnail Slider -->
                                                     <div class="popup-thumb-slider">
-                                                        @foreach($product->product_main_images as $img)
+                                                          @foreach($product->product_main_images->sortByDesc('is_front') as $img)
                                                             <div class="popup-thumb" data-variant-id="{{ $img->variant_id }}">
                                                                 <img src="{{ asset('uploads/products/'.$img->graphic) }}"
                                                                     alt="">
