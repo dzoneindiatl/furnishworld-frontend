@@ -320,7 +320,7 @@
     </section>
 
     <!-- PRODUCT LISTING -->
-    <section class="fw_product_section pt-60">
+    <section class="fw_product_section fw_product_section_trending pt-60">
         <div class="container-fluid">
 
             <div class="fw_section_head">
@@ -393,10 +393,10 @@
 
                         {{-- <h2 id="catName"></h2> --}}
                         <!--p class="fw_content" id="catDescription">
-                                                                                    {{-- Explore complete room collections designed to help
+                                                                                                                {{-- Explore complete room collections designed to help
                             you create beautiful and harmonious living
                             environments. --}}
-                                                                                </p-->
+                                                                                                            </p-->
                         {{-- <a href="#" class="btn-primary" id="catUrl">
                             <span>Explore Collection</span>
                         </a> --}}
@@ -425,9 +425,36 @@
                             @foreach ($MainCategory as $index => $cate)
                                 <a href="" data-index="{{ $index }}"
                                     class="{{ $index == 0 ? 'active' : '' }}">
-                                    <span class="material-symbols-outlined">
-                                        {{ $icons[$index] ?? 'category' }}
-                                    </span>
+                                    @if ($cate->name == 'Storage')
+                                        <span><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                                                viewBox="0 0 24 24" fill="none" stroke="#2f4a3c" stroke-width="1.8"
+                                                stroke-linecap="round" stroke-linejoin="round">
+
+                                                <ellipse cx="12" cy="5" rx="8" ry="3">
+                                                </ellipse>
+                                                <path d="M4 5v7c0 1.66 3.58 3 8 3s8-1.34 8-3V5"></path>
+                                                <path d="M4 12v7c0 1.66 3.58 3 8 3s8-1.34 8-3v-7"></path>
+
+                                            </svg></span>
+                                    @elseif($cate->name == 'Decor & Furnishing')
+                                        <span><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                                viewBox="0 0 24 24" fill="none" stroke="#2f4a3c" stroke-width="1.8"
+                                                stroke-linecap="round" stroke-linejoin="round">
+
+                                                <path d="M4 18h16"></path>
+                                                <path d="M6 18v3"></path>
+                                                <path d="M18 18v3"></path>
+                                                <path d="M5 18v-5c0-2 1.5-3 3.5-3h7c2 0 3.5 1 3.5 3v5"></path>
+                                                <path d="M5 15h14"></path>
+                                                <path d="M15 3h5l-2 6h-5l2-6z"></path>
+                                                <path d="M17.5 9v3"></path>
+
+                                            </svg></span>
+                                    @else
+                                        <span class="material-symbols-outlined">
+                                            {{ $icons[$index] ?? 'category' }}
+                                        </span>
+                                    @endif
                                     {{ $cate->name }}
                                 </a>
                             @endforeach

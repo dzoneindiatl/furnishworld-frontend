@@ -21,7 +21,7 @@
   <p><a href="<?php echo env('WEBSITE_URL'); ?>" class="btn btn-primary w-100"> Continue Shopping</a></p></div>`;
 </script>
 <header class="header_container">
-    <div class="logo">
+    <div class="logo desktop-logo">
         <a href="{{ url('/') }}"><img src="{{ env('WEBSITE_URL') . 'uploads/settings/' . @$siteLogo->value }}"
                 alt="Logo"></a>
     </div>
@@ -288,10 +288,19 @@
                 menu
             </span>
         </button>
+        <div class="logo mobile-logo">
+            <a href="{{ url('/') }}"><img
+                    src="{{ env('WEBSITE_URL') . 'uploads/settings/' . @$siteLogo->value }}" alt="Logo"></a>
+        </div>
         <div class="search_icon">
-            <button class="search_button"><span class="material-symbols-outlined">
-                    search
-                </span>
+            <button class="search_button"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round">
+
+                    <circle cx="10.5" cy="10.5" r="6.5"></circle>
+                    <line x1="15.5" y1="15.5" x2="21" y2="21"></line>
+
+                </svg>
             </button>
         </div>
         <span class="divider">|</span>

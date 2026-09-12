@@ -165,15 +165,15 @@
                                                 <!-- Buttons -->
                                                 <!--div class="price_filter_action">
 
-                                                                                                                                    <button type="button" class="price_apply_btn">
-                                                                                                                                        Apply
-                                                                                                                                    </button>
+                                                                                                                                        <button type="button" class="price_apply_btn">
+                                                                                                                                            Apply
+                                                                                                                                        </button>
 
-                                                                                                                                    <button type="button" class="price_reset_btn">
-                                                                                                                                        Reset
-                                                                                                                                    </button>
+                                                                                                                                        <button type="button" class="price_reset_btn">
+                                                                                                                                            Reset
+                                                                                                                                        </button>
 
-                                                                                                                                </div-->
+                                                                                                                                    </div-->
 
                                             </div>
 
@@ -515,6 +515,12 @@
                                 <div id="grid_large" class="active"><a href="javascript:void(0);"
                                         title="3 Column"><span></span><span></span><span></span></a></div>
                             </div>
+                            <div class="product-display-mode mobile-view-mode">
+                                <div id="grid" class=""><a href="javascript:void(0);"
+                                        title="1 Column"><span></span></a></div>
+                                <div id="grid_large" class="active"><a href="javascript:void(0);"
+                                        title="2 Column"><span></span><span></span></a></div>
+                            </div>
                         </div>
                         <ul class="products column-3" id="product-list">
                             @include('front.modules.shop.load_more_data')
@@ -707,8 +713,8 @@
         <!--container-->
     </section>
     <!--=====================================================
-                                                                                                                                                        Site Section End
-                                                                                                                                         =========================================================-->
+                                                                                                                                                            Site Section End
+                                                                                                                                             =========================================================-->
 @endsection
 
 <style>
