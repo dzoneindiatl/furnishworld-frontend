@@ -1847,7 +1847,7 @@ class HomeController extends Controller
     {
         $searchValue = $request->searchValue; 
         
-        $products = Product::select('id','name','sku','slug','buying_price','selling_price')->where('is_active', 1)
+        $products = Product::select('id','name','sku','slug','buying_price','selling_price')->where('is_active', "1")
                    ->where('is_deleted', 0)
                    ->where(function($query) use ($searchValue) {
                        $query->where('name', 'LIKE', '%' . $searchValue . '%')

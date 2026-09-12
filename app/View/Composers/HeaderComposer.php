@@ -32,7 +32,7 @@ Class HeaderComposer
         $totalPrice = $cart->sum(function ($item) {
             return $item->product->selling_price * $item->quantity;
         });
-        $popularProduct = Product::where('is_active',1)->where('is_deleted',0)->where('draf',0)->latest()->take(9)->get();  
+        $popularProduct = Product::where('is_active',"1")->where('is_deleted',0)->where('draf',0)->latest()->take(9)->get();  
         $allCategory = Category::where('is_active',1)->where('is_deleted',0)->get(); 
         $parentCategoryId = $allCategory->whereNull('parent_id')->pluck('id');
         $subCategory = Category::select('id','name','slug','thumbnail_image','parent_id','show_on_menu')->whereIn('parent_id',$parentCategoryId)->where('is_active',1)->where('is_deleted',0)->get(); 
