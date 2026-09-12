@@ -29,6 +29,7 @@
     @endphp
     <script>
         var codMaxLimit = '<?php echo $codMaxLimit; ?>';
+        window.dbCartItems = @json($cart ?? []); 
     </script>
 
     <!-- Banner -->

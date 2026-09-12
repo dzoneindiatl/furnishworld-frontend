@@ -263,8 +263,9 @@ $.ajaxSetup({
 });
 var totalShippingCharge = 0;
 $('#pay_now').on('click', function (e) { 
-    $('.error-msg').html(""); 
-    var cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    $('.error-msg').html("");
+
+    var cartItems = getCartItems();
     console.log(' cart items ', cartItems.length);
     if (parseInt(cartItems.length) === 0) { 
         $('#pay_now').remove();
@@ -579,11 +580,17 @@ $(document).on('change', '.editState', function () {
 
 
 renderCart();
+function getCartItems() {
+    if (isLoggedIn) {
+        return window.dbCartItems || [];
+    }
 
+    return JSON.parse(localStorage.getItem('cartItems')) || [];
+}
 function renderCart() {
     var cartItems = [];
     var cartOutOfStock = [];
-    var cartAllItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    var cartAllItems = getCartItems();
     cartAllItems.forEach(function (item, index) {
         let variants = item.selectedVariants || {};
         //  product is out of stock

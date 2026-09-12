@@ -1226,8 +1226,8 @@ class HomeController extends Controller
 
     public function checkoutBag()
     {
-        try 
-        {
+        try {
+
             $cartItems = [];
             $userBillingAddress = [];
             $usershippingAddress = [];
@@ -1235,9 +1235,13 @@ class HomeController extends Controller
             $userId = null;
 
             if (auth()->guard('customer')->check()) {
+
                 $userId = auth()->guard('customer')->user()->id;
+
                 $buyNow = session('buy_now');
+
                 if (!empty($buyNow)) {
+
                     $product = Product::select(
                         'id',
                         'name',
@@ -1245,17 +1249,26 @@ class HomeController extends Controller
                         'buying_price',
                         'selling_price'
                     )
-                    ->where('id', $buyNow['product_id'])
-                    ->first();
+                        ->where('id', $buyNow['product_id'])
+                        ->first();
+
                     if ($product) {
+
                         $cartItems[] = [
                             'product'  => $product,
                             'quantity' => $buyNow['quantity'],
                         ];
                     }
+
                 } else {
-                    $cartRecords = Cart::where('user_id', $userId)->get();
+
+                    $cartRecords = Cart::where(
+                        'user_id',
+                        $userId
+                    )->get();
+
                     foreach ($cartRecords as $cart) {
+
                         $product = Product::select(
                             'id',
                             'name',
@@ -1263,52 +1276,318 @@ class HomeController extends Controller
                             'buying_price',
                             'selling_price'
                         )
-                        ->where('id', $cart->product_id)
-                        ->first();
+                            ->where('id', $cart->product_id)
+                            ->first();
+
                         if ($product) {
+
                             $cartItems[] = [
                                 'product'  => $product,
                                 'quantity' => $cart->quantity,
+                                'card_id'  => $cart->id
                             ];
                         }
                     }
                 }
 
-                $userRecord = User::where('id', $userId)->first();
+                $userRecord = User::where(
+                    'id',
+                    $userId
+                )->first();
+
                 $userBillingAddress = UserAddress::with([
                     'country',
                     'state',
                     'city'
                 ])
-                ->where([
-                    'user_id' => $userId,
-                    'type'    => 'billing'
-                ])
-                ->orderBy('id', 'desc')
-                ->get();
+                    ->where([
+                        'user_id' => $userId,
+                        'type'    => 'billing'
+                    ])
+                    ->orderBy('id', 'desc')
+                    ->get();
 
                 $usershippingAddress = UserAddress::with([
                     'country',
                     'state',
                     'city'
                 ])
-                ->where([
-                    'user_id' => $userId,
-                    'type'    => 'shipping'
-                ])
-                ->orderBy('id', 'desc')
-                ->get();
+                    ->where([
+                        'user_id' => $userId,
+                        'type'    => 'shipping'
+                    ])
+                    ->orderBy('id', 'desc')
+                    ->get();
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | User Wallet
+            |--------------------------------------------------------------------------
+            */
 
-            $userwallet = User::where('id', $userId)->first();
-            $countries = Country::where('is_active', 1)
-                ->pluck('name', 'id');
-            $states = State::where('country_id', 101)
-                ->where('is_active', 1)
-                ->pluck('name', 'id');
-            $citys = City::where('is_active', 1)->get();
+            $userwallet = User::where(
+                'id',
+                $userId
+            )->first();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Countries
+            |--------------------------------------------------------------------------
+            */
+
+            $countries = Country::where(
+                'is_active',
+                1
+            )
+                ->pluck(
+                    'name',
+                    'id'
+                );
+
+            /*
+            |--------------------------------------------------------------------------
+            | States
+            |--------------------------------------------------------------------------
+            */
+
+            $states = State::where(
+                'country_id',
+                101
+            )
+                ->where(
+                    'is_active',
+                    1
+                )
+                ->pluck(
+                    'name',
+                    'id'
+                );
+
+            /*
+            |--------------------------------------------------------------------------
+            | Cities
+            |--------------------------------------------------------------------------
+            */
+
+            $citys = City::where(
+                'is_active',
+                1
+            )->get();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Invoice Setting
+            |--------------------------------------------------------------------------
+            */
+
             $invoiceSetting = InvoiceSetting::first();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Cart
+            |--------------------------------------------------------------------------
+            */
+
+            $cart = Cart::with('product')
+                ->where(
+                    'user_id',
+                    Auth::guard('customer')->id()
+                )
+                ->get();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Prepare Cart Items
+            |--------------------------------------------------------------------------
+            */
+
+            $cart->each(function ($cartItem) {
+
+                /*
+                |--------------------------------------------------------------------------
+                | Product Variant Combination
+                |--------------------------------------------------------------------------
+                */
+
+                $combination = ProductVariantCombination::find(
+                    $cartItem->product_variant_combination_id
+                );
+
+                info(
+                    '----combination----',
+                    [
+                        $combination
+                    ]
+                );
+
+                /*
+                |--------------------------------------------------------------------------
+                | Selected Variants
+                |--------------------------------------------------------------------------
+                */
+
+                $selectedVariants = [];
+
+                if (
+                    $combination &&
+                    $combination->primary_variant_value_id
+                ) {
+
+                    $variantValue = VariantValue::with('variant')
+                        ->find(
+                            $combination->primary_variant_value_id
+                        );
+
+                    info(
+                        '---------variantValue---------',
+                        [
+                            $variantValue
+                        ]
+                    );
+
+                    if (
+                        $variantValue &&
+                        $variantValue->variant
+                    ) {
+
+                        $selectedVariants[
+                            strtolower(
+                                $variantValue->variant->name
+                            )
+                        ] = $variantValue->name;
+                    }
+                }
+
+                $cartItem->selectedVariants = $selectedVariants;
+
+                /*
+                |--------------------------------------------------------------------------
+                | Product / Variant Details
+                |--------------------------------------------------------------------------
+                */
+
+                $cartItem->sku = $combination?->sku ?? '';
+
+                $cartItem->productType =
+                    $cartItem->product_type;
+
+                $cartItem->sellingPrice =
+                    $combination?->selling_price ?? 0;
+
+                $cartItem->discountAmount =
+                    $combination?->discount ?? 0;
+
+                $cartItem->discountType =
+                    $combination?->discount_type ?? '';
+
+                $cartItem->quantity =
+                    $cartItem->quantity ?? 1;
+
+                $cartItem->price =
+                    $combination?->price ?? 0;
+
+                $cartItem->name =
+                    $cartItem->product?->name ?? '';
+
+                /*
+                |--------------------------------------------------------------------------
+                | Product Category
+                |--------------------------------------------------------------------------
+                */
+
+                $productCategoryId =
+                    $cartItem->product?->main_category_id ?? 0;
+
+                /*
+                |--------------------------------------------------------------------------
+                | Category Taxes
+                |--------------------------------------------------------------------------
+                */
+
+                $categoryTaxes = CategoryTax::where(
+                    'category_taxes.category_id',
+                    $productCategoryId
+                )->get();
+
+                /*
+                |--------------------------------------------------------------------------
+                | Tax Variables
+                |--------------------------------------------------------------------------
+                */
+
+                $taxPrice = 0;
+                $taxOption = '';
+                $taxType = '';
+
+                /*
+                |--------------------------------------------------------------------------
+                | Calculate Tax
+                |--------------------------------------------------------------------------
+                |
+                | tax_option = inclusive
+                | tax_type   = flat
+                |
+                | Flat tax is calculated per quantity.
+                |
+                */
+
+                foreach ($categoryTaxes as $tax) {
+
+                    $taxOption = $tax->tax_option ?? '';
+
+                    $taxType = $tax->tax_type ?? '';
+
+                    $taxId = $tax->tax_id ?? ''; 
+
+                    if (
+                        $taxOption === 'inclusive' &&
+                        $taxType === 'flat'
+                    ) {
+
+                        $flatTax = (float) (
+                            $tax->tax ?? 0
+                        );
+
+                        $quantity = (int) (
+                            $cartItem->quantity ?? 1
+                        );
+
+                        $taxPrice +=
+                            $flatTax * $quantity;
+                    }
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Append Tax Details To Cart Item
+                |--------------------------------------------------------------------------
+                */
+
+                $cartItem->tax_price = $taxPrice;
+
+                $cartItem->tax_option = $taxOption;
+
+                $cartItem->tax_type = $taxType;
+                $cartItem->tax_id = $taxId; 
+
+                /*
+                |--------------------------------------------------------------------------
+                | Raw Tax Array
+                |--------------------------------------------------------------------------
+                */
+
+                $cartItem->rawTaxArr =
+                    $categoryTaxes->toJson();
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Checkout View
+            |--------------------------------------------------------------------------
+            */
+
             return view(
                 'front.modules.products.checkout',
                 compact(
@@ -1319,20 +1598,21 @@ class HomeController extends Controller
                     'states',
                     'userwallet',
                     'invoiceSetting',
-                    'userRecord'
+                    'userRecord',
+                    'cart'
                 )
             );
 
         } catch (\Exception $e) {
 
-        Log::error($e);
+            Log::error($e);
 
-        return redirect()->back()->with([
-            'error'     => 'Unable to load cart',
-            'error_msg' => $e->getMessage()
-        ]);
+            return redirect()->back()->with([
+                'error'     => 'Unable to load cart',
+                'error_msg' => $e->getMessage()
+            ]);
+        }
     }
-}
 
     public function dynamicPages(Request $request, $slug)
     {

@@ -169,7 +169,7 @@ class CheckoutController extends Controller
 
         if(!empty($request->cartItems)){
             foreach($request->cartItems as $cart){
-                $productId = $cart['productId'];
+                $productId = $cart['product_id'];
                 $quantity = $cart['quantity'];
 
                 $product = Product::where('id', $productId)->first();
@@ -470,9 +470,9 @@ class CheckoutController extends Controller
         $couponAppliedQty = 0;
         foreach ($checkout_data as $item) {
             $applyDiscount = false;
-            $productCategoryId = $allProducts[$item['productId']]['main_category_id'] ?? 0;
-            $productSubCategoryId = $allProducts[$item['productId']]['main_sub_category_id'] ?? 0;
-            $productChildCategoryId = $allProducts[$item['productId']]['main_child_category_id'] ?? 0;
+            $productCategoryId = $allProducts[$item['product_id']]['main_category_id'] ?? 0;
+            $productSubCategoryId = $allProducts[$item['product_id']]['main_sub_category_id'] ?? 0;
+            $productChildCategoryId = $allProducts[$item['product_id']]['main_child_category_id'] ?? 0;
             if ($couponCategoryId == 0) {
                 $applyDiscount = true;
             } elseif ($productCategoryId == $couponCategoryId) {
@@ -487,15 +487,15 @@ class CheckoutController extends Controller
                 }
             }
             if ($applyDiscount) {
-                $couponAppliedQty += $productQty[$item['productId']] ?? 0;
+                $couponAppliedQty += $productQty[$item['product_id']] ?? 0;
             }
         }
 
         foreach ($checkout_data as $item) {
 
             $applyDiscount = false;
-            $productCategoryId = $allProducts[$item['productId']]['main_category_id'] ?? 0;
-            $productSubCategoryId = $allProducts[$item['productId']]['main_sub_category_id'] ?? 0;
+            $productCategoryId = $allProducts[$item['product_id']]['main_category_id'] ?? 0;
+            $productSubCategoryId = $allProducts[$item['product_id']]['main_sub_category_id'] ?? 0;
             if ($couponCategoryId == 0) {
                 $applyDiscount = true;
             } elseif ($productCategoryId == $couponCategoryId) {
@@ -514,7 +514,7 @@ class CheckoutController extends Controller
 
             $order_items = new OrderItem;
             $order_items->order_id = $order_id;
-            $order_items->product_id = $item['productId'];
+            $order_items->product_id = $item['product_id'];
             $order_items->qty = $item['quantity'];
             $order_items->mrp = $item['price'];
             $order_items->selling_price = $item['sellingPrice'];
@@ -531,7 +531,7 @@ class CheckoutController extends Controller
             // $order_items_tax->order_item_id = $order_id;
             $order_items_tax->order_item_id = $order_items->id;
             $order_items_tax->category_tax_id = $item['tax_id'];
-            $order_items_tax->tax_val = $item['tax_rate'];
+            $order_items_tax->tax_val = (isset($item['tax_rate']) && !empty($item['tax_rate'])) ? $item['tax_rate'] : "";
             $order_items_tax->tax_price = $item['tax_price'];
             $order_items_tax->save();
 
@@ -608,8 +608,8 @@ class CheckoutController extends Controller
 
         foreach ($checkout_data as $item) {
             $applyDiscount = false;
-            $productCategoryId = $allProducts[$item['productId']]['main_category_id'] ?? 0;
-            $productSubCategoryId = $allProducts[$item['productId']]['main_sub_category_id'] ?? 0;
+            $productCategoryId = $allProducts[$item['product_id']]['main_category_id'] ?? 0;
+            $productSubCategoryId = $allProducts[$item['product_id']]['main_sub_category_id'] ?? 0;
             if ($couponCategoryId == 0) {
                 $applyDiscount = true;
             } elseif ($productCategoryId == $couponCategoryId) {
@@ -622,30 +622,30 @@ class CheckoutController extends Controller
             $discountAmt = ($applyDiscount && $couponAppliedQty) ? round($coupon_discount / $couponAppliedQty, 2) : 0;
             $total_discount = $discountAmt * $item['quantity'];
             $variants = [];
-            foreach ($item['selectedVariants'] as $key => $val) {
-                $variants[] = ucfirst($key) . ': ' . $val;
-            }
-            $orderDetails .= '<tr>
-                                <td><img src="' . $item['image'] . '" width="90" alt="' . $item['name'] . '"></td>
-                                <td>' . $item['name'] . '</td>
-                                <td>' . $item['quantity'] . '</td>
-                                <td>' . (($item['quantity'] * $item['sellingPrice']) - $total_discount) . '</td>
-                               <td>' . implode(', ', $variants) . '</td>
-                            </tr>';
+            // foreach ($item['selectedVariants'] as $key => $val) {
+            //     $variants[] = ucfirst($key) . ': ' . $val;
+            // }
+            // $orderDetails .= '<tr>
+            //                     <td><img src="' . $item['image'] . '" width="90" alt="' . $item['name'] . '"></td>
+            //                     <td>' . $item['name'] . '</td>
+            //                     <td>' . $item['quantity'] . '</td>
+            //                     <td>' . (($item['quantity'] * $item['sellingPrice']) - $total_discount) . '</td>
+            //                    <td>' . implode(', ', $variants) . '</td>
+            //                 </tr>';
         }
 
-        $orderDetails .= '</table>';
+        // $orderDetails .= '</table>';
 
 
         // 3. Placeholder Data
-        $data = [
-            'CUSTOMER_NAME' => $customerName,
-            'ORDER_ID'      => $ordernumber,
-            'ORDER_DETAILS' => $orderDetails,
-        ];
+        // $data = [
+        //     'CUSTOMER_NAME' => $customerName,
+        //     'ORDER_ID'      => $ordernumber,
+        //     'ORDER_DETAILS' => $orderDetails,
+        // ];
 
         // 4. Get Processed Template
-        $template = EmailHelper::getProcessedTemplate('order-success', $data);
+        // $template = EmailHelper::getProcessedTemplate('order-success', $data);
 
         // 5. Send Email
         // Mail::to($customerEmail)->send(new orderSuccessEmail($template['subject'], $template['body']));
