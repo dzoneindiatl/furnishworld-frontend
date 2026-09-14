@@ -56,8 +56,7 @@
                                                                 <del>₹ {{ $item['product']['buying_price'] }}</del>
                                                                 <ins>₹ {{ $item['product']['selling_price'] }}</ins>
                                                             </span>
-                                                            <a href="#" data-index="{{ $key }}"
-                                                                class="remove remove_from_cart_button trash-icon close-product" data-cartid ="{{ $item['card_id'] }}">Remove</a>
+                                                            <a href="#" data-index="{{ $key }}" class="remove remove_from_cart_button trash-icon close-product" data-cartid ="{{ $item['card_id'] }}">Remove</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -211,7 +210,7 @@
                                                 </tr>
                                                 <tr class="order-total">
                                                     <th><b>Total Payable</b> (Tax Included)</th>
-                                                    <td data-title="Total" class="text-end"><strong
+                                                    <td data-title="Total" class="text-end"><strong class="finalAmount"
                                                             id="finalAmount"></strong></td>
                                                 </tr>
                                             </tbody>

@@ -122,46 +122,21 @@ $(document).on('click', '.addToCartBtn', function() {
     });
 
     if (isExist) {
-        showFlashMessage(
-            "This product with selected options is already in your cart."
-        );
-
+        showFlashMessage("This product with selected options is already in your cart.");
         openCartDropdown();
-
         return;
     }
 
-    // =========================
-    // SAVE GUEST CART
-    // =========================
     cartItems.push(productData);
+    localStorage.setItem('cartItems',JSON.stringify(cartItems));
+    console.log('Guest cart saved:',JSON.parse(localStorage.getItem('cartItems')));
 
-    localStorage.setItem(
-        'cartItems',
-        JSON.stringify(cartItems)
-    );
-
-    console.log(
-        'Guest cart saved:',
-        JSON.parse(localStorage.getItem('cartItems'))
-    );
-
-    // =========================
-    // UPDATE HEADER
-    // =========================
     updateHeaderCart();
-
-    // =========================
-    // OPEN DROPDOWN
-    // =========================
     openCartDropdown();
-
     $('.addToCartText').html("Go To Cart");
-
-    showFlashMessage(
-        "Product added to cart successfully"
-    );
+    showFlashMessage("Product added to cart successfully");
 });
+
 $(document).ready(function () {
     if (!isLoggedIn) {
         updateHeaderCart();
@@ -715,39 +690,34 @@ function priceCalculation() {
     } else {
         $("#taxPrice").html("0");
     }
-
+    console.log("-------------finalAmount------------",finalAmount); 
     if (finalAmount > 0) {
+        console.log("-----------comes under if----------",finalAmount); 
         if (taxOption === 'inclusive') {
             $('.finalAmount').html(`₹${Math.floor(finalAmount)}`);
         } else if (taxOption === 'exclusive') {
             $('.finalAmount').html(`₹${Math.floor(finalAmount + totalTaxPrice)}`);
         }
-
         $('.checkoutButton').removeClass('disabled-link');
     } else {
+        console.log("----------comes under else------------",finalAmount); 
         $('.finalAmount').html(`₹0`);
         $('.checkoutButton').addClass('disabled-link');
     }
 }
 
 document.addEventListener('click', function (e) {
-
     const button = e.target.closest('.close-product');
-
     if (!button) {
         return;
     }
-
     e.preventDefault();
-
     // Guest user → LocalStorage
     if (!window.isCustomerLoggedIn) {
-
         const index = parseInt(button.dataset.index);
         let cartItems = JSON.parse(
             localStorage.getItem('cartItems') || '[]'
         );
-
         if (cartItems[index]) {
             cartItems.splice(index, 1);
 
@@ -755,14 +725,11 @@ document.addEventListener('click', function (e) {
                 'cartItems',
                 JSON.stringify(cartItems)
             );
-
             displayGuestCart();
             showFlashMessage("Product removed from cart", "warning");
         }
-
         return;
     }
-
     // Logged-in user → Database
     const cartId = button.dataset.cartid;
 

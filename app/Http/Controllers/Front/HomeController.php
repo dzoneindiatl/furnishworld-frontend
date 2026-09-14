@@ -1166,6 +1166,7 @@ class HomeController extends Controller
 
                 $cartItem->selectedVariants = $selectedVariants;
                 $cartItem->sku = $combination->sku ; 
+                $cartItem->image = $cartItem->product->images['first']; 
                 $cartItem->productType = $cartItem->product_type; 
                 $cartItem->sellingPrice = $combination->selling_price ?? 0;
                 $cartItem->discountAmount = $combination->discount ?? 0;
@@ -1183,7 +1184,7 @@ class HomeController extends Controller
                 $cartItem->rawTaxArr = $categoryTaxes->toJson();
                
             });
-
+         
             return view('front.modules.products.viewbag', compact('cartItems', 'bestproduct', 'isWishlisted','recentViewproduct','cart'));
         } catch (\Exception $e) {
             Log::error($e);
@@ -1241,19 +1242,8 @@ class HomeController extends Controller
                 $buyNow = session('buy_now');
 
                 if (!empty($buyNow)) {
-
-                    $product = Product::select(
-                        'id',
-                        'name',
-                        'slug',
-                        'buying_price',
-                        'selling_price'
-                    )
-                        ->where('id', $buyNow['product_id'])
-                        ->first();
-
+                    $product = Product::select('id','name','slug','buying_price','selling_price')->where('id', $buyNow['product_id'])->first();
                     if ($product) {
-
                         $cartItems[] = [
                             'product'  => $product,
                             'quantity' => $buyNow['quantity'],
@@ -1261,26 +1251,10 @@ class HomeController extends Controller
                     }
 
                 } else {
-
-                    $cartRecords = Cart::where(
-                        'user_id',
-                        $userId
-                    )->get();
-
+                    $cartRecords = Cart::where('user_id',$userId)->get();
                     foreach ($cartRecords as $cart) {
-
-                        $product = Product::select(
-                            'id',
-                            'name',
-                            'slug',
-                            'buying_price',
-                            'selling_price'
-                        )
-                            ->where('id', $cart->product_id)
-                            ->first();
-
+                        $product = Product::select('id','name','slug','buying_price','selling_price')->where('id', $cart->product_id)->first();
                         if ($product) {
-
                             $cartItems[] = [
                                 'product'  => $product,
                                 'quantity' => $cart->quantity,
@@ -1290,11 +1264,7 @@ class HomeController extends Controller
                     }
                 }
 
-                $userRecord = User::where(
-                    'id',
-                    $userId
-                )->first();
-
+                $userRecord = User::where('id',$userId)->first();
                 $userBillingAddress = UserAddress::with([
                     'country',
                     'state',
@@ -1320,138 +1290,21 @@ class HomeController extends Controller
                     ->get();
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | User Wallet
-            |--------------------------------------------------------------------------
-            */
-
-            $userwallet = User::where(
-                'id',
-                $userId
-            )->first();
-
-            /*
-            |--------------------------------------------------------------------------
-            | Countries
-            |--------------------------------------------------------------------------
-            */
-
-            $countries = Country::where(
-                'is_active',
-                1
-            )
-                ->pluck(
-                    'name',
-                    'id'
-                );
-
-            /*
-            |--------------------------------------------------------------------------
-            | States
-            |--------------------------------------------------------------------------
-            */
-
-            $states = State::where(
-                'country_id',
-                101
-            )
-                ->where(
-                    'is_active',
-                    1
-                )
-                ->pluck(
-                    'name',
-                    'id'
-                );
-
-            /*
-            |--------------------------------------------------------------------------
-            | Cities
-            |--------------------------------------------------------------------------
-            */
-
-            $citys = City::where(
-                'is_active',
-                1
-            )->get();
-
-            /*
-            |--------------------------------------------------------------------------
-            | Invoice Setting
-            |--------------------------------------------------------------------------
-            */
-
+            $userwallet = User::where('id',$userId)->first();
+            $countries = Country::where('is_active',1)->pluck('name','id');
+            $states = State::where('country_id',101 )->where('is_active',1)->pluck('name','id');
+            $citys = City::where('is_active',1)->get();
             $invoiceSetting = InvoiceSetting::first();
-
-            /*
-            |--------------------------------------------------------------------------
-            | Cart
-            |--------------------------------------------------------------------------
-            */
-
-            $cart = Cart::with('product')
-                ->where(
-                    'user_id',
-                    Auth::guard('customer')->id()
-                )
-                ->get();
-
-            /*
-            |--------------------------------------------------------------------------
-            | Prepare Cart Items
-            |--------------------------------------------------------------------------
-            */
+            $cart = Cart::with('product')->where('user_id',Auth::guard('customer')->id())->get();
 
             $cart->each(function ($cartItem) {
-
-                /*
-                |--------------------------------------------------------------------------
-                | Product Variant Combination
-                |--------------------------------------------------------------------------
-                */
-
-                $combination = ProductVariantCombination::find(
-                    $cartItem->product_variant_combination_id
-                );
-
-                info(
-                    '----combination----',
-                    [
-                        $combination
-                    ]
-                );
-
-                /*
-                |--------------------------------------------------------------------------
-                | Selected Variants
-                |--------------------------------------------------------------------------
-                */
-
+                $combination = ProductVariantCombination::find($cartItem->product_variant_combination_id);
+                info('----combination----',[$combination]);
                 $selectedVariants = [];
-
-                if (
-                    $combination &&
-                    $combination->primary_variant_value_id
-                ) {
-
-                    $variantValue = VariantValue::with('variant')
-                        ->find(
-                            $combination->primary_variant_value_id
-                        );
-
-                    info(
-                        '---------variantValue---------',
-                        [
-                            $variantValue
-                        ]
-                    );
-
-                    if (
-                        $variantValue &&
-                        $variantValue->variant
-                    ) {
-
+                if ($combination &&$combination->primary_variant_value_id) {
+                    $variantValue = VariantValue::with('variant')->find($combination->primary_variant_value_id);
+                    info('---------variantValue---------',[$variantValue]);
+                    if ($variantValue && $variantValue->variant) {
                         $selectedVariants[
                             strtolower(
                                 $variantValue->variant->name
@@ -1461,77 +1314,22 @@ class HomeController extends Controller
                 }
 
                 $cartItem->selectedVariants = $selectedVariants;
-
-                /*
-                |--------------------------------------------------------------------------
-                | Product / Variant Details
-                |--------------------------------------------------------------------------
-                */
-
                 $cartItem->sku = $combination?->sku ?? '';
+                $cartItem->productType = $cartItem->product_type;
+                $cartItem->sellingPrice = $combination?->selling_price ?? 0;
+                $cartItem->discountAmount = $combination?->discount ?? 0;
+                $cartItem->discountType = $combination?->discount_type ?? '';
+                $cartItem->quantity = $cartItem->quantity ?? 1;
+                $cartItem->price = $combination?->price ?? 0;
+                $cartItem->name = $cartItem->product?->name ?? '';
+                $cartItem->image = $cartItem->product->images['first']; 
 
-                $cartItem->productType =
-                    $cartItem->product_type;
-
-                $cartItem->sellingPrice =
-                    $combination?->selling_price ?? 0;
-
-                $cartItem->discountAmount =
-                    $combination?->discount ?? 0;
-
-                $cartItem->discountType =
-                    $combination?->discount_type ?? '';
-
-                $cartItem->quantity =
-                    $cartItem->quantity ?? 1;
-
-                $cartItem->price =
-                    $combination?->price ?? 0;
-
-                $cartItem->name =
-                    $cartItem->product?->name ?? '';
-
-                /*
-                |--------------------------------------------------------------------------
-                | Product Category
-                |--------------------------------------------------------------------------
-                */
-
-                $productCategoryId =
-                    $cartItem->product?->main_category_id ?? 0;
-
-                /*
-                |--------------------------------------------------------------------------
-                | Category Taxes
-                |--------------------------------------------------------------------------
-                */
-
-                $categoryTaxes = CategoryTax::where(
-                    'category_taxes.category_id',
-                    $productCategoryId
-                )->get();
-
-                /*
-                |--------------------------------------------------------------------------
-                | Tax Variables
-                |--------------------------------------------------------------------------
-                */
+                $productCategoryId = $cartItem->product?->main_category_id ?? 0;
+                $categoryTaxes = CategoryTax::where('category_taxes.category_id',$productCategoryId)->get();
 
                 $taxPrice = 0;
                 $taxOption = '';
                 $taxType = '';
-
-                /*
-                |--------------------------------------------------------------------------
-                | Calculate Tax
-                |--------------------------------------------------------------------------
-                |
-                | tax_option = inclusive
-                | tax_type   = flat
-                |
-                | Flat tax is calculated per quantity.
-                |
-                */
 
                 foreach ($categoryTaxes as $tax) {
 
@@ -1541,53 +1339,19 @@ class HomeController extends Controller
 
                     $taxId = $tax->tax_id ?? ''; 
 
-                    if (
-                        $taxOption === 'inclusive' &&
-                        $taxType === 'flat'
-                    ) {
-
-                        $flatTax = (float) (
-                            $tax->tax ?? 0
-                        );
-
-                        $quantity = (int) (
-                            $cartItem->quantity ?? 1
-                        );
-
-                        $taxPrice +=
-                            $flatTax * $quantity;
+                    if ($taxOption === 'inclusive' && $taxType === 'flat') {
+                        $flatTax = (float) ($tax->tax ?? 0);
+                        $quantity = (int) ($cartItem->quantity ?? 1);
+                        $taxPrice += $flatTax * $quantity;
                     }
                 }
 
-                /*
-                |--------------------------------------------------------------------------
-                | Append Tax Details To Cart Item
-                |--------------------------------------------------------------------------
-                */
-
                 $cartItem->tax_price = $taxPrice;
-
                 $cartItem->tax_option = $taxOption;
-
                 $cartItem->tax_type = $taxType;
                 $cartItem->tax_id = $taxId; 
-
-                /*
-                |--------------------------------------------------------------------------
-                | Raw Tax Array
-                |--------------------------------------------------------------------------
-                */
-
-                $cartItem->rawTaxArr =
-                    $categoryTaxes->toJson();
+                $cartItem->rawTaxArr = $categoryTaxes->toJson();
             });
-
-            /*
-            |--------------------------------------------------------------------------
-            | Checkout View
-            |--------------------------------------------------------------------------
-            */
-
             return view(
                 'front.modules.products.checkout',
                 compact(

@@ -192,7 +192,7 @@
                     console.log('Remove cart response:', response);
 
                     if (response.success) {
-                        $('.cart-item[data-cartid="' + cartId + '"]').remove();
+                        $('.close-product[data-cartid="' + cartId + '"]') .closest('.cart-item') .remove();
 
                         let count = parseInt($('#cartCount').text()) || 0;
                         $('#cartCount').text(Math.max(0, count - 1));

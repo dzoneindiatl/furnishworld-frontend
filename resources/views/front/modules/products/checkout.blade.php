@@ -454,6 +454,9 @@
     <script>
         var RAZORPAYKEY = "{{ env('RAZORPAY_MODE') == 'test' ? env('RAZORPAY_TEST_KEY') : env('RAZORPAY_LIVE_KEY') }}";
     </script>
+    <script>
+        window.dbCartItems = @json($cart ?? []); 
+    </script>
     <script src="{{ asset('assets/front/js/checkouts.js') }}"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 

@@ -713,19 +713,24 @@ function renderCart() {
     } else {
         $("#totalMrp").html("0"); // Or use .text('') depending on your layout
     }
+    
     if (totalDiscount > 0) {
         $("#totalDiscount").html(`-₹${totalDiscount.toFixed(2)}`).show();
     } else {
         $("#totalDiscount").html("0"); // Or use .text('') depending on your layout
     }
+
     $('#subTotal').html(`₹${(subTotal).toFixed(2)}`);
+    
     if (couponDiscount > 0) {
         $("#couponDiscount").html(`-₹${couponDiscount.toFixed(2)}`).show();
     } else {
         $("#couponDiscount").html("0"); // Or use .text('') depending on your layout
     }
+    
     $('#grandTotal').html(`₹${(grandTotal).toFixed(2)}`);
     $('#taxableAmount').html(`₹${(taxableAmount).toFixed(2)}`);
+    
     if (taxOption == 'inclusive') {
         $("#taxPrice").html(`+₹${totalTaxPrice.toFixed(2)}`).show();
     } else if (taxOption == 'exclusive') {
@@ -733,6 +738,7 @@ function renderCart() {
     } else {
         $("#taxPrice").html("0"); // Or use .text('') depending on your layout
     }
+    
     if (finalAmount > 0) {
         //$('.finalAmount').html(`₹${finalAmount.toFixed(2)}`);
         if (taxOption == 'inclusive') {
@@ -745,6 +751,7 @@ function renderCart() {
         $('.finalAmount').html(`₹0`);
         $('.checkoutButton').addClass('disabled-link');
     }
+    
     $('#delivery').text(`₹${delivery.toLocaleString()}`);
     // $('#total-items').text(cartItems.length);
     $('#total-items').html(qty); 
