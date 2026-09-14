@@ -1,13 +1,11 @@
 @extends('front.layouts.app')
 @section('content')
-
-    
     <script>
         var getVarient = "{{ route('variant.combination.prices') }}";
         window.csrfToken = "{{ csrf_token() }}";
-        const maxSellingUnits = {{ $product?->max_selling_units ?? 10 }};
-        const minSellingUnit = {{ $product?->min_selling_units ?? 1 }};
-        const minStockLimit = {{ $product?->min_stock_limit ?? 1 }};
+        const maxSellingUnits = {{ $product?->max_selling_units ?? 10 }}
+        const minSellingUnit = {{ $product?->min_selling_units ?? 1 }}
+        const minStockLimit = {{ $product?->min_stock_limit ?? 1 }}
         let maxQtyLimit = maxSellingUnits;
     </script>
     @push('body-class')
@@ -1881,7 +1879,7 @@
                 </section>
             </div>
         </div>
-
+</section>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css">
 
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css">
@@ -1889,14 +1887,63 @@
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
         <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
-
         <script>
-            $(document).ready(function() {
+            function updateVariantImages(variantId) {
+
+                console.log('variant_id', variantId);
+                const mainSlider = $('.product-main-slider');
+                const thumbSlider = $('.product-thumb-slider');
+
+                if (mainSlider.hasClass('slick-initialized')) {
+                    mainSlider.slick('unslick');
+                }
+
+                if (thumbSlider.hasClass('slick-initialized')) {
+                    thumbSlider.slick('unslick');
+                }
+
+                const allImages = @json($product->product_main_images);
+
+                const variantImages = allImages.filter(function (image) {
+
+                    return String(image.variant_id) === String(variantId);
+
+                });
+
+
+                console.log('variant images', variantImages);
+
+                let slideRow = '';
+
+                let thumbnailRow = '';
+
+                variantImages.forEach(function (image, index) {
+                    const imageUrl =
+                        "{{ asset('uploads/products') }}/" + image.graphic;
+
+                    slideRow += `
+                        <div class="product-slide">
+                            <img src="${imageUrl}" alt="">
+                        </div>
+                    `;
+
+                    thumbnailRow += `
+                        <div class="thumb">
+                            <img src="${imageUrl}" alt="${index}">
+                        </div>
+                    `;
+                });
+
+
+                console.log('thumbnailRow', thumbnailRow);
+                console.log('slideRow', slideRow);
+
+                mainSlider.html(slideRow);
+                thumbSlider.html(thumbnailRow);
 
                 initProductSliders();
-                /* =========================
-                   PRODUCT MAIN SLIDER
-                ========================= */
+            }
+            function initProductSliders() {
 
                 $('.product-main-slider').slick({
                     slidesToShow: 1,
@@ -1907,9 +1954,7 @@
                     asNavFor: '.product-thumb-slider'
                 });
 
-                /* =========================
-                   PRODUCT THUMB SLIDER
-                ========================= */
+
 
                 $('.product-thumb-slider').slick({
                     slidesToShow: 5,
@@ -1919,7 +1964,8 @@
                     focusOnSelect: true,
                     asNavFor: '.product-main-slider',
 
-                    responsive: [{
+                    responsive: [
+                        {
                             breakpoint: 991,
                             settings: {
                                 slidesToShow: 3
@@ -1933,45 +1979,34 @@
                         }
                     ]
                 });
+            }
 
-
-                /* =========================
-                   POPUP MAIN SLIDER
-                ========================= */
+            function initPopupProductSliders() {
 
                 $('.popup-main-slider').slick({
                     slidesToShow: 1,
                     slidesToScroll: 1,
-
                     arrows: true,
                     infinite: false,
                     fade: true,
-
                     asNavFor: '.popup-thumb-slider'
                 });
-
-
-                /* =========================
-                   POPUP THUMB SLIDER
-                ========================= */
 
                 $('.popup-thumb-slider').slick({
                     slidesToShow: 5,
                     slidesToScroll: 1,
-
                     arrows: true,
                     infinite: false,
-
                     focusOnSelect: true,
-
                     asNavFor: '.popup-main-slider',
-
-                    responsive: [{
+                    responsive: [
+                        {
                             breakpoint: 768,
                             settings: {
                                 slidesToShow: 4
                             }
                         },
+
                         {
                             breakpoint: 480,
                             settings: {
@@ -1980,12 +2015,20 @@
                         }
                     ]
                 });
-
-
-                /* =========================
-                   OPEN POPUP
-                ========================= */
-
+            }    
+        </script>
+        <script>
+            $(document).ready(function() {
+                   let activeVariant = $('[data-vid].active').first();
+                    if (activeVariant.length) {
+                        let variantId = activeVariant.attr('data-vid');
+                        console.log('INITIAL VARIANT ID:', variantId);
+                        updateVariantImages(variantId);
+                    } else {
+                        console.log('No active variant found');
+                        initProductSliders();
+                    }
+                initPopupProductSliders();
                 $('.product-main-slider').on('click', '.product-slide', function() {
 
                     let index = $('.product-main-slider')
@@ -2019,21 +2062,11 @@
 
                 });
 
-
-                /* =========================
-                   CLOSE POPUP
-                ========================= */
-
                 $('.gallery-close').on('click', function() {
 
                     closeGallery();
 
                 });
-
-
-                /* =========================
-                   OUTSIDE CLICK
-                ========================= */
 
                 $('.gallery-popup').on('click', function(e) {
 
@@ -2045,11 +2078,6 @@
 
                 });
 
-
-                /* =========================
-                   ESC CLOSE
-                ========================= */
-
                 $(document).on('keydown', function(e) {
 
                     if (e.key === 'Escape') {
@@ -2059,7 +2087,6 @@
                     }
 
                 });
-
 
                 function closeGallery() {
 
@@ -2071,14 +2098,7 @@
                     resetZoom();
 
                 }
-
-
-                /* =========================
-                   ZOOM
-                ========================= */
-
                 let zoomLevel = 1;
-
 
                 $('.zoom-plus').on('click', function() {
 
@@ -2092,7 +2112,6 @@
 
                 });
 
-
                 $('.zoom-minus').on('click', function() {
 
                     zoomLevel -= 0.25;
@@ -2104,7 +2123,6 @@
                     updateZoom();
 
                 });
-
 
                 function updateZoom() {
 
@@ -2129,25 +2147,16 @@
 
                 }
 
-
-                /* =========================
-                   RESET ZOOM ON SLIDE CHANGE
-                ========================= */
-
                 $('.popup-main-slider').on(
                     'beforeChange',
                     function() {
-
                         resetZoom();
-
                     }
                 );
-
             });
         </script>
 
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
         <script>
             $(document).ready(function() {
                 $('.product-tab-btn').on('click', function() {
@@ -2500,12 +2509,8 @@
                 });
             });
         </script>
-        <!--content-wrapper -->
-    </section>
+    
 @endsection
-<!--=====================================================
-                Site Section End
-=========================================================-->
 @push('scripts')
     @if ($activeVarientId)
         <script>
@@ -2569,146 +2574,7 @@
 
                 }
             }
-            function updateVariantImages(variantId) {
-
-                console.log('variant_id', variantId);
-
-                const mainSlider = $('.product-main-slider');
-                const thumbSlider = $('.product-thumb-slider');
-
-                /*
-                * IMPORTANT:
-                * Existing Slick destroy karo
-                */
-
-                if (mainSlider.hasClass('slick-initialized')) {
-                    mainSlider.slick('unslick');
-                }
-
-                if (thumbSlider.hasClass('slick-initialized')) {
-                    thumbSlider.slick('unslick');
-                }
-
-
-                /*
-                * Product ki saari images
-                */
-
-                const allImages = @json($product->product_main_images);
-
-
-                /*
-                * Selected variant ki images
-                */
-
-                const variantImages = allImages.filter(function (image) {
-
-                    return String(image.variant_id) === String(variantId);
-
-                });
-
-
-                console.log('variant images', variantImages);
-
-
-                /*
-                * Main slider HTML
-                */
-
-                let slideRow = '';
-
-                /*
-                * Thumbnail HTML
-                */
-
-                let thumbnailRow = '';
-
-
-                variantImages.forEach(function (image, index) {
-
-                    const imageUrl =
-                        "{{ asset('uploads/products') }}/" + image.graphic;
-
-
-                    slideRow += `
-                        <div class="product-slide">
-                            <img src="${imageUrl}" alt="">
-                        </div>
-                    `;
-
-
-                    thumbnailRow += `
-                        <div class="thumb">
-                            <img src="${imageUrl}" alt="${index}">
-                        </div>
-                    `;
-
-                });
-
-
-                console.log('thumbnailRow', thumbnailRow);
-                console.log('slideRow', slideRow);
-
-
-                /*
-                * New HTML set karo
-                */
-
-                mainSlider.html(slideRow);
-                thumbSlider.html(thumbnailRow);
-
-
-                /*
-                * Slick dobara initialize
-                */
-
-                initProductSliders();
-
-            }
-            function initProductSliders() {
-
-                /* =========================
-                PRODUCT MAIN SLIDER
-                ========================= */
-
-                $('.product-main-slider').slick({
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                    arrows: true,
-                    fade: true,
-                    infinite: false,
-                    asNavFor: '.product-thumb-slider'
-                });
-
-
-                /* =========================
-                PRODUCT THUMB SLIDER
-                ========================= */
-
-                $('.product-thumb-slider').slick({
-                    slidesToShow: 5,
-                    slidesToScroll: 1,
-                    arrows: false,
-                    infinite: false,
-                    focusOnSelect: true,
-                    asNavFor: '.product-main-slider',
-
-                    responsive: [
-                        {
-                            breakpoint: 991,
-                            settings: {
-                                slidesToShow: 3
-                            }
-                        },
-                        {
-                            breakpoint: 767,
-                            settings: {
-                                slidesToShow: 3
-                            }
-                        }
-                    ]
-                });
-            }
+            
         </script>
     @endif
     <script>
