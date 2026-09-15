@@ -757,12 +757,25 @@ class HomeController extends Controller
             ->where('is_deleted', 0)
             ->get();
         $variantColor = VariantValue::whereIn('variant_id',$variants->pluck('id'))->get();
-        $user = Auth::guard('customer')->user();
 
+        $results->each(function ($product) {
+            foreach ($product->productVariants as $productVariant) {
+                foreach ($productVariant->variantValues as $variantValue) {
+                    $variantValueId = $variantValue->variant_value_id;
+                    $graphics = ProductGraphics::where('product_id', $product->id)
+                        ->where('variant_id', $variantValueId)
+                        ->where('is_variant_icon', 1)
+                        ->first();
+                    $variantValue->variant_image = $graphics->graphic ?? null;
+                }
+            }
+        });
+
+        $user = Auth::guard('customer')->user();
         if ($user) {
             $isWishlisteddata =Wishlist::where('user_id',$user->id)->pluck('product_id')->toArray();
         }
-         
+
         if ($request->ajax()) {
             return response()->json([
                 'html' => view('front.modules.shop.load_more_data',compact('results','isWishlisteddata','totalResults','category','grandParent','parent','categoriesData','variants','attributes','limit','allSubCategory','AllMainCategory','variantColor','path'))->render(),
@@ -1139,22 +1152,37 @@ class HomeController extends Controller
 
                 $cart->each(function ($cartItem) {
 
+                $combinationIds = json_decode($cartItem->product_variant_combination_id,true);
+
+                
                 $combination = ProductVariantCombination::find(
                     $cartItem->product_variant_combination_id
                 );
-
-                info("----combination----", [$combination]);
-
                 $selectedVariants = [];
 
-                if ($combination && $combination->primary_variant_value_id) {
+                if ($combination && $combination->combination_id) {
+                    $combinationIds = json_decode($combination->combination_id,true);
 
-                    $variantValue = VariantValue::with('variant')
-                        ->find($combination->primary_variant_value_id);
-
-                    info("---------variantValue---------", [
-                        $variantValue
+                    info("----combination ids----", [
+                        $combinationIds
                     ]);
+
+                    foreach ($combinationIds as $variantValueId) {
+
+                        $variantValue = VariantValue::with('variant')
+                            ->find($variantValueId);
+
+                        info("---------variantValue---------", [
+                            $variantValue
+                        ]);
+
+                        if ($variantValue && $variantValue->variant) {
+
+                            $selectedVariants[
+                                strtolower($variantValue->variant->name)
+                            ] = $variantValue->name;
+                        }
+                    }
 
                     if ($variantValue && $variantValue->variant) {
 
@@ -1167,7 +1195,7 @@ class HomeController extends Controller
                 $cartItem->selectedVariants = $selectedVariants;
                 $cartItem->sku = $combination->sku ; 
                 $cartItem->image = $cartItem->product->images['first']; 
-                $cartItem->productType = $cartItem->product_type; 
+                $cartItem->productType = $cartItem->product->product_type; 
                 $cartItem->sellingPrice = $combination->selling_price ?? 0;
                 $cartItem->discountAmount = $combination->discount ?? 0;
                 $cartItem->discountType = $combination->discount_type ?? '';
@@ -1175,16 +1203,46 @@ class HomeController extends Controller
                 $cartItem->price = $combination->price ?? 0; 
                 $cartItem->name = $cartItem->product->name; 
                 $productCategoryId = $cartItem->product->main_category_id ?? 0;
-
-                $categoryTaxes = CategoryTax::where(
+                $categoryTaxes = CategoryTax::where('category_taxes.category_id', $productCategoryId ?? 0)
+                ->leftJoin('taxes', 'taxes.id', '=', 'category_taxes.tax_id')
+                ->select(
+                    'category_taxes.id',
                     'category_taxes.category_id',
-                    $productCategoryId
-                )->get();
+                    'taxes.tax_type',
+                    'taxes.tax_option',
+                    'taxes.tax_from',
+                    'taxes.tax_to',
+                    'taxes.tax_rate'
+                )
+                ->get()->toArray();
 
-                $cartItem->rawTaxArr = $categoryTaxes->toJson();
-               
+                $taxPrice = 0;
+                $taxOption = '';
+                $taxType = '';
+                $taxId = ""; 
+                $taxRate = "" ; 
+                
+                foreach ($categoryTaxes as $tax) {
+                        $taxOption = $tax['tax_option'] ?? '';
+                        $taxType = $tax['tax_type'] ?? '';
+                        $taxId = $tax['id'] ?? '';
+                        $taxRate = $tax['tax_rate'] ?? '';
+                    if ($taxOption === 'inclusive' && $taxType === 'flat') {
+                        $flatTax = (float) ($tax->tax ?? 0);
+                        $quantity = (int) ($cartItem->quantity ?? 1);
+                        $taxPrice += $flatTax * $quantity;
+                    }
+                }
+
+                $cartItem->tax_price = $taxPrice;
+                $cartItem->tax_option = $taxOption;
+                $cartItem->tax_type = $taxType;
+                $cartItem->tax_id = $taxId; 
+                $cartItem->tax_rate = $taxRate ; 
+                $cartItem->rawTaxArr = $categoryTaxes;
+                
             });
-         
+
             return view('front.modules.products.viewbag', compact('cartItems', 'bestproduct', 'isWishlisted','recentViewproduct','cart'));
         } catch (\Exception $e) {
             Log::error($e);
@@ -1325,20 +1383,30 @@ class HomeController extends Controller
                 $cartItem->image = $cartItem->product->images['first']; 
 
                 $productCategoryId = $cartItem->product?->main_category_id ?? 0;
-                $categoryTaxes = CategoryTax::where('category_taxes.category_id',$productCategoryId)->get();
-
+                $categoryTaxes = CategoryTax::where('category_taxes.category_id', $productCategoryId ?? 0)
+            ->leftJoin('taxes', 'taxes.id', '=', 'category_taxes.tax_id')
+            ->select(
+                'category_taxes.id',
+                'category_taxes.category_id',
+                'taxes.tax_type',
+                'taxes.tax_option',
+                'taxes.tax_from',
+                'taxes.tax_to',
+                'taxes.tax_rate'
+            )
+            ->get()->toArray();
+               
                 $taxPrice = 0;
                 $taxOption = '';
                 $taxType = '';
-
+                $taxId = ""; 
+                $taxRate = "" ; 
+                
                 foreach ($categoryTaxes as $tax) {
-
-                    $taxOption = $tax->tax_option ?? '';
-
-                    $taxType = $tax->tax_type ?? '';
-
-                    $taxId = $tax->tax_id ?? ''; 
-
+                        $taxOption = $tax['tax_option'] ?? '';
+                        $taxType = $tax['tax_type'] ?? '';
+                        $taxId = $tax['id'] ?? '';
+                        $taxRate = $tax['tax_rate'] ?? '';
                     if ($taxOption === 'inclusive' && $taxType === 'flat') {
                         $flatTax = (float) ($tax->tax ?? 0);
                         $quantity = (int) ($cartItem->quantity ?? 1);
@@ -1350,7 +1418,8 @@ class HomeController extends Controller
                 $cartItem->tax_option = $taxOption;
                 $cartItem->tax_type = $taxType;
                 $cartItem->tax_id = $taxId; 
-                $cartItem->rawTaxArr = $categoryTaxes->toJson();
+                $cartItem->tax_rate = $taxRate ; 
+                $cartItem->rawTaxArr = $categoryTaxes;
             });
             return view(
                 'front.modules.products.checkout',

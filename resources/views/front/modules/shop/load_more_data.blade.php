@@ -73,10 +73,25 @@
                                                      
                                                         
                                                          <div class="product-option-colors">
-                                                             @foreach($product->color_options as $colorOption)
-                                                                <span class="product-color-option" style="background:{{ $colorOption['color_code'] }}" data-variant-value-id="{{ $colorOption['id'] }}"></span>
-                                                             @endforeach 
-                                                         </div>
+                                                            @foreach($product->productVariants as $productVariant)
+                                                                @if($productVariant->variant_id == 1)
+                                                                    @foreach($productVariant->variantValues as $variantValue)
+                                                                        @if($variantValue->variant_image)
+                                                                            <span
+                                                                                class="product-color-option"
+                                                                                data-variant-value-id="{{ $variantValue->variant_value_id }}"
+                                                                                style="
+                                                                                    background-image: url('{{ asset('uploads/products').'/'. $variantValue->variant_image }}');
+                                                                                    background-size: cover;
+                                                                                    background-position: center;
+                                                                                    background-repeat: no-repeat;
+                                                                                "
+                                                                            ></span>
+                                                                        @endif
+                                                                    @endforeach
+                                                                @endif
+                                                            @endforeach
+                                                        </div>
                                                          
                                                          <div class="product-option-wrap">
                                                              <fieldset class="product-option-list product-option-size">

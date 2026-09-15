@@ -520,8 +520,12 @@ function priceCalculation() {
 
         try {
             if (rawTaxArr) {
-                let decodedJson = decodeHtml(rawTaxArr);
-                taxArr = JSON.parse(decodedJson) || [];
+                if (Array.isArray(rawTaxArr)) {
+                    taxArr = rawTaxArr;
+                } else if (typeof rawTaxArr === 'string') {
+                    let decodedJson = decodeHtml(rawTaxArr);
+                    taxArr = JSON.parse(decodedJson) || [];
+                }
             }
         } catch (error) {
             console.error("Tax JSON Parse Error:", error);
@@ -543,58 +547,57 @@ function priceCalculation() {
         if (netPrice < 0) {
             netPrice = 0;
         }
-
+        console.log("--------------taxArr--------------",taxArr); 
         if (taxArr.length > 0) {
-            taxArr.forEach(tax => {
-                tax_type = tax.tax_type || "flat";
-                tax_option = tax.tax_option || "inclusive";
-                tax_id = tax.id || "";
+           taxArr.forEach((tax) => {
+                let taxprice = 0;
+                let tax_price = 0;
+                tax_type = tax.tax_type;
 
-                if (
-                    tax.tax_rate === null ||
-                    tax.tax_rate === undefined ||
-                    String(tax.tax_rate).trim().toLowerCase() === "no tax"
-                ) {
-                    tax_rate = 0;
-                } else {
-                    tax_rate = parseFloat(tax.tax_rate) || 0;
-                }
+                if (tax.tax_type === "flat") {
+                    tax_option = tax.tax_option;
 
-                if (tax_type === "flat") {
-                    if (tax_option === "inclusive") {
-                        if (tax_rate > 0) {
-                            let taxMultiplier = 1 + (tax_rate / 100);
-                            let priceWithoutTax = netPrice / taxMultiplier;
-                            tax_price_total = netPrice - priceWithoutTax;
-                        } else {
-                            tax_price_total = 0;
-                        }
-                    } else if (tax_option === "exclusive") {
-                        tax_price_total = tax_rate > 0 ? (netPrice * tax_rate) / 100 : 0;
+                    tax_id = tax.id;
+                    tax_rate = (tax.tax_rate > 0 || String(tax.tax_rate).toLowerCase() !== "no tax") ? tax.tax_rate : 0;
+                    console.log("------------tax_rate-----------------",tax_rate); 
+                    if (tax_option == "inclusive") {
+                        // taxprice = 1 + (tax_rate / 100);
+                        // console.log("----------taxprice------------",taxprice); 
+                        // tax_price = tax_rate ? (netPrice / taxprice) : 0;
+                        // console.log("==========tax--price=========",tax_price); 
+                        // tax_price_total = netPrice - tax_price;
+                        // console.log("===========tax_price_total------------",tax_price_total); 
+                        tax_price_total = ((netPrice * tax_rate) / 100);
+
+                        console.log("-------tax_price_total-------if-----",tax_price_total); 
+                    } else {
+                        tax_price_total = tax_rate ? ((netPrice * tax_rate) / 100) : 0;
+                        console.log("-------tax_price_total-------else-----",tax_price_total); 
                     }
-                } else if (tax_type === "floating") {
-                    let taxFrom = parseFloat(tax.tax_from) || 0;
-                    let taxTo = parseFloat(tax.tax_to) || 0;
 
-                    if (netPrice >= taxFrom && netPrice <= taxTo) {
-                        if (tax_option === "inclusive") {
-                            if (tax_rate > 0) {
-                                let taxMultiplier = 1 + (tax_rate / 100);
-                                let priceWithoutTax = netPrice / taxMultiplier;
-                                tax_price_total = netPrice - priceWithoutTax;
-                            } else {
-                                tax_price_total = 0;
-                            }
-                        } else if (tax_option === "exclusive") {
-                            tax_price_total = tax_rate > 0 ? (netPrice * tax_rate) / 100 : 0;
+                } else if (tax.tax_type === "floating") {
+                    tax_option = tax.tax_option;
+
+                    tax_id = tax.id;
+
+                    if ((parseInt(netPrice) >= parseInt(tax.tax_from)) && (parseInt(netPrice) <= parseInt(tax.tax_to))) {
+                        tax_rate = (tax.tax_rate > 0 || String(tax.tax_rate).toLowerCase() !== "no tax") ? tax.tax_rate : 0;
+                        if (tax_option == "inclusive") {
+                            taxprice = 1 + (tax_rate / 100);
+
+                            tax_price = tax_rate > 0 ? (netPrice / taxprice) : 0;
+
+                            tax_price_total = netPrice - tax_price;
+
+                        } else {
+                            tax_price_total = tax_rate > 0 ? ((netPrice * tax_rate) / 100) : 0;
                         }
                     }
                 }
             });
         }
 
-        let quantity = parseInt(item.quantity) || 1;
-        let finalTax = quantity * tax_price_total;
+        let finalTax = item.quantity * tax_price_total;
 
         return {
             ...item,
@@ -606,7 +609,7 @@ function priceCalculation() {
             rawTaxArr: rawTaxArr
         };
     });
-
+   
     if (window.buyNowData) {
         cartItems = cartData;
     } else if (isLoggedIn) {
@@ -630,18 +633,18 @@ function priceCalculation() {
         let sellingPrice = parseFloat(item.sellingPrice) || 0;
         console.log("-----sellingPrice----------",sellingPrice); 
         let taxPrice = parseFloat(item.tax_price) || 0;
-
+        console.log("----------taxPrice--------------",taxPrice); 
         totalMrp += price * quantity;
         totalSelling += sellingPrice * quantity;
         totalTaxPrice += taxPrice;
-
+      
         if (item.tax_option) {
             taxOption = item.tax_option;
         }
     });
     console.log("----------totalMrp----------",totalMrp); 
     console.log("----------total selling-----------",totalSelling);
-
+    console.log("========totalTaxPRice==========",totalTaxPrice); 
     totalDiscount = totalMrp - totalSelling;
     console.log("------------totalDiscount---------",totalDiscount); 
     let subTotal = totalMrp - totalDiscount;
@@ -656,6 +659,7 @@ function priceCalculation() {
 
     if (taxOption === 'inclusive') {
         taxableAmount = grandTotal - totalTaxPrice;
+        console.log("===========taxableAmount==========",taxableAmount); 
     } else if (taxOption === 'exclusive') {
         taxableAmount = grandTotal;
     }

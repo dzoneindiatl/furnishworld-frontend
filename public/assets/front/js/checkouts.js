@@ -591,6 +591,8 @@ function renderCart() {
     var cartItems = [];
     var cartOutOfStock = [];
     var cartAllItems = getCartItems();
+
+    console.log("--------renderCart-----in renderCartMethod--",cartAllItems); 
     cartAllItems.forEach(function (item, index) {
         let variants = item.selectedVariants || {};
         //  product is out of stock
@@ -654,6 +656,7 @@ function renderCart() {
     let totalTaxPrice = 0;
     let taxOption = 'inclusive';
     let qty = 0;
+    let taxRate = 0; 
     console.log(' before loop ', cartItems);
     cartItems.forEach(function (item) {
         qty = item.quantity;
@@ -666,7 +669,10 @@ function renderCart() {
         // }
         totalDiscount += item.price - item.sellingPrice ;  
         taxOption = item.tax_option;
-        totalTaxPrice += item.tax_price;
+        taxRate = item.tax_rate; 
+
+        totalTaxPrice += ((item.sellingPrice * taxRate)/100) ; 
+
         output += `
                 <li>
                     <div class="cp-list-l">
@@ -685,7 +691,7 @@ function renderCart() {
                 </li>`;
     });
     output += '</ul>';
-
+    
     $container.html(output);
     let subTotal = totalMrp - totalDiscount;
     let grandTotal = subTotal - couponDiscount;
@@ -695,7 +701,6 @@ function renderCart() {
     } else if (taxOption == 'exclusive') {
         taxableAmount = grandTotal;
     }
-
     console.log(totalShippingCharge);
     let finalAmount = grandTotal + totalShippingCharge;
     // Update Summary
