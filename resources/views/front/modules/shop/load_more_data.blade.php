@@ -78,10 +78,10 @@
                                                                     @foreach($productVariant->variantValues as $variantValue)
                                                                         @if($variantValue->variant_image)
                                                                             <span
-                                                                                class="product-color-option"
+                                                                                class="product-color-option {{ $variantValue->is_main == 1 ? 'active' : '' }}"
                                                                                 data-variant-value-id="{{ $variantValue->variant_value_id }}"
                                                                                 style="
-                                                                                    background-image: url('{{ asset('uploads/products').'/'. $variantValue->variant_image }}');
+                                                                                    background-image: url('{{ asset('uploads/products/' . $variantValue->variant_image) }}');
                                                                                     background-size: cover;
                                                                                     background-position: center;
                                                                                     background-repeat: no-repeat;

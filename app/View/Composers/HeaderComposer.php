@@ -9,6 +9,7 @@ use Illuminate\View\View;
 use App\Models\Cart;
 use Illuminate\Support\Facades\Cookie;
 use App\Models\Product; 
+use App\Models\ProductGraphics; 
 
 Class HeaderComposer 
 {
@@ -32,7 +33,26 @@ Class HeaderComposer
         $totalPrice = $cart->sum(function ($item) {
             return $item->product->selling_price * $item->quantity;
         });
-        $popularProduct = Product::where('is_active',"1")->where('is_deleted',0)->where('draf',0)->latest()->take(12)->get();  
+        $popularProduct = Product::select('id','name','sku','slug','discount','discount_type','selling_price','buying_price')->where('is_active',"1")->where('is_deleted',0)->where('draf',0)->latest()->take(12)->get();  
+        $popularProduct->each(function ($product) {
+            $product->primary_variant_value = null;
+            foreach ($product->productVariants as $productVariant) {
+                foreach ($productVariant->variantValues as $variantValue) {
+                    $variantValueId = $variantValue->variant_value_id;
+                    // Variant icon/image
+                    $graphics = ProductGraphics::where('product_id', $product->id)
+                        ->where('variant_id', $variantValueId)
+                        ->where('is_variant_icon', 1)
+                        ->first();
+
+                    $variantValue->variant_image = $graphics->graphic ?? null;
+                    // Primary variant
+                    if ((int) $variantValue->is_main === 1) {
+                        $product->primary_variant_value = $variantValue;
+                    }
+                }
+            }
+        });
         $allCategory = Category::where('is_active',1)->where('is_deleted',0)->get(); 
         $parentCategoryId = $allCategory->whereNull('parent_id')->pluck('id');
         $subCategory = Category::select('id','name','slug','thumbnail_image','parent_id','show_on_menu')->whereIn('parent_id',$parentCategoryId)->where('is_active',1)->where('is_deleted',0)->get(); 

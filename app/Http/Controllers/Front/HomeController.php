@@ -115,8 +115,26 @@ class HomeController extends Controller
      
         $testimonials = Testimonial::where(['is_active' => 1])->get();
         $new_arrivals_product = Product::where('is_new_arrivals', 1)->where("is_deleted",  0)->where(['is_active' => 1])->where(['is_new_arrivals' => true, 'draf' => false])->orderBy('id', 'desc')->get();   
-        $trendingProduct = Product::where('trending', 1)->where("is_deleted",  0)->where(['is_active' => 1])->where(['trending' => true, 'draf' => false])->orderBy('id', 'desc')->get();   
+        $trendingProduct = Product::select('id','name','sku','slug','discount','discount_type','buying_price')->where('trending', 1)->where("is_deleted",  0)->where(['is_active' => 1])->where(['trending' => true, 'draf' => false])->orderBy('id', 'desc')->get();   
+        $trendingProduct->each(function ($product) {
+            $product->primary_variant_value = null;
+            foreach ($product->productVariants as $productVariant) {
+                foreach ($productVariant->variantValues as $variantValue) {
+                    $variantValueId = $variantValue->variant_value_id;
+                    // Variant icon/image
+                    $graphics = ProductGraphics::where('product_id', $product->id)
+                        ->where('variant_id', $variantValueId)
+                        ->where('is_variant_icon', 1)
+                        ->first();
 
+                    $variantValue->variant_image = $graphics->graphic ?? null;
+                    // Primary variant
+                    if ((int) $variantValue->is_main === 1) {
+                        $product->primary_variant_value = $variantValue;
+                    }
+                }
+            }
+        });
         $user = Auth::guard('customer')->user();
         if ($user) {
             $isWishlisteddata = Wishlist::where('user_id', $user->id)
@@ -134,7 +152,27 @@ class HomeController extends Controller
 
         $homeSlider =  Slider::where('is_active', 1)->get();
         $ActiveCoupon =  Coupon::where('is_active', 1)->first();
-        $best_seller_products = Product::where('best_seller', 1)->where('is_active',1)->orderBy('id', 'desc')->get();
+        $best_seller_products = Product::select('id','name','sku','slug','discount','discount_type','selling_price','buying_price')->where('best_seller', 1)->where('is_active',1)->orderBy('id', 'desc')->get();
+        $best_seller_products->each(function ($product) {
+            $product->primary_variant_value = null;
+            foreach ($product->productVariants as $productVariant) {
+                foreach ($productVariant->variantValues as $variantValue) {
+                    $variantValueId = $variantValue->variant_value_id;
+                    // Variant icon/image
+                    $graphics = ProductGraphics::where('product_id', $product->id)
+                        ->where('variant_id', $variantValueId)
+                        ->where('is_variant_icon', 1)
+                        ->first();
+
+                    $variantValue->variant_image = $graphics->graphic ?? null;
+                    // Primary variant
+                    if ((int) $variantValue->is_main === 1) {
+                        $product->primary_variant_value = $variantValue;
+                    }
+                }
+            }
+        });
+     
         return view('front.modules.home.index', compact('best_seller_products','ActiveCoupon','homeSlider','MainCategory','testimonials',  'new_arrivals_product','allProduct', 'isWishlisteddata', 'referralCode','featureSubCategory','refreshYourRoom','modernLiving1','modernLiving2','modernLiving3','productGallery','childCategory','subCategory','trendingProduct'));
     }
     public function indexNew()
@@ -759,14 +797,21 @@ class HomeController extends Controller
         $variantColor = VariantValue::whereIn('variant_id',$variants->pluck('id'))->get();
 
         $results->each(function ($product) {
+            $product->primary_variant_value = null;
             foreach ($product->productVariants as $productVariant) {
                 foreach ($productVariant->variantValues as $variantValue) {
                     $variantValueId = $variantValue->variant_value_id;
+                    // Variant icon/image
                     $graphics = ProductGraphics::where('product_id', $product->id)
                         ->where('variant_id', $variantValueId)
                         ->where('is_variant_icon', 1)
                         ->first();
+
                     $variantValue->variant_image = $graphics->graphic ?? null;
+                    // Primary variant
+                    if ((int) $variantValue->is_main === 1) {
+                        $product->primary_variant_value = $variantValue;
+                    }
                 }
             }
         });
