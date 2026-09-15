@@ -243,10 +243,10 @@
                                                     <div class="quantity">
                                                         <label for="quantity"><strong>Qty :</strong></label>
                                                         <div class="quantity-group">
-                                                            <a href="javascript:void(0)" class="dec qty-btn"></a>
+                                                            <a href="javascript:void(0)" class="dec qty-btn" data-action="decrease"></a>
                                                             <input type="text" id="quantity" class="input-text qty"
-                                                                name="quantity" value="1" maxlength="50">
-                                                            <a href="javascript:void(0)" class="inc qty-btn"></a>
+                                                                name="quantity" value="1" maxlength="{{ $product->qty }}" max="{{ $product->qty }}"> 
+                                                            <a href="javascript:void(0)" class="inc qty-btn" data-action="increase"></a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -359,16 +359,7 @@
                                             <div class="save-extra-offers">
                                                 <h5>Save Extra with Below Offers</h5>
                                                 <div class="save-extra-offers-txt">
-                                                    {{-- <div class="extra-offers">
-                                                        <div class="extra-offers-inner">
-                                                            <p class="extra-txt-easy">Easy EMI<i
-                                                                    class="fa-solid fa-circle-arrow-right"></i></p>
-                                                        </div>
-                                                        <div class="extra-inne-price">Get it for ₹608/m</div>
-                                                    </div> --}}
-
                                                     <div class="diwali-banner">
-
                                                         <div class="demand-label">
                                                             Extended On Demand
                                                         </div>
@@ -556,411 +547,10 @@
                                                             fill="#FFF" />
                                                         </svg>
                                                     </a>
-                                                    
-
-                                                    
-
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
-                                 {{--  <div class="size-chart">
-                                        <div class="modal fade" id="sizeModal">
-                                            <div class="modal-dialog modal-dialog-centered modal-lg">
-                                                <div class="modal-content">
-                                                    <button type="button" class="close" data-bs-dismiss="modal"
-                                                        aria-label="Close"><span aria-hidden="true">×</span></button>
-                                                    <div class="modal-body p-lg-4">
-                                                        <div class="tab-style">
-                                                            <div class="tab-header">
-                                                                <ul class="nav nav-tabs" role="tablist">
-                                                                    <li role="presentation">
-                                                                        <button class="active" data-bs-toggle="tab"
-                                                                            data-bs-target="#slim" type="button"
-                                                                            role="tab"
-                                                                            aria-selected="true">Slim</button>
-                                                                    </li>
-                                                                    <li role="presentation">
-                                                                        <button data-bs-toggle="tab"
-                                                                            data-bs-target="#regular" type="button"
-                                                                            role="tab"
-                                                                            aria-selected="false">Regular</button>
-                                                                    </li>
-                                                                    <li role="presentation">
-                                                                        <button data-bs-toggle="tab"
-                                                                            data-bs-target="#measure" type="button"
-                                                                            role="tab" aria-selected="false">How to
-                                                                            measure</button>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <div class="tab-content">
-                                                                <div id="slim" class="tab-pane fade show active">
-                                                                    <p>Our sizes are engineered for Indian men. Every fit
-                                                                        has been iterated &amp; perfected over years of
-                                                                        testing,
-                                                                        resulting in two base fits: Slim and Regular.</p>
-
-                                                                    <ul class="nav nav-tabs border-0 justify-content-end"
-                                                                        role="tablist">
-                                                                        <li role="presentation">
-                                                                            <button class="active" data-bs-toggle="tab"
-                                                                                data-bs-target="#cm" type="button"
-                                                                                role="tab"
-                                                                                aria-selected="true">cm</button>
-                                                                        </li>
-                                                                        <li role="presentation">
-                                                                            <button data-bs-toggle="tab"
-                                                                                data-bs-target="#inches" type="button"
-                                                                                role="tab"
-                                                                                aria-selected="false">inches</button>
-                                                                        </li>
-                                                                    </ul>
-
-                                                                    <div class="tab-content">
-                                                                        <div id="cm"
-                                                                            class="tab-pane fade show active">
-                                                                            <table class="table table-bordered">
-                                                                                <tbody>
-                                                                                    <tr>
-                                                                                        <td>Size</td>
-                                                                                        <td>S</td>
-                                                                                        <td>M</td>
-                                                                                        <td>L</td>
-                                                                                        <td>XL</td>
-                                                                                        <td>XXL</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Collar</td>
-                                                                                        <td>39</td>
-                                                                                        <td>40</td>
-                                                                                        <td>42</td>
-                                                                                        <td>44</td>
-                                                                                        <td>45</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Shoulder</td>
-                                                                                        <td>45</td>
-                                                                                        <td>46</td>
-                                                                                        <td>49</td>
-                                                                                        <td>51</td>
-                                                                                        <td>53</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Chest</td>
-                                                                                        <td>95</td>
-                                                                                        <td>99</td>
-                                                                                        <td>105</td>
-                                                                                        <td>111</td>
-                                                                                        <td>117</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Waist</td>
-                                                                                        <td>85</td>
-                                                                                        <td>89</td>
-                                                                                        <td>95</td>
-                                                                                        <td>101</td>
-                                                                                        <td>107</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Front Length</td>
-                                                                                        <td>74</td>
-                                                                                        <td>77</td>
-                                                                                        <td>79</td>
-                                                                                        <td>81</td>
-                                                                                        <td>83</td>
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>
-                                                                        <div id="inches" class="tab-pane fade">
-                                                                            <table class="table table-bordered">
-                                                                                <tbody>
-                                                                                    <tr>
-                                                                                        <td>Size</td>
-
-                                                                                        <td>S</td>
-
-                                                                                        <td>M</td>
-
-                                                                                        <td>L</td>
-
-                                                                                        <td>XL</td>
-
-                                                                                        <td>XXL</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Collar</td>
-
-                                                                                        <td>15.4</td>
-
-                                                                                        <td>15.7</td>
-
-                                                                                        <td>16.5</td>
-
-                                                                                        <td>17.3</td>
-
-                                                                                        <td>17.7</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Shoulder</td>
-
-                                                                                        <td>17.7</td>
-
-                                                                                        <td>18.1</td>
-
-                                                                                        <td>19.3</td>
-
-                                                                                        <td>20.1</td>
-
-                                                                                        <td>20.9</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Chest</td>
-
-                                                                                        <td>37.4</td>
-
-                                                                                        <td>39</td>
-
-                                                                                        <td>41.3</td>
-
-                                                                                        <td>43.7</td>
-
-                                                                                        <td>46.1</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Waist</td>
-
-                                                                                        <td>33.5</td>
-
-                                                                                        <td>35</td>
-
-                                                                                        <td>37.4</td>
-
-                                                                                        <td>39.8</td>
-
-                                                                                        <td>42.1</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Front Length</td>
-
-                                                                                        <td>29.1</td>
-
-                                                                                        <td>30.3</td>
-
-                                                                                        <td>31.1</td>
-
-                                                                                        <td>31.9</td>
-
-                                                                                        <td>32.7</td>
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>
-                                                                    </div>
-                                                                    <p>
-                                                                        All measurements are body measurements.<br>
-                                                                        Incase you run between sizes, size up for a relaxed
-                                                                        fit or a size down for a snug fit.
-                                                                    </p>
-
-                                                                </div>
-
-                                                                <div id="regular" class="tab-pane fade">
-
-                                                                    <p>Our sizes are engineered for Indian men. Every fit
-                                                                        has been iterated &amp; perfected over years of
-                                                                        testing,
-                                                                        resulting in two base fits: Slim and Regular.</p>
-
-                                                                    <ul class="nav nav-tabs border-0 justify-content-end"
-                                                                        role="tablist">
-                                                                        <li role="presentation">
-                                                                            <button class="active" data-bs-toggle="tab"
-                                                                                data-bs-target="#cm1" type="button"
-                                                                                role="tab"
-                                                                                aria-selected="true">cm</button>
-                                                                        </li>
-                                                                        <li role="presentation">
-                                                                            <button data-bs-toggle="tab"
-                                                                                data-bs-target="#inches1" type="button"
-                                                                                role="tab"
-                                                                                aria-selected="false">inches</button>
-                                                                        </li>
-                                                                    </ul>
-
-                                                                    <div class="tab-content">
-                                                                        <div id="cm1"
-                                                                            class="tab-pane fade show active">
-                                                                            <table class="table table-bordered">
-                                                                                <tbody>
-                                                                                    <tr>
-                                                                                        <td>Size</td>
-                                                                                        <td>S</td>
-                                                                                        <td>M</td>
-                                                                                        <td>L</td>
-                                                                                        <td>XL</td>
-                                                                                        <td>XXL</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Collar</td>
-                                                                                        <td>39</td>
-                                                                                        <td>40</td>
-                                                                                        <td>42</td>
-                                                                                        <td>44</td>
-                                                                                        <td>45</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Shoulder</td>
-                                                                                        <td>45</td>
-                                                                                        <td>46</td>
-                                                                                        <td>49</td>
-                                                                                        <td>51</td>
-                                                                                        <td>53</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Chest</td>
-                                                                                        <td>95</td>
-                                                                                        <td>99</td>
-                                                                                        <td>105</td>
-                                                                                        <td>111</td>
-                                                                                        <td>117</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Waist</td>
-                                                                                        <td>85</td>
-                                                                                        <td>89</td>
-                                                                                        <td>95</td>
-                                                                                        <td>101</td>
-                                                                                        <td>107</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Front Length</td>
-                                                                                        <td>74</td>
-                                                                                        <td>77</td>
-                                                                                        <td>79</td>
-                                                                                        <td>81</td>
-                                                                                        <td>83</td>
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>
-                                                                        <div id="inches1" class="tab-pane fade">
-                                                                            <table class="table table-bordered">
-                                                                                <tbody>
-                                                                                    <tr>
-                                                                                        <td>Size</td>
-
-                                                                                        <td>S</td>
-
-                                                                                        <td>M</td>
-
-                                                                                        <td>L</td>
-
-                                                                                        <td>XL</td>
-
-                                                                                        <td>XXL</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Collar</td>
-
-                                                                                        <td>15.4</td>
-
-                                                                                        <td>15.7</td>
-
-                                                                                        <td>16.5</td>
-
-                                                                                        <td>17.3</td>
-
-                                                                                        <td>17.7</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Shoulder</td>
-
-                                                                                        <td>17.7</td>
-
-                                                                                        <td>18.1</td>
-
-                                                                                        <td>19.3</td>
-
-                                                                                        <td>20.1</td>
-
-                                                                                        <td>20.9</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Chest</td>
-
-                                                                                        <td>37.4</td>
-
-                                                                                        <td>39</td>
-
-                                                                                        <td>41.3</td>
-
-                                                                                        <td>43.7</td>
-
-                                                                                        <td>46.1</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Waist</td>
-
-                                                                                        <td>33.5</td>
-
-                                                                                        <td>35</td>
-
-                                                                                        <td>37.4</td>
-
-                                                                                        <td>39.8</td>
-
-                                                                                        <td>42.1</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>Front Length</td>
-
-                                                                                        <td>29.1</td>
-
-                                                                                        <td>30.3</td>
-
-                                                                                        <td>31.1</td>
-
-                                                                                        <td>31.9</td>
-
-                                                                                        <td>32.7</td>
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>
-                                                                    </div>
-                                                                    <p>
-                                                                        All measurements are body measurements.<br>
-                                                                        Incase you run between sizes, go a size up for a
-                                                                        relaxed fit or a size down for a snug fit.
-                                                                    </p>
-
-                                                                </div>
-
-                                                                <div id="measure" class="tab-pane fade">
-                                                                    <p>Before you start, you'll need a few essential items:
-                                                                    </p>
-                                                                    <ol>
-                                                                        <li>A flexible measuring tape</li>
-                                                                        <li>A mirror and someone to assist you (optional but
-                                                                            helpful)</li>
-                                                                        <li>Comfortable, form-fitting clothing</li>
-                                                                    </ol>
-                                                                    <p>(Tap on the indicators below for specific
-                                                                        instructions.)</p>
-                                                                    <img src="{{ asset('assets/front/tejap/images/tops.webp') }}"
-                                                                        alt="" width="300" />
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -1934,10 +1524,6 @@
                     `;
                 });
 
-
-                console.log('thumbnailRow', thumbnailRow);
-                console.log('slideRow', slideRow);
-
                 mainSlider.html(slideRow);
                 thumbSlider.html(thumbnailRow);
 
@@ -2018,6 +1604,38 @@
             }    
         </script>
         <script>
+            $(document).on('click', '.qty-btn', function () {
+                const input = $(this).siblings('.qty');
+                let qty = parseInt(input.val()) || 1;
+                const maxQty = parseInt(input.attr('max')) || 1;
+                if ($(this).hasClass('inc')) {
+                    if (qty < maxQty) {
+                        qty++;
+                        input.val(qty);
+                    } else {
+                        input.val(maxQty);
+                        console.log('Maximum available quantity is ' + maxQty);
+                    }
+
+                } else if ($(this).hasClass('dec')) {
+                    if (qty > 1) {
+                        qty--;
+                        input.val(qty);
+                    }
+                }
+            });
+            $(document).on('input', '.qty', function () {
+                let qty = parseInt($(this).val()) || 1;
+                const maxQty = parseInt($(this).attr('max')) || 1;
+                if (qty < 1) {
+                    qty = 1;
+                }
+                if (qty > maxQty) {
+                    qty = maxQty;
+                }
+                $(this).val(qty);
+            });
+
             $(document).ready(function() {
                    let activeVariant = $('[data-vid].active').first();
                     if (activeVariant.length) {

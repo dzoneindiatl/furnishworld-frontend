@@ -1,6 +1,12 @@
 
 /* Billing Address country */
+function getCartItems() {
+    if (isLoggedIn) {
+        return window.dbCartItems || [];
+    }
 
+    return JSON.parse(localStorage.getItem('cartItems')) || [];
+}
 $('#country').on('change', function () {
     var countryId = $(this).val();
     var selectedStateId = null; // or set this dynamically
@@ -455,6 +461,7 @@ $('#pay_now').on('click', function (e) {
         shippingcharge: totalShippingCharge,
     };
     var url = window.location.origin + "/place-order";
+    console.log("===========postData=============",postData); 
     console.log("place order url------",url); 
     that.prop('disabled', true).text('Please wait...');
     $.ajax({
@@ -580,13 +587,7 @@ $(document).on('change', '.editState', function () {
 
 
 renderCart();
-function getCartItems() {
-    if (isLoggedIn) {
-        return window.dbCartItems || [];
-    }
 
-    return JSON.parse(localStorage.getItem('cartItems')) || [];
-}
 function renderCart() {
     var cartItems = [];
     var cartOutOfStock = [];
