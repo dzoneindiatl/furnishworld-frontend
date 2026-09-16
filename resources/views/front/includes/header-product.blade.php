@@ -1,7 +1,12 @@
 @foreach($products->take(12) as $product)
                         <div class="product-card">
-                            <div class="product-image">
-                                <img src="{{$product->images['first']}}" alt="">
+                            <div class="product-image" data-product-id="{{ $product->id }}">
+                                <div class="product-main-image">
+                                    <img src="{{$product->images['first']}}" class="main-image" alt="">
+                                </div>
+                                <div class="product-hover-image">
+                                    <img src="{{ $product->images['second'] }}" class="hover-image" alt="">
+                                </div>
                             </div>
                             <div class="hover-panel">
                                 <div class="hover-content">

@@ -40,6 +40,54 @@
 </script>
 
 <script>
+$(document).on('click', '.product-color-option', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    let colorOption = $(this);
+    let variantValueId = colorOption.attr('data-variant-value-id');
+    let productImageBox;
+    let productId;
+    if (colorOption.closest('.product-card').length) {
+        let productCard = colorOption.closest('.product-card');
+        productImageBox = productCard.find('.product-image');
+        productId = productImageBox.attr('data-product-id');
+    }
+    else if (colorOption.closest('.product-wrap').length) {
+        let productWrap = colorOption.closest('.product-wrap');
+        productImageBox = productWrap.find('.product-image');
+        productId = productImageBox.attr('data-product-id');
+    }
+
+    if (!productId) {
+        console.error('Product ID not found!');
+        return;
+    }
+    $.ajax({
+        url: "{{ route('front-product-variant-image') }}",
+        type: "GET",
+        data: {
+            product_id: productId,
+            variant_value_id: variantValueId
+        },
+        success: function (response) {
+            let mainImage = productImageBox.find('.main-image');
+            console.log('Variant Image Response:', response);
+            if (response.first_image) {
+                productImageBox.find('.product-image .product-main-image .main-image').attr('src', response.first_image);
+                mainImage.attr('src', response.first_image);
+                productImageBox.find('.hover-image').attr('src',response.second_image || response.first_image);
+            }
+
+            colorOption.closest('.product-option-colors').find('.product-color-option').removeClass('active');
+            colorOption.addClass('active');
+        },
+
+        error: function (xhr) {
+            console.log('Variant image AJAX error:', xhr.responseText);
+        }
+    });
+});   
+
 $(document).on('change', '#searchingproducts', function() {
     var searchValue = $(this).val();
     $.ajax({

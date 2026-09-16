@@ -27,7 +27,7 @@
                                      ?>
                                      <li class="product-item product">
                                          <div class="product-wrap">
-                                             <div class="product-image" data-product-id="{{ $product->id }}">
+                                            <div class="product-image" data-product-id="{{ $product->id }}">
                                                  <a href="{{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($product->name) . '.html', 'sku' => $product->sku]) }}">
                                                      <div class="product-main-image">
                                                          <img src="{{ asset('uploads/products/' . $firstImage) }}"

@@ -245,53 +245,53 @@
                     currentBox.toggleClass('active');
                 });
             });
-            $(document).on('click', '.product-color-option', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                let colorOption = $(this);
-                let variantValueId = colorOption.attr('data-variant-value-id');
-                let productImageBox = colorOption.closest('.product-image');
-                let productId = productImageBox.attr('data-product-id');
-                console.log('Product ID:', productId);
-                console.log('Variant Value ID:', variantValueId);
-                $.ajax({
-                    url: "{{ route('front-product-variant-image') }}",
-                    type: "GET",
+            // $(document).on('click', '.product-color-option', function (e) {
+            //     e.preventDefault();
+            //     e.stopPropagation();
+            //     let colorOption = $(this);
+            //     let variantValueId = colorOption.attr('data-variant-value-id');
+            //     let productImageBox = colorOption.closest('.product-image');
+            //     let productId = productImageBox.attr('data-product-id');
+            //     console.log('Product ID:', productId);
+            //     console.log('Variant Value ID:', variantValueId);
+            //     $.ajax({
+            //         url: "{{ route('front-product-variant-image') }}",
+            //         type: "GET",
 
-                    data: {
-                        product_id: productId,
-                        variant_value_id: variantValueId
-                    },
+            //         data: {
+            //             product_id: productId,
+            //             variant_value_id: variantValueId
+            //         },
 
-                    success: function (response) {
+            //         success: function (response) {
 
-                        let mainImage = productImageBox.find('.main-image');
-                        console.log('Variant Image Response:', response);
+            //             let mainImage = productImageBox.find('.main-image');
+            //             console.log('Variant Image Response:', response);
 
-                        if (response.first_image) {
-                            productImageBox
-                                .find('.product-image .product-main-image .main-image')
-                                .attr('src', response.first_image);
-                                mainImage.attr('src', response.first_image);
+            //             if (response.first_image) {
+            //                 productImageBox
+            //                     .find('.product-image .product-main-image .main-image')
+            //                     .attr('src', response.first_image);
+            //                     mainImage.attr('src', response.first_image);
 
-                                 productImageBox.find('.hover-image').attr('src',response.second_image || response.first_image);
-                                // console.log('New src:', mainImage.attr('src'));
-                                // console.log('DOM src:', mainImage[0].src);
-                        }
+            //                      productImageBox.find('.hover-image').attr('src',response.second_image || response.first_image);
+            //                     // console.log('New src:', mainImage.attr('src'));
+            //                     // console.log('DOM src:', mainImage[0].src);
+            //             }
 
-                        colorOption
-                            .closest('.product-option-colors')
-                            .find('.product-color-option')
-                            .removeClass('active');
+            //             colorOption
+            //                 .closest('.product-option-colors')
+            //                 .find('.product-color-option')
+            //                 .removeClass('active');
 
-                        colorOption.addClass('active');
-                    },
+            //             colorOption.addClass('active');
+            //         },
 
-                    error: function (xhr) {
-                        console.log('Variant image AJAX error:', xhr.responseText);
-                    }
-                });
-            });
+            //         error: function (xhr) {
+            //             console.log('Variant image AJAX error:', xhr.responseText);
+            //         }
+            //     });
+            // });
         </script>
 
         <script>

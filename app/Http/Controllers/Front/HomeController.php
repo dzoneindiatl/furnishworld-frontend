@@ -115,7 +115,7 @@ class HomeController extends Controller
      
         $testimonials = Testimonial::where(['is_active' => 1])->get();
         $new_arrivals_product = Product::where('is_new_arrivals', 1)->where("is_deleted",  0)->where(['is_active' => 1])->where(['is_new_arrivals' => true, 'draf' => false])->orderBy('id', 'desc')->get();   
-        $trendingProduct = Product::select('id','name','sku','slug','discount','discount_type','buying_price')->where('trending', 1)->where("is_deleted",  0)->where(['is_active' => 1])->where(['trending' => true, 'draf' => false])->orderBy('id', 'desc')->get();   
+        $trendingProduct = Product::select('id','name','sku','slug','discount','discount_type','buying_price')->where('trending', 1)->where("is_deleted",  0)->where(['is_active' => "1"])->where(['trending' => true, 'draf' => false])->orderBy('id', 'desc')->get();   
         $trendingProduct->each(function ($product) {
             $product->primary_variant_value = null;
             foreach ($product->productVariants as $productVariant) {
@@ -152,7 +152,7 @@ class HomeController extends Controller
 
         $homeSlider =  Slider::where('is_active', 1)->get();
         $ActiveCoupon =  Coupon::where('is_active', 1)->first();
-        $best_seller_products = Product::select('id','name','sku','slug','discount','discount_type','selling_price','buying_price')->where('best_seller', 1)->where('is_active',1)->orderBy('id', 'desc')->get();
+        $best_seller_products = Product::select('id','name','sku','slug','discount','discount_type','selling_price','buying_price')->where('best_seller', 1)->where('is_active',"1")->orderBy('id', 'desc')->get();
         $best_seller_products->each(function ($product) {
             $product->primary_variant_value = null;
             foreach ($product->productVariants as $productVariant) {
@@ -171,8 +171,7 @@ class HomeController extends Controller
                     }
                 }
             }
-        });
-     
+        }); 
         return view('front.modules.home.index', compact('best_seller_products','ActiveCoupon','homeSlider','MainCategory','testimonials',  'new_arrivals_product','allProduct', 'isWishlisteddata', 'referralCode','featureSubCategory','refreshYourRoom','modernLiving1','modernLiving2','modernLiving3','productGallery','childCategory','subCategory','trendingProduct'));
     }
     public function indexNew()
@@ -642,8 +641,7 @@ class HomeController extends Controller
         $grandParent = '';
 
         $DB = Product::select('id','name','slug','buying_price','selling_price','discount','discount_type','sku')->where('is_deleted', 0)
-            ->where('is_active', 1)
-            ->where('draf', false);
+            ->where('is_active', "1"); 
         $hasCategoryFilter = $request->filled('category_id') || $request->filled('sub_category_id') ||  $request->filled('sub_child_category_id');
         if (!$hasCategoryFilter) {
 

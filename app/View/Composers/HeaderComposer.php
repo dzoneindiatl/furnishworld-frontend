@@ -33,7 +33,7 @@ Class HeaderComposer
         $totalPrice = $cart->sum(function ($item) {
             return $item->product->selling_price * $item->quantity;
         });
-        $popularProduct = Product::select('id','name','sku','slug','discount','discount_type','selling_price','buying_price')->where('is_active',"1")->where('is_deleted',0)->where('draf',0)->latest()->take(12)->get();  
+        $popularProduct = Product::select('id','name','sku','slug','discount','discount_type','selling_price','buying_price')->where('is_active',"1")->where('is_deleted',0)->latest()->take(12)->get();  
         $popularProduct->each(function ($product) {
             $product->primary_variant_value = null;
             foreach ($product->productVariants as $productVariant) {

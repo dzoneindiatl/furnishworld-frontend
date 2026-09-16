@@ -37,15 +37,20 @@ class Product extends Model
 
     public function getImagesAttribute()
     {
+        $primaryVariantId = ProductVariantValue::where('product_id', $this->id)->where('is_main', 1)->value('variant_value_id');    
         $imgs = $this->product_main_images;
-
         $front = null;
         $back = null;
-
+        
         foreach ($imgs as $img) {
-            if ($img->is_front && !$front) $front = $img->graphic;
-            if ($img->is_back && !$back) $back = $img->graphic;
-            if ($front && $back) break;
+            if ($img->variant_id == $primaryVariantId && $img->is_front === 1) {
+                $front = $img->graphic;
+            }
+            if ($img->variant_id == $primaryVariantId && $img->is_back === 1){
+                $back = $img->graphic;
+            }
+            if ($front && $back) 
+            break;
         }
 
         $fallback = $imgs->pluck('graphic');
