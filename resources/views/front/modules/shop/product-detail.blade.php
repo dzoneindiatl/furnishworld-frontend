@@ -12,13 +12,13 @@
         product-details-page
     @endpush
     <section class="site-content">
-        <div class="offer-banner">
+    {{--<div class="offer-banner">
             <div class="offer-banner-content">
                 <span class="offer-highlight">UPTO 70% OFF</span>
                 <span class="offer-divider">|</span>
                 <span class="offer-delivery">FREE DELIVERY AVAILABLE</span>
             </div>
-        </div>
+        </div> --}}
         <div class="page-banner-section">
             <div class="page-banner">
                 <div class="container">
@@ -92,13 +92,29 @@
                                     }
                                     
                                     ?>
+                                    @php
+                                        $primaryVariantId = \App\Models\ProductVariantValue::where('product_id', $product->id)
+                                            ->where('is_main', 1)
+                                            ->value('variant_value_id');
+
+                                        $allProductImages = $product->product_main_images;
+                                        $sortedProductImages = $allProductImages->sortBy(function ($img) use ($primaryVariantId) {
+                                            if ((string) $img->variant_id === (string) $primaryVariantId && (int) $img->is_front === 1) {
+                                                return 0;
+                                            }
+                                            if ((string) $img->variant_id === (string) $primaryVariantId) {
+                                                return 1;
+                                            }
+                                            return 2;
+                                        })->values();
+                                    @endphp
                                     <div class="product-gallery">
                                         <div class="product-gallery-area product-gallery-with-images">
                                             <!-- Main Slider -->
                                             <div class="product-gallery">
                                                 <div class="product-main-slider">
-                                                    @foreach($product->product_main_images->sortByDesc('is_front') as $img)
-                                                            <div class="product-slide" data-variant-id="{{ $img->variant_id }}">
+                                                    @foreach($sortedProductImages as $img)
+                                                            <div class="product-slide" data-variant-id="{{ $img->variant_id }}" data-is-front="{{ $img->is_front }}">
                                                                 <img src="{{ asset('uploads/products/'.$img->graphic) }}"
                                                                     alt="Product 1">
                                                             </div>  
@@ -106,8 +122,8 @@
                                                 </div>
 
                                                 <div class="product-thumb-slider">
-                                                      @foreach($product->product_main_images->sortByDesc('is_front') as $img)
-                                                            <div class="thumb" data-variant-id="{{ $img->variant_id }}">
+                                                      @foreach($sortedProductImages as $img)
+                                                            <div class="thumb" data-variant-id="{{ $img->variant_id }}" data-is-front="{{ $img->is_front }}">
                                                                 <img src="{{ asset('uploads/products/'.$img->graphic) }}"
                                                                     alt="">
                                                             </div>
@@ -115,30 +131,26 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Popup Gallery -->
                                             <div class="gallery-popup">
                                                 <button class="gallery-close">&times;</button>
                                                 <div class="popup-gallery-wrap">
-
-                                                    <!-- Popup Main Slider -->
+                                                        <!-- Popup Main Slider -->
                                                     <div class="popup-main-slider">
-                                                     @foreach($product->product_main_images->sortByDesc('is_front') as $img)
-                                                        <div class="popup-slide" data-variant-id="{{ $img->variant_id }}">
-                                                            <img src="{{ asset('uploads/products/'.$img->graphic) }}"
-                                                                alt="">
-                                                        </div>
-                                                  @endforeach 
-                                                </div>
-
-                                                    <!-- Popup Thumbnail Slider -->
-                                                    <div class="popup-thumb-slider">
-                                                          @foreach($product->product_main_images->sortByDesc('is_front') as $img)
-                                                            <div class="popup-thumb" data-variant-id="{{ $img->variant_id }}">
-                                                                <img src="{{ asset('uploads/products/'.$img->graphic) }}"
-                                                                    alt="">
+                                                        {{--  @foreach($sortedProductImages as $img)
+                                                            <div class="popup-slide" data-variant-id="{{ $img->variant_id }}" data-is-front="{{ $img->is_front }}">
+                                                                <img src="{{ asset('uploads/products/'.$img->graphic) }}" alt="">
                                                             </div>
-                                                        @endforeach     
-                                                 </div>
+                                                        @endforeach --}}
+                                                    </div>
+
+                                                        <!-- Popup Thumbnail Slider -->
+                                                    <div class="popup-thumb-slider">
+                                                    {{--    @foreach($sortedProductImages as $img)
+                                                            <div class="popup-thumb" data-variant-id="{{ $img->variant_id }}" data-is-front="{{ $img->is_front }}">
+                                                                <img src="{{ asset('uploads/products/'.$img->graphic) }}" alt="">
+                                                            </div>
+                                                        @endforeach    --}} 
+                                                    </div>
                                                 </div>
 
                                                 <div class="zoom-controls">
@@ -1478,12 +1490,122 @@
 
         <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
         <script>
-            function updateVariantImages(variantId) {
+            $(document).ready(function () {
+                const allImages = @json($product->product_main_images);
+                $(document).on('click', '.product-main-slider .product-slide img', function () {
+                    const clickedSlide = $(this).closest('.product-slide');
+                    const variantId = clickedSlide.attr('data-variant-id');
+                    console.log('Clicked Variant ID:', variantId);
+                    if (!variantId) {
+                        console.log('Variant ID not found');
+                        return;
+                    }
 
-                console.log('variant_id', variantId);
+                    openVariantPopupGallery(variantId);
+                });
+
+                function openVariantPopupGallery(variantId) {
+                    const popupMain = $('.popup-main-slider');
+                    const popupThumb = $('.popup-thumb-slider');
+
+                    if (popupMain.hasClass('slick-initialized')) {
+                        popupMain.slick('unslick');
+                    }
+
+                    if (popupThumb.hasClass('slick-initialized')) {
+                        popupThumb.slick('unslick');
+                    }
+                    const variantImages = allImages
+                        .filter(function (image) {
+                            return String(image.variant_id) === String(variantId);
+                        })
+                        .sort(function (a, b) {
+                            return Number(b.is_front) - Number(a.is_front);
+                        });
+
+                    console.log('Popup Variant Images:', variantImages);
+                    if (!variantImages.length) {
+                        console.log('No images found for variant:', variantId);
+                        return;
+                    }
+
+                    let mainHtml = '';
+                    let thumbHtml = '';
+
+                    variantImages.forEach(function (image, index) {
+
+                        const imageUrl =
+                            "{{ asset('uploads/products') }}/" + image.graphic;
+
+                        mainHtml += `
+                            <div class="popup-slide"
+                                data-variant-id="${image.variant_id}"
+                                data-is-front="${image.is_front}">
+
+                                <img src="${imageUrl}" alt="Product Image">
+                            </div>
+                        `;
+
+                        thumbHtml += `
+                            <div class="popup-thumb"
+                                data-variant-id="${image.variant_id}"
+                                data-is-front="${image.is_front}">
+
+                                <img src="${imageUrl}" alt="Product Thumbnail">
+                            </div>
+                        `;
+                    });
+
+                    popupMain.html(mainHtml);
+                    popupThumb.html(thumbHtml);
+
+                    $('.gallery-popup').addClass('active');
+
+                    popupMain.slick({
+                        slidesToShow: 1,
+                        slidesToScroll: 1,
+                        arrows: true,
+                        infinite: false,
+                        fade: true,
+                        asNavFor: '.popup-thumb-slider'
+                    });
+
+                    popupThumb.slick({
+                        slidesToShow: 5,
+                        slidesToScroll: 1,
+                        arrows: true,
+                        infinite: false,
+                        focusOnSelect: true,
+                        asNavFor: '.popup-main-slider',
+
+                        responsive: [
+                            {
+                                breakpoint: 768,
+                                settings: {
+                                    slidesToShow: 4
+                                }
+                            },
+                            {
+                                breakpoint: 480,
+                                settings: {
+                                    slidesToShow: 3
+                                }
+                            }
+                        ]
+                    });
+                    popupMain.slick('slickGoTo', 0, true);
+                    popupThumb.slick('slickGoTo', 0, true);
+                }
+
+                $(document).on('click', '.gallery-close', function () {
+                    $('.gallery-popup').removeClass('active');
+                });
+
+            });
+            function updateVariantImages(variantId) {
+                console.log('Active Variant ID:', variantId);
                 const mainSlider = $('.product-main-slider');
                 const thumbSlider = $('.product-thumb-slider');
-
                 if (mainSlider.hasClass('slick-initialized')) {
                     mainSlider.slick('unslick');
                 }
@@ -1494,17 +1616,16 @@
 
                 const allImages = @json($product->product_main_images);
 
-                const variantImages = allImages.filter(function (image) {
+                const variantImages = allImages
+                    .filter(function (image) {
+                        return String(image.variant_id) === String(variantId);
+                    })
+                    .sort(function (a, b) {
+                        return Number(b.is_front) - Number(a.is_front);
+                    });
 
-                    return String(image.variant_id) === String(variantId);
-
-                });
-
-
-                console.log('variant images', variantImages);
-
+                console.log('Active Variant Images:', variantImages);
                 let slideRow = '';
-
                 let thumbnailRow = '';
 
                 variantImages.forEach(function (image, index) {
@@ -1512,13 +1633,21 @@
                         "{{ asset('uploads/products') }}/" + image.graphic;
 
                     slideRow += `
-                        <div class="product-slide">
+                        <div
+                            class="product-slide"
+                            data-variant-id="${image.variant_id}"
+                            data-is-front="${image.is_front}"
+                        >
                             <img src="${imageUrl}" alt="">
                         </div>
                     `;
 
                     thumbnailRow += `
-                        <div class="thumb">
+                        <div
+                            class="thumb"
+                            data-variant-id="${image.variant_id}"
+                            data-is-front="${image.is_front}"
+                        >
                             <img src="${imageUrl}" alt="${index}">
                         </div>
                     `;
@@ -1528,6 +1657,12 @@
                 thumbSlider.html(thumbnailRow);
 
                 initProductSliders();
+                if (mainSlider.hasClass('slick-initialized')) {
+                    mainSlider.slick('slickGoTo', 0, true);
+                }
+                if (thumbSlider.hasClass('slick-initialized')) {
+                    thumbSlider.slick('slickGoTo', 0, true);
+                }
             }
             function initProductSliders() {
 
@@ -1539,8 +1674,6 @@
                     infinite: false,
                     asNavFor: '.product-thumb-slider'
                 });
-
-
 
                 $('.product-thumb-slider').slick({
                     slidesToShow: 5,
@@ -1635,7 +1768,7 @@
                 }
                 $(this).val(qty);
             });
-
+            
             $(document).ready(function() {
                    let activeVariant = $('[data-vid].active').first();
                     if (activeVariant.length) {
@@ -1651,118 +1784,72 @@
 
                     let index = $('.product-main-slider')
                         .slick('slickCurrentSlide');
-
                     $('.gallery-popup').addClass('active');
-
                     $('body').css('overflow', 'hidden');
-
-
-                    /*
-                     * Important because Slick popup
-                     * was hidden using display:none
-                     */
-
                     $('.popup-main-slider').slick('setPosition');
                     $('.popup-thumb-slider').slick('setPosition');
-
-
-                    /*
-                     * Open same image
-                     */
 
                     $('.popup-main-slider')
                         .slick('slickGoTo', index, true);
 
                     $('.popup-thumb-slider')
                         .slick('slickGoTo', index, true);
-
                     resetZoom();
-
                 });
 
                 $('.gallery-close').on('click', function() {
-
                     closeGallery();
-
                 });
-
                 $('.gallery-popup').on('click', function(e) {
-
                     if ($(e.target).hasClass('gallery-popup')) {
-
                         closeGallery();
-
                     }
-
                 });
-
                 $(document).on('keydown', function(e) {
-
                     if (e.key === 'Escape') {
-
                         closeGallery();
-
                     }
-
                 });
 
                 function closeGallery() {
-
-                    $('.gallery-popup')
-                        .removeClass('active');
-
+                    $('.gallery-popup').removeClass('active');
                     $('body').css('overflow', '');
-
                     resetZoom();
-
                 }
+
                 let zoomLevel = 1;
-
                 $('.zoom-plus').on('click', function() {
-
                     zoomLevel += 0.25;
-
                     if (zoomLevel > 3) {
                         zoomLevel = 3;
                     }
-
                     updateZoom();
-
                 });
 
                 $('.zoom-minus').on('click', function() {
-
                     zoomLevel -= 0.25;
-
                     if (zoomLevel < 1) {
                         zoomLevel = 1;
                     }
-
                     updateZoom();
-
                 });
 
                 function updateZoom() {
-
                     $('.popup-main-slider .slick-current img')
                         .css(
                             'transform',
                             'scale(' + zoomLevel + ')'
                         );
-
                 }
 
 
                 function resetZoom() {
-
                     zoomLevel = 1;
-
                     $('.popup-main-slider img')
                         .css(
                             'transform',
                             'scale(1)'
                         );
-
                 }
 
                 $('.popup-main-slider').on(
@@ -1784,7 +1871,6 @@
                     $('.product-tab-content').removeClass('active');
                     $('#' + tabId).addClass('active');
                 });
-
             });
         </script>
 

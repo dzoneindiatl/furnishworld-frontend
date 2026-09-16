@@ -1046,8 +1046,8 @@ class HomeController extends Controller
         
         $productChildCat = Category::where('id', $product->main_child_category_id)->first();
         
-        $productreview = Product::with(['reviews.user'])->where('sku', $sku)->where('is_active', 1)->first();
-        $reviews = $productreview->reviews()->latest()->get();
+        // $productreview = Product::with(['reviews.user'])->where('sku', $sku)->where('is_active', 1)->first();
+        // $reviews = $productreview->reviews()->latest()->get();
         $productVariantSpecification = ProductVariantSpecialization::where('product_id',$product->id)->get(); 
 
         $productvariants = ProductVariant::with([
@@ -1155,7 +1155,8 @@ class HomeController extends Controller
         $youtube = Setting::select('id','value')->where('key','Social.youtube')->first(); 
         $twitter = Setting::select('id','value')->where('key','Social.twitter')->first();        
 
-        return view('front.modules.shop.product-detail', compact('product','productChildCat', 'productcat', 'productSubCat', 'productvariants', 'related_products', 'bestproduct', 'releatedProduct', 'returnexchangeProduct', 'contactDetails', 'productVarientCom', 'isWishlisted', 'isWishlisteddata', 'categoryTaxes', 'reviews', 'productreview', 'recentlyViewedProducts','productVariantSpecification','facebook','instagram','pinterst','youtube','twitter','productDetailManager', 'best_seller_products'));
+        // 'reviews', 'productreview',
+        return view('front.modules.shop.product-detail', compact('product','productChildCat', 'productcat', 'productSubCat', 'productvariants', 'related_products', 'bestproduct', 'releatedProduct', 'returnexchangeProduct', 'contactDetails', 'productVarientCom', 'isWishlisted', 'isWishlisteddata', 'categoryTaxes',  'recentlyViewedProducts','productVariantSpecification','facebook','instagram','pinterst','youtube','twitter','productDetailManager', 'best_seller_products'));
     }
 
     public function viewBag()
