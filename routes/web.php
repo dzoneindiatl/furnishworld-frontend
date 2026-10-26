@@ -57,7 +57,7 @@ Route::get('/blogs', [HomeController::class, 'blogList'])->name('blog.blog');
 Route::get('/blog-details/{slug}', [HomeController::class, 'blogDetails'])->name('blog.detail');
 Route::match(['get', 'post'], '/check-delevery', [CartController::class, 'checkDelevery'])->name('check.delevery');
 
-Route::post('subscribers/create',[HomeController::class,'storeNewsletterRecord'])->name('create-subscriber'); 
+Route::post('subscribers/create', [HomeController::class, 'storeNewsletterRecord'])->name('create-subscriber');
 
 Route::post('/payu/response', [CheckoutController::class, 'payuCallback'])->name('payu.response');
 Route::get('/payu/order-success/{order_id}', [OrderController::class, 'orderSuccess'])->name('payu.order.success');
@@ -71,7 +71,8 @@ Route::name('front-')->group(function () {
     Route::get('/', [App\Http\Controllers\Front\HomeController::class, 'index'])->name('home.index');
     Route::get('/shop/{categoryId?}/{subCategoryId?}/{childCategoryId?}', [App\Http\Controllers\Front\ShopController::class, 'index'])->name('shop.index');
 
-    Route::middleware(['GuestCustomer'])->group(function () {        
+    
+    Route::middleware(['GuestCustomer'])->group(function () {
         Route::get('/login', [App\Http\Controllers\Front\Auth\AuthController::class, 'login'])->name('user.login');
         Route::get('/signup', [App\Http\Controllers\Front\Auth\AuthController::class, 'signup'])->name('user.signup');
         Route::post('/sign-in', [App\Http\Controllers\Front\Auth\AuthController::class, 'postLogin'])->name('user.postLogin');
@@ -103,7 +104,7 @@ Route::name('front-')->group(function () {
         Route::get('/addresses/delete-address/{addressId}', [App\Http\Controllers\Front\DashboardController::class, 'deleteAddress'])->name('user.deleteAddress');
         Route::get('/orders', [App\Http\Controllers\Front\DashboardController::class, 'orders'])->name('user.orders');
 
-       /* new dashboard routes */
+        /* new dashboard routes */
         Route::get('/mypurchase', [App\Http\Controllers\Front\DashboardController::class, 'myPurchase'])->name('user.myPurchase');
         Route::get('/mypurchasedetail/{id}', [App\Http\Controllers\Front\DashboardController::class, 'myPurchaseDetail'])->name('user.myPurchaseDetail');
         Route::get('/accountsetting', [App\Http\Controllers\Front\DashboardController::class, 'accountSetting'])->name('user.accountSetting');
@@ -140,19 +141,19 @@ Route::name('front-')->group(function () {
         Route::match(['post'], '/orders/generate-items-invoice', [OrderController::class, 'generateItemsInvoice'])->name('orders.generate.items.invoice');
         Route::match(['get', 'post'], '/get-shipping-address', [CheckoutController::class, 'getShippingData'])->name('get.shipping.address');
 
-        Route::post('order/cancel',[CheckoutController::class,'orderCancelled'])->name('order.cancel');
-        Route::post('order/delivered',[CheckoutController::class,'orderReturn'])->name('order.return');
+        Route::post('order/cancel', [CheckoutController::class, 'orderCancelled'])->name('order.cancel');
+        Route::post('order/delivered', [CheckoutController::class, 'orderReturn'])->name('order.return');
     });
 
-    Route::get('header-product-search',[HomeController::class,'headerProductSearch'])->name('header-product-search'); 
+    Route::get('header-product-search', [HomeController::class, 'headerProductSearch'])->name('header-product-search');
     Route::get('/product/{product}/{title}/{sku}', [HomeController::class, 'productDetail'])->name('product.detail');
 
-    Route::get('get/sub/child/category',[HomeController::class,'getSubAndChildCategory'])->name('get-category'); 
-    Route::post('/remove-cart-product',[HomeController::class,'removeCartProduct'])->name('remove-cart-product'); 
+    Route::get('get/sub/child/category', [HomeController::class, 'getSubAndChildCategory'])->name('get-category');
+    Route::post('/remove-cart-product', [HomeController::class, 'removeCartProduct'])->name('remove-cart-product');
 
-    Route::get('get-product-variant-image',[HomeController::class,'getProductVariantImages'])->name('product-variant-image'); 
-    });
-    
+    Route::get('get-product-variant-image', [HomeController::class, 'getProductVariantImages'])->name('product-variant-image');
+});
+
 Route::post('/checkVarientStock', [App\Http\Controllers\Front\HomeController::class, 'variantStockCheck'])->name('variant.stock.check');
 Route::get('product/collection/{slug}', [HomeController::class, 'collectionListing'])->name('collections.show');
 Route::get('{path}', [HomeController::class, 'productListing'])->where('path', '.*')->name('category.show');
