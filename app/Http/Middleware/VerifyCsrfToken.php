@@ -16,7 +16,11 @@ class VerifyCsrfToken extends Middleware
         //
         'variant-combination/prices',
         'base/uploder',
-        'checkout-callback'
+        'checkout-callback',
+        'ccavenue/callback',
+        'ccavenue/response',
+        'ccavenue/cancel',
+         'payu/response',
     ];
 
     public function handle($request, Closure $next)

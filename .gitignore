@@ -24,3 +24,7 @@ package.zip
 # Laravel logs
 /storage/logs/
 /public/error_log
+/public/uploads.zip
+/bootstrap/cache/config.php
+/bootstrap/cache/*.php
+!/bootstrap/cache/.gitignore

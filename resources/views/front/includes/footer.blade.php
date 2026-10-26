@@ -156,6 +156,19 @@
         </div>
     @endif
     <script>
+           $('.filter-btn').on('click', function() {
+        $(".product-cat-page").addClass("show")
+        $(".filter-overlay").addClass("show")
+    });
+    
+    $('.filter-close').on('click', function() {
+        $(".product-cat-page").removeClass("show")
+        $(".filter-overlay").removeClass("show")
+    });
+    $('.filter-overlay').on('click', function() {
+        $(this).removeClass("show")
+        $(".product-cat-page").removeClass("show")
+    });
        $(document).ready(function() {
             window.isCustomerLoggedIn = @json(Auth::guard('customer')->check());
             console.log('========== CART INIT ==========');

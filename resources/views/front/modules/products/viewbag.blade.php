@@ -52,9 +52,55 @@
                                                             </div>
                                                         </div>
                                                         <div class="cart-summeryprice">
+                                                            @php 
+                                                                if(isset($priceDrop) && !empty($priceDrop)){
+                                                                    $productId = $priceDrop->product_id;
+                                                                    $discountAmount = $priceDrop->amount;
+                                                                    if($priceDrop->gain_type == "drop"){
+                                                                        if($productId == "all"){
+                                                                            if($priceDrop->drop_type == "percentage"){
+                                                                                $mainPrice =$item['product']['selling_price'] - (($discountAmount/100) * $item['product']['selling_price']) ; 
+                                                                            }
+                                                                            if($priceDrop->drop_type == "flat"){
+                                                                                $mainPrice = $item['product']['selling_price'] - $discountAmount ; 
+                                                                            }
+                                                                        }
+                                                                        else{
+                                                                            $productIdArray = explode(",",$productId); 
+                                                                            if(in_array($item['product']['id'],$productIdArray)){
+                                                                                if ($priceDrop->drop_type == "percentage") {
+                                                                                    $mainPrice = $item['product']['selling_price'] - (($priceDrop->amount / 100) * $item['product']['selling_price']);
+                                                                                } elseif ($priceDrop->drop_type == "flat") {
+                                                                                    $mainPrice = $item['product']['selling_price'] - $priceDrop->amount;
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    if($priceDrop->gain_type == "gain"){
+                                                                        if($productId == "all"){
+                                                                            if($priceDrop->drop_type == "percentage"){
+                                                                                $mainPrice = $item['product']['selling_price'] + (($discountAmount/100) * $item['product']['selling_price']) ; 
+                                                                            }
+                                                                            if($priceDrop->drop_type == "flat"){
+                                                                                $mainPrice = $item['product']['selling_price'] + $discountAmount ; 
+                                                                            }
+                                                                        }
+                                                                        else{
+                                                                            $productIdArray = explode(",",$productId); 
+                                                                            if(in_array($item['product']['id'],$productIdArray)){
+                                                                                if ($priceDrop->drop_type == "percentage") {
+                                                                                    $mainPrice = $item['product']['selling_price'] + (($priceDrop->amount / 100) * $item['product']['selling_price']);
+                                                                                } elseif ($priceDrop->drop_type == "flat") {
+                                                                                    $mainPrice = $item['product']['selling_price'] + $priceDrop->amount;
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }    
+                                                                }
+                                                            @endphp
                                                             <span class="cart-price">
                                                                 <del>₹ {{ $item['product']['buying_price'] }}</del>
-                                                                <ins>₹ {{ $item['product']['selling_price'] }}</ins>
+                                                                <ins>₹ @if(isset($priceDrop) && !empty($priceDrop)) {{ $mainPrice }} @else {{ $item['product']['selling_price'] }} @endif</ins>
                                                             </span>
                                                             <a href="#" data-index="{{ $key }}" class="remove remove_from_cart_button trash-icon close-product" data-cartid ="{{ $item['card_id'] }}">Remove</a>
                                                         </div>
@@ -351,11 +397,19 @@ window.dbCartItems = @json($cart ?? []);
         getCoupon();
 
         function applyCoupon(couponCode) {
+            console.log("=====coupon code=========",couponCode); 
             if (couponCode == '') {
                 showFlashMessage('Please enter coupon code!!!');
             }
-
-            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            let cartItems = ""; 
+            if(isLoggedIn){
+                cartItems = window.dbCartItems ; 
+                 console.log("========if=====cartItems=",cartItems);
+            }else{
+                cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                 console.log("========else=====cartItems=",cartItems);
+            }
+           
             let subTotal = 0;
             cartItems.forEach(function(item) {
                 subTotal += item.price * item.quantity;

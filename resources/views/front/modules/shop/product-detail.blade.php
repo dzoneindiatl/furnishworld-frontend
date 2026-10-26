@@ -12,13 +12,6 @@
         product-details-page
     @endpush
     <section class="site-content">
-    {{--<div class="offer-banner">
-            <div class="offer-banner-content">
-                <span class="offer-highlight">UPTO 70% OFF</span>
-                <span class="offer-divider">|</span>
-                <span class="offer-delivery">FREE DELIVERY AVAILABLE</span>
-            </div>
-        </div> --}}
         <div class="page-banner-section">
             <div class="page-banner">
                 <div class="container">
@@ -185,8 +178,54 @@
 
 
                                         <div class="single-product-price">
-                                            <del id="pdpStrikedMrp">₹ {{ floor($buying_price) }}</del>
-                                            <ins id="productPrice">₹ {{ floor($selling_price) }}</ins>
+                                            @php 
+                                                if(isset($priceDrop) && !empty($priceDrop)){
+                                                    $productId = $priceDrop->product_id;
+                                                    $discountAmount = $priceDrop->amount;
+                                                    if($priceDrop->gain_type == "drop"){
+                                                        if($productId == "all"){
+                                                            if($priceDrop->drop_type == "percentage"){
+                                                                $mainPrice =$selling_price - (($discountAmount/100) * $selling_price) ; 
+                                                            }
+                                                            if($priceDrop->drop_type == "flat"){
+                                                                $mainPrice = $selling_price - $discountAmount ; 
+                                                            }
+                                                        }
+                                                        else{
+                                                            $productIdArray = explode(",",$productId); 
+                                                            if(in_array($product->id,$productIdArray)){
+                                                                if ($priceDrop->drop_type == "percentage") {
+                                                                    $mainPrice = $selling_price - (($priceDrop->amount / 100) * $selling_price);
+                                                                } elseif ($priceDrop->drop_type == "flat") {
+                                                                    $mainPrice = $selling_price - $priceDrop->amount;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    if($priceDrop->gain_type == "gain"){
+                                                        if($productId == "all"){
+                                                            if($priceDrop->drop_type == "percentage"){
+                                                                $mainPrice = $selling_price + (($discountAmount/100) * $selling_price) ; 
+                                                            }
+                                                            if($priceDrop->drop_type == "flat"){
+                                                                $mainPrice = $selling_price + $discountAmount ; 
+                                                            }
+                                                        }
+                                                        else{
+                                                            $productIdArray = explode(",",$productId); 
+                                                            if(in_array($product->id,$productIdArray)){
+                                                                if ($priceDrop->drop_type == "percentage") {
+                                                                    $mainPrice = $selling_price + (($priceDrop->amount / 100) * $selling_price);
+                                                                } elseif ($priceDrop->drop_type == "flat") {
+                                                                    $mainPrice = $selling_price + $priceDrop->amount;
+                                                                }
+                                                            }
+                                                        }
+                                                    }    
+                                                }
+                                            @endphp
+                                            <del id="pdpStrikedMrp">₹{{ floor($buying_price) }}</del>
+                                            <ins id="productPrice">₹ @if(isset($priceDrop) && !empty($priceDrop) && $mainPrice > 0) {{ $mainPrice }} @else {{ floor($selling_price) }} @endif</ins>
                                             <span class="single-product-priceoff"
                                                 id="discountShow">{{ $discountText }}</span>
                                         </div>
@@ -302,7 +341,7 @@
                                                             data-producttype="{{ $product->product_type }}"
                                                             data-sku="{{ $product->sku }}"
                                                             data-price="{{ $buying_price }}"
-                                                            data-salePrice="{{ $selling_price }}"
+                                                            data-salePrice="@if(isset($priceDrop) && !empty($priceDrop) && $mainPrice > 0) {{ $mainPrice }} @else {{ floor($selling_price) }} @endif"
                                                             data-discountType="Flat"
                                                             data-discount="{{ $discount_product }}"
                                                             data-tax-arr="{{ e(json_encode($categoryTaxes)) }}">
@@ -317,7 +356,7 @@
                                                             data-producttype="{{ $product->product_type }}"
                                                             data-sku="{{ $product->sku }}"
                                                             data-price="{{ $buying_price }}"
-                                                            data-salePrice="{{ $selling_price }}"
+                                                            data-salePrice="@if(isset($priceDrop) && !empty($priceDrop) && $mainPrice > 0) {{ $mainPrice }} @else {{ floor($selling_price) }} @endif"
                                                             data-discountType="Flat"
                                                             data-discount="{{ $discount_product }}"
                                                             data-image = "{{ $product->images['first'] }}"
@@ -368,50 +407,60 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="save-extra-offers">
-                                                <h5>Save Extra with Below Offers</h5>
-                                                <div class="save-extra-offers-txt">
-                                                    <div class="diwali-banner">
-                                                        <div class="demand-label">
-                                                            Extended On Demand
-                                                        </div>
-
-                                                        <div class="diwali-heading">
-                                                            <span>Why</span>
-                                                            <span class="wait-text">Wait</span>
-                                                            <span>for Diwali Sale</span>
-                                                        </div>
-
-                                                        <div class="offer-circle">
-                                                            <strong>Upto 70% Off +</strong>
-                                                            <strong>20% Cashback</strong>
-
-                                                            <span class="offer-line"></span>
-
-                                                            <strong>Free Shipping</strong>
-                                                        </div>
-
-                                                        <div class="offer-bar">
-
-                                                            <div class="offer-content">
-                                                                <strong>FLAT Rs. 1,000 OFF</strong>
-                                                                <span>On Min. Purchase Of Rs. 5,999</span>
+                                            @if(isset($couponOnDetail) && !empty($couponOnDetail))
+                                                <div class="save-extra-offers">
+                                                    <h5>{{ $couponOnDetail->detail_page_heading }}</h5>
+                                                    <div class="save-extra-offers-txt">
+                                                        <div class="diwali-banner">
+                                                            <div class="demand-label">
+                                                                {{ $couponOnDetail->name }}
                                                             </div>
 
-                                                            <div class="coupon-box">
-                                                                <span>Use Code:</span>
-                                                                <input type="text" value="WWFD1K" class="coupon-inp">
-                                                                <div class="circle1"></div>
-                                                                <div class="circle2"></div>
+                                                            <div class="diwali-heading">
+                                                               {!! $couponOnDetail->small_description !!}
+                                                            </div>
+
+                                                            <div class="offer-circle">
+                                                                @php 
+                                                                $discount = ""; 
+                                                                if($couponOnDetail->discount_type == "flat"){
+                                                                    $discount =  'Flat Rs '. $couponOnDetail->discount_value." Off"; 
+                                                                }
+                                                                if($couponOnDetail->discount_type == "percentage"){
+                                                                    $discount = $couponOnDetail->discount_value."% Off";
+                                                                }
+
+                                                                @endphp 
+                                                                <strong>Upto {{ $discount }}  </strong>
+                                                                
+
+                                                          
+                                                            @if($couponOnDetail->has_free_shipping)
+                                                                <strong>Free Shipping</strong>
+                                                            @endif     
+                                                            </div>
+
+                                                            <div class="offer-bar">
+
+                                                                <div class="offer-content">
+                                                                    <strong>FLAT Rs.{{ $couponOnDetail->max_discount }} OFF</strong>
+                                                                    <span>On Min. Purchase Of Rs. {{ $couponOnDetail->min_cart_value }}</span>
+                                                                </div>
+
+                                                                <div class="coupon-box">
+                                                                    <span>Use Code:</span>
+                                                                    <input type="text" value="{{ $couponOnDetail->coupon_code }}" class="coupon-inp" readonly onclick="copyCouponCode(this);">
+                                                                    <div class="circle1"></div>
+                                                                    <div class="circle2"></div>
+                                                                </div>
+
                                                             </div>
 
                                                         </div>
 
                                                     </div>
-
                                                 </div>
-                                            </div>
-
+                                            @endif         
                                             <div class="product-benefit-summery">
                                                 <ul class="product-benefit-items">
                                                     <li>
@@ -1872,6 +1921,14 @@
                     $('#' + tabId).addClass('active');
                 });
             });
+            function copyCouponCode(element) {
+                    const text = element.value.trim();
+                    navigator.clipboard.writeText(text).then(function () {
+                        showFlashMessage('Copied!');
+                    }).catch(function (error) {
+                        console.error('Copy failed:', error);
+                    });
+                }
         </script>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.2.0/anime.min.js"></script>

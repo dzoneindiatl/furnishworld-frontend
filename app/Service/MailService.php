@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Mail\SendMail;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Auth;
 use App\Models\EmailTemplate; 
 
 Class MailService 
@@ -203,7 +202,7 @@ Class MailService
         info("-----subject----body----userData-------",[$subject,$body,$userData]);     
         $this->sendMail($email,$subject,$body); 
     }    
-    public function orderAccepted($order,$productDetail){
+    public function orderAccepted($order,$productDetail,$userData){
 
         \Log::info("cart Item =----",[$productDetail]); 
         \Log::info("Order Detail--------",[$order]); 
@@ -231,9 +230,8 @@ Class MailService
                         </tbody>
                     </table>';
         $data = EmailTemplate::where('name','Order Accepted')->first(); 
-        $userData = Auth::user();
-        $email = Auth::guard('customer')->user()->email;
-        $name = Auth::guard('customer')->user()->name; 
+        $email = $userData->email;
+        $name = $userData->name;
         $subject = $data->subject; 
         $body = $data->body; 
         $body = strtr($body, [

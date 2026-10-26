@@ -32,6 +32,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use FontLib\TrueType\Collection;
 use App\Models\OrderStatusHistory;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
@@ -115,7 +116,7 @@ class CheckoutController extends Controller
         $user = Auth::guard('customer')->user();
 
         $postData = $request->all();
-        if(isset($postData['addressId']) && !empty($postData['addressId'])){
+        if (isset($postData['addressId']) && !empty($postData['addressId'])) {
             $address = UserAddress::where('id', $postData['addressId'])->firstOrFail();
         } else {
             $address = new UserAddress();
@@ -141,62 +142,62 @@ class CheckoutController extends Controller
     public function placeOrder(Request $request)
     {
         $resp = [];
-        info("-----------request-all--------",[$request->all()]); 
+        info("-----------request-all--------", [$request->all()]);
         // Backend Order validation 
-        $login_user_id =  Auth::guard('customer')->user()->id;
+        $login_user_id = Auth::guard('customer')->user()->id;
         $userAvailableWalletAmount = $this->getuserWallet($login_user_id);
 
         $codMaxLimit = 12000;
         $invoiceSetting = InvoiceSetting::where('prefix', 'site')->first();
-        if(!empty($invoiceSetting)){
+        if (!empty($invoiceSetting)) {
             $codMaxLimit = $invoiceSetting->cash_on_limit;
         }
 
         $validation_error = '';
-        if(count($request->cartItems)==0){
+        if (count($request->cartItems) == 0) {
             $validation_error .= " </br> You should be alteast add 1 item in cart";
-        } 
-        if($request->sub_total < 1 && $request->payment_mode != 'wallet'){
+        }
+        if ($request->sub_total < 1 && $request->payment_mode != 'wallet') {
             $validation_error .= " </br>Your order amount should be greater than zero";
         }
-        
-        if($request->wallet_amount > $userAvailableWalletAmount){
-            $validation_error .= " </br> You dont have exact amount in wallet";
-        } 
-        if($request->payment_mode =='cod' && $request->sub_total > $codMaxLimit){
-            $validation_error .= " </br> You have reached maximum amount for COD order.";
-        } 
 
-        if(!empty($request->cartItems)){
-            foreach($request->cartItems as $cart){
+        if ($request->wallet_amount > $userAvailableWalletAmount) {
+            $validation_error .= " </br> You dont have exact amount in wallet";
+        }
+        if ($request->payment_mode == 'cod' && $request->sub_total > $codMaxLimit) {
+            $validation_error .= " </br> You have reached maximum amount for COD order.";
+        }
+
+        if (!empty($request->cartItems)) {
+            foreach ($request->cartItems as $cart) {
                 $productId = $cart['product_id'];
                 $quantity = $cart['quantity'];
 
                 $product = Product::where('id', $productId)->first();
-                if(!empty($product)){
-                    if($product->in_stock == 0){
+                if (!empty($product)) {
+                    if ($product->in_stock == 0) {
                         $validation_error .= ' </br> You have some out of stock product into order items';
                     }
 
                     $product_valient_sku = '';
-                    if(!empty($product_sku = $product->sku)){
+                    if (!empty($product_sku = $product->sku)) {
                         $product_valient_sku .= strtolower($product_sku = $product->sku);
                     }
-                    if(!empty($request->cartItems['selectedVariants']) && !empty($request->cartItems['selectedVariants']['colour'])){
-                        $product_valient_sku .= '_'. strtolower($request->cartItems['selectedVariants']['colour']);
+                    if (!empty($request->cartItems['selectedVariants']) && !empty($request->cartItems['selectedVariants']['colour'])) {
+                        $product_valient_sku .= '_' . strtolower($request->cartItems['selectedVariants']['colour']);
                     }
-                    if(!empty($request->cartItems['selectedVariants']) && !empty($request->cartItems['selectedVariants']['size'])){
-                        $product_valient_sku .= '_'. strtolower($request->cartItems['selectedVariants']['size']);
+                    if (!empty($request->cartItems['selectedVariants']) && !empty($request->cartItems['selectedVariants']['size'])) {
+                        $product_valient_sku .= '_' . strtolower($request->cartItems['selectedVariants']['size']);
                     }
                     $qtyVarient = ProductVariantCombination::where('product_id', $productId)->where('sku', $product_valient_sku)->select('qty')->first();
-                    if(!empty($qtyVarient)){
-                        if($qtyVarient->qty==0){
+                    if (!empty($qtyVarient)) {
+                        if ($qtyVarient->qty == 0) {
                             $validation_error .= ' </br> You have some out of stock product varient into order items';
-                        } else if($qtyVarient->qty < $quantity){
+                        } else if ($qtyVarient->qty < $quantity) {
                             $validation_error .= ' </br> Product does not have suffcient quantity.';
                         }
                     }
-                    if(!empty($product->max_selling_units) && $product->max_selling_units!=0 &&  $quantity > $product->max_selling_units){
+                    if (!empty($product->max_selling_units) && $product->max_selling_units != 0 && $quantity > $product->max_selling_units) {
                         $validation_error .= ' </br> You have reached maximum quantity for product.';
                     }
 
@@ -207,14 +208,14 @@ class CheckoutController extends Controller
         }
 
         // Apply Coupon VAlidation 
-        if(!empty($request->coupon_id)){
+        if (!empty($request->coupon_id)) {
             $couponDetail = Coupon::where('id', $request->coupon_id)->where('is_active', 1)->first();
-            if(empty($couponDetail)){
-                    $validation_error .= ' </br> Your coupon does not activated';
+            if (empty($couponDetail)) {
+                $validation_error .= ' </br> Your coupon does not activated';
             } else {
                 $couponStatus = $this->applyCoupon($couponDetail->coupon_code, $request->sub_total, $request->cart_items);
-                if($couponStatus->original['status']==false){
-                    $validation_error .=   " </br> " . $couponStatus->original['message'];
+                if ($couponStatus->original['status'] == false) {
+                    $validation_error .= " </br> " . $couponStatus->original['message'];
                 }
                 // Apply Coupon VAlidation 
             }
@@ -229,9 +230,9 @@ class CheckoutController extends Controller
         }
         // Backend Order validation 
 
-        
 
-        $ip_address = $request->ip(); 
+
+        $ip_address = $request->ip();
         if ($request->payment_mode == 'cod') {
             $order_id = $this->createOrder(
                 $ip_address,
@@ -260,12 +261,12 @@ class CheckoutController extends Controller
                 "partial_payment" => false,
                 "first_payment_min_amount" => 200,
                 "notes" => [
-                    "coupon_id"         => $request->coupon_id,
-                    "coupon_discount"   => $request->coupon_discount,
-                    "shippingcharge"    => $request->shippingcharge,
-                    "billing_id"        => $request->billing_id,
-                    "shipping_id"       => $request->shipping_id,
-                    "wallet_amount"   => $request->wallet_amount,
+                    "coupon_id" => $request->coupon_id,
+                    "coupon_discount" => $request->coupon_discount,
+                    "shippingcharge" => $request->shippingcharge,
+                    "billing_id" => $request->billing_id,
+                    "shipping_id" => $request->shipping_id,
+                    "wallet_amount" => $request->wallet_amount,
                 ]
             ];
 
@@ -284,12 +285,188 @@ class CheckoutController extends Controller
             }
 
             return response()->json($resp);
+        } elseif ($request->payment_mode == 'ccavenue') {
+            $gatewayConfig = config('services.ccavenue');
+            if (empty($gatewayConfig['merchant_id']) || empty($gatewayConfig['working_key']) || empty($gatewayConfig['access_code'])) {
+                Log::error('CCAvenue payment is not configured.');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Online payment is temporarily unavailable. Please try another payment method.',
+                ], 503);
+            }
+
+            $billingAddress = UserAddress::where('id', $request->billing_id)
+                ->where('user_id', $login_user_id)
+                ->first();
+            if (!$billingAddress) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please select a valid billing address.',
+                ], 422);
+            }
+
+            $gatewayOrderId = Str::upper(Str::random(20));
+            $cacheKey = 'ccavenue_checkout:' . $gatewayOrderId;
+            Cache::put($cacheKey, [
+                'user_id' => $login_user_id,
+                'ip_address' => $ip_address,
+                'amount' => (float) $request->sub_total,
+                'coupon_id' => $request->coupon_id,
+                'coupon_discount' => (float) $request->coupon_discount,
+                'wallet_amount' => (float) $request->wallet_amount,
+                'shippingcharge' => (float) $request->shippingcharge,
+                'billing_id' => $request->billing_id,
+                'shipping_id' => $request->shipping_id,
+                'cart_items' => $request->cartItems,
+            ], now()->addHours(2));
+
+            $gatewayFields = [
+                'merchant_id' => $gatewayConfig['merchant_id'],
+                'order_id' => $gatewayOrderId,
+                'currency' => 'INR',
+                'amount' => number_format((float) $request->sub_total, 2, '.', ''),
+                'redirect_url' => $gatewayConfig['redirect_url'] ?: route('checkout.ccavenue.callback'),
+                'cancel_url' => $gatewayConfig['cancel_url'] ?: route('checkout.ccavenue.callback'),
+                'language' => 'EN',
+                'billing_name' => $billingAddress->name,
+                'billing_address' => $billingAddress->address,
+                'billing_city' => optional($billingAddress->city)->name,
+                'billing_state' => optional($billingAddress->state)->name,
+                'billing_zip' => $billingAddress->postal_code,
+                'billing_country' => optional($billingAddress->country)->name,
+                'billing_tel' => $billingAddress->phone_number,
+                'billing_email' => $billingAddress->email,
+            ];
+
+            try {
+                $encryptedRequest = $this->encryptCcavenueRequest(
+                    http_build_query($gatewayFields, '', '&', PHP_QUERY_RFC3986),
+                    $gatewayConfig['working_key']
+                );
+            } catch (Exception $exception) {
+                Cache::forget($cacheKey);
+                Log::error('Unable to encrypt CCAvenue checkout request.', [
+                    'exception' => $exception->getMessage(),
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unable to start online payment. Please try again.',
+                ], 500);
+            }
+
+            $gatewayAction = $gatewayConfig['gateway_url'];
+            if (!preg_match('/(?:\?|&)command=/', $gatewayAction)) {
+                $gatewayAction .= (str_contains($gatewayAction, '?') ? '&' : '?') . 'command=initiateTransaction';
+            }
+
+            $resp['success'] = true;
+            $resp['ccavenue'] = [
+                'action' => $gatewayAction,
+                'encRequest' => $encryptedRequest,
+                'access_code' => $gatewayConfig['access_code'],
+            ];
+            return response()->json($resp);
+       
+            } elseif ($request->payment_mode === 'payu') {
+            $payu = config('services.payu');
+
+            if (empty($payu['key']) || empty($payu['salt']) || empty($payu['url'])) {
+                Log::error('PayU payment is not configured.');
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Online payment is temporarily unavailable. Please try another payment method.',
+                ], 503);
+            }
+
+            $billingAddress = UserAddress::where('id', $request->billing_id)
+                ->where('user_id', $login_user_id)
+                ->first();
+
+            if (!$billingAddress) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please select a valid billing address.',
+                ], 422);
+            }
+
+            // Replace this with your server-calculated payable amount.
+            // Do not use a total supplied only by the browser in production.
+            $payableAmount = round((float) $request->sub_total, 2);
+            $amount = number_format($payableAmount, 2, '.', '');
+
+            $txnid = 'PAYU' . Str::upper(Str::random(20));
+
+            Cache::put('payu_checkout:' . $txnid, [
+                'user_id' => $login_user_id,
+                'ip_address' => $request->ip(),
+                'amount' => $amount,
+                'coupon_id' => $request->coupon_id,
+                'coupon_discount' => (float) $request->coupon_discount,
+                'wallet_amount' => (float) $request->wallet_amount,
+                'shippingcharge' => (float) $request->shippingcharge,
+                'billing_id' => $request->billing_id,
+                'shipping_id' => $request->shipping_id,
+                'cart_items' => $request->cartItems,
+            ], now()->addHours(2));
+
+            $productInfo = 'FurnishWorld order';
+            $firstName = $billingAddress->name ?: Auth::guard('customer')->user()->name;
+            $email = $billingAddress->email ?: Auth::guard('customer')->user()->email;
+
+            $fields = [
+                'key' => $payu['key'],
+                'txnid' => $txnid,
+                'amount' => $amount,
+                'productinfo' => $productInfo,
+                'firstname' => $firstName,
+                'email' => $email,
+                'phone' => $billingAddress->phone_number,
+                'surl' => route('payu.response'),
+                'furl' => route('payu.response'),
+                'udf1' => '',
+                'udf2' => '',
+                'udf3' => '',
+                'udf4' => '',
+                'udf5' => '',
+            ];
+
+            // PayU India's standard hosted-checkout request hash.
+            $hashParts = [
+                $fields['key'],
+                $fields['txnid'],
+                $fields['amount'],
+                $fields['productinfo'],
+                $fields['firstname'],
+                $fields['email'],
+                $fields['udf1'],
+                $fields['udf2'],
+                $fields['udf3'],
+                $fields['udf4'],
+                $fields['udf5'],
+                '',
+                '',
+                '',
+                '',
+                '',
+                $payu['salt'],
+            ];
+
+            $fields['hash'] = hash('sha512', implode('|', $hashParts));
+
+            return response()->json([
+                'success' => true,
+                'payu' => [
+                    'action' => $payu['url'],
+                    'fields' => $fields,
+                ],
+            ]);
         } elseif ($request->payment_mode == 'wallet') {
             $order_number = $this->random_strings(8);
 
-            $order_id = $this->createOrder($ip_address,$request->payment_mode, $request->wallet_amount, 'received', $request->coupon_id, $request->coupon_discount, $request->wallet_amount, $request->shippingcharge, $request->billing_id, $request->shipping_id, $request->cartItems);
+            $order_id = $this->createOrder($ip_address, $request->payment_mode, $request->wallet_amount, 'received', $request->coupon_id, $request->coupon_discount, $request->wallet_amount, $request->shippingcharge, $request->billing_id, $request->shipping_id, $request->cartItems);
             Order::find($order_id)->update([
-                'payment_status'      => 'paid',
+                'payment_status' => 'paid',
             ]);
             $resp['success'] = true;
             $resp['url'] = route('front-order.success', ['order_id' => encrypt($order_id)]);
@@ -301,7 +478,7 @@ class CheckoutController extends Controller
     public function checkout_callback(Request $request)
     {
         $razorpayOrderId = $request->razorpay_order_id;
-        $ip_address = $request->ip(); 
+        $ip_address = $request->ip();
         // Call Razorpay to get all payments for this order
         $paymentsResponse = $this->callApi(
             "https://api.razorpay.com/v1/orders/{$razorpayOrderId}/payments",
@@ -362,7 +539,7 @@ class CheckoutController extends Controller
                 // Save payment ID
                 Order::find($order_id)->update([
                     'razorpay_payment_id' => $latestPayment['id'],
-                    'payment_status'      => 'paid',
+                    'payment_status' => 'paid',
                 ]);
 
                 session()->forget('cart_items');
@@ -374,14 +551,209 @@ class CheckoutController extends Controller
         return redirect()->back();
     }
 
-
-    public function createOrder($ip_address,$payment_method, $amount, $order_status, $coupon_id, $coupon_discount, $wallet_amount = 0, $shippingcharge, $billingId, $shippingId, $checkout_data)
+    public function ccavenueCallback(Request $request)
     {
+        $encryptedResponse = $request->input('encResp');
+        if (!is_string($encryptedResponse) || $encryptedResponse === '') {
+            Log::warning('CCAvenue callback did not include an encrypted response.');
+            return redirect()->route('product.checkoutBag')->with('error', 'Payment could not be verified. Please try again.');
+        }
 
+        $workingKey = config('services.ccavenue.working_key');
+        if (empty($workingKey)) {
+            Log::error('CCAvenue callback received while the working key is not configured.');
+            return redirect()->route('product.checkoutBag')->with('error', 'Payment could not be verified. Please contact support.');
+        }
+
+        try {
+            $responseString = $this->decryptCcavenueResponse($encryptedResponse, $workingKey);
+            parse_str($responseString, $gatewayResponse);
+        } catch (Exception $exception) {
+            Log::warning('CCAvenue callback response could not be decrypted.', [
+                'exception' => $exception->getMessage(),
+            ]);
+            return redirect()->route('product.checkoutBag')->with('error', 'Payment could not be verified. Please try again.');
+        }
+
+        $gatewayOrderId = $gatewayResponse['order_id'] ?? '';
+        $cacheKey = 'ccavenue_checkout:' . $gatewayOrderId;
+        $checkout = $gatewayOrderId !== '' ? Cache::get($cacheKey) : null;
+        if (!$checkout) {
+            Log::warning('CCAvenue callback does not match an active checkout.', [
+                'gateway_order_id' => $gatewayOrderId,
+            ]);
+            return redirect()->route('product.checkoutBag')->with('error', 'This payment session has expired. Please place your order again.');
+        }
+
+        $expectedAmount = number_format((float) $checkout['amount'], 2, '.', '');
+        $receivedAmount = isset($gatewayResponse['amount']) ? number_format((float) $gatewayResponse['amount'], 2, '.', '') : '';
+        $receivedMerchantId = $gatewayResponse['merchant_id'] ?? null;
+        if (
+            strcasecmp($gatewayResponse['order_status'] ?? '', 'Success') !== 0 ||
+            strtoupper($gatewayResponse['currency'] ?? '') !== 'INR' ||
+            $receivedAmount !== $expectedAmount ||
+            ($receivedMerchantId !== null && (string) $receivedMerchantId !== (string) config('services.ccavenue.merchant_id'))
+        ) {
+            Cache::forget($cacheKey);
+            Log::warning('CCAvenue payment was not successful or did not match the checkout.', [
+                'gateway_order_id' => $gatewayOrderId,
+                'order_status' => $gatewayResponse['order_status'] ?? null,
+                'received_amount' => $gatewayResponse['amount'] ?? null,
+            ]);
+            return redirect()->route('product.checkoutBag')->with('error', 'Payment was not completed. You can try placing the order again.');
+        }
+
+        $orderId = $this->createOrder(
+            $checkout['ip_address'],
+            'ccavenue',
+            $checkout['amount'],
+            'paid',
+            $checkout['coupon_id'],
+            $checkout['coupon_discount'],
+            $checkout['wallet_amount'],
+            $checkout['shippingcharge'],
+            $checkout['billing_id'],
+            $checkout['shipping_id'],
+            $checkout['cart_items'],
+            (int) $checkout['user_id']
+        );
+        Order::where('id', $orderId)->update(['payment_status' => 'paid']);
+        Cache::forget($cacheKey);
+
+        return redirect()->route('ccavenue.order.success', ['order_id' => encrypt($orderId)]);
+    }
+
+
+    public function payuCallback(Request $request)
+    {
+        $payu = config('services.payu');
+        $response = $request->all();
+
+        $txnid = $response['txnid'] ?? '';
+        $status = $response['status'] ?? '';
+        $checkout = $txnid !== ''
+            ? Cache::get('payu_checkout:' . $txnid)
+            : null;
+
+        if (empty($payu['key']) || empty($payu['salt']) || empty($response['hash'])) {
+            Log::warning('PayU callback is missing required verification data.');
+
+            return redirect()->route('product.checkoutBag')
+                ->with('error', 'Payment could not be verified. Please contact support.');
+        }
+
+        $reverseHashParts = [
+            $payu['salt'],
+            $status,
+            '',
+            '',
+            '',
+            '',
+            '',
+            $response['udf5'] ?? '',
+            $response['udf4'] ?? '',
+            $response['udf3'] ?? '',
+            $response['udf2'] ?? '',
+            $response['udf1'] ?? '',
+            $response['email'] ?? '',
+            $response['firstname'] ?? '',
+            $response['productinfo'] ?? '',
+            $response['amount'] ?? '',
+            $txnid,
+            $payu['key'],
+        ];
+
+        $expectedHash = hash('sha512', implode('|', $reverseHashParts));
+
+        if (!hash_equals($expectedHash, (string) $response['hash'])) {
+            Log::warning('PayU callback hash verification failed.', ['txnid' => $txnid]);
+
+            return redirect()->route('product.checkoutBag')
+                ->with('error', 'Payment could not be verified. Please try again.');
+        }
+
+        if (!$checkout) {
+            Log::warning('PayU callback has no matching active checkout.', ['txnid' => $txnid]);
+
+            return redirect()->route('product.checkoutBag')
+                ->with('error', 'This payment session has expired. Please contact support.');
+        }
+
+        $receivedAmount = number_format((float) ($response['amount'] ?? 0), 2, '.', '');
+        $expectedAmount = number_format((float) $checkout['amount'], 2, '.', '');
+
+        if (
+            ($response['key'] ?? '') !== $payu['key'] ||
+            $receivedAmount !== $expectedAmount
+        ) {
+            Log::warning('PayU callback did not match the checkout.', ['txnid' => $txnid]);
+
+            return redirect()->route('product.checkoutBag')
+                ->with('error', 'Payment could not be matched to your order. Please contact support.');
+        }
+
+        if (strtolower((string) $status) !== 'success') {
+            Cache::forget('payu_checkout:' . $txnid);
+
+            return redirect()->route('product.checkoutBag')
+                ->with('error', 'Payment was not completed. You can try placing the order again.');
+        }
+
+        $orderId = $this->createOrder(
+            $checkout['ip_address'],
+            'payu',
+            (float) $checkout['amount'],
+            'paid',
+            $checkout['coupon_id'],
+            $checkout['coupon_discount'],
+            $checkout['wallet_amount'],
+            $checkout['shippingcharge'],
+            $checkout['billing_id'],
+            $checkout['shipping_id'],
+            $checkout['cart_items'],
+            (int) $checkout['user_id']
+        );
+        Order::where('id', $orderId)->update(['payment_status' => 'paid']);
+        Cache::forget('payu_checkout:' . $txnid);
+        return redirect()->route('payu.order.success', [
+            'order_id' => encrypt($orderId),
+        ]);
+    }
+    private function encryptCcavenueRequest(string $plainText, string $workingKey): string
+    {
+        $key = hex2bin(md5($workingKey));
+        $initialVector = pack('C*', ...range(0, 15));
+        $encrypted = openssl_encrypt($plainText, 'AES-128-CBC', $key, OPENSSL_RAW_DATA, $initialVector);
+        if ($encrypted === false) {
+            throw new Exception('CCAvenue request encryption failed.');
+        }
+        return bin2hex($encrypted);
+    }
+
+    private function decryptCcavenueResponse(string $encryptedText, string $workingKey): string
+    {
+        $key = hex2bin(md5($workingKey));
+        $encrypted = ctype_xdigit($encryptedText) ? hex2bin($encryptedText) : false;
+        if ($encrypted === false) {
+            throw new Exception('CCAvenue response is not valid hexadecimal data.');
+        }
+        $initialVector = pack('C*', ...range(0, 15));
+        $decrypted = openssl_decrypt($encrypted, 'AES-128-CBC', $key, OPENSSL_RAW_DATA, $initialVector);
+        if ($decrypted === false) {
+            throw new Exception('CCAvenue response decryption failed.');
+        }
+
+        return $decrypted;
+    }
+
+
+    public function createOrder($ip_address, $payment_method, $amount, $order_status, $coupon_id, $coupon_discount, $wallet_amount = 0, $shippingcharge, $billingId, $shippingId, $checkout_data, $userId = null)
+    {
         $debitFromWallet = 0;
-        $user_id =  Auth::guard('customer')->user()->id;
-        $customerName = Auth::guard('customer')->user()->name ?? 'Customer';
-        $customerEmail = Auth::guard('customer')->user()->email ?? 'Customer';
+        $user = $userId ? User::findOrFail($userId) : Auth::guard('customer')->user();
+        $user_id = $user->id;
+        $customerName = $user->name ?? 'Customer';
+        $customerEmail = $user->email ?? 'Customer';
 
         $shipping_id = $billing_id = null;
         $shippingItems = [];
@@ -416,7 +788,7 @@ class CheckoutController extends Controller
             $couponChildCategoryIds = !empty($coupon->child_category) ? array_filter(json_decode($coupon->child_category, true)) : null;
             $order->coupon_name = $coupon->coupon_code;
             $order->coupon_discount = round($coupon_discount, 2);
-            $discount  = round($coupon_discount, 2);
+            $discount = round($coupon_discount, 2);
         }
 
         // $order->order_number = $this->random_strings(8);
@@ -436,7 +808,7 @@ class CheckoutController extends Controller
         $order->ip_address = $ip_address;
         $order->save();
 
-        $this->mailService->orderAccepted($order,$checkout_data);
+        $this->mailService->orderAccepted($order, $checkout_data, $user);
 
         $order_id = $order->id;
         if (!empty($coupon)) {
@@ -479,9 +851,9 @@ class CheckoutController extends Controller
                 if (empty($couponSubCategoryIds)) {
                     $applyDiscount = true;
                 } elseif (in_array($productSubCategoryId, $couponSubCategoryIds)) {
-                    if(empty($couponChildCategoryIds)){
+                    if (empty($couponChildCategoryIds)) {
                         $applyDiscount = true;
-                    } elseif (in_array($productChildCategoryId, $couponChildCategoryIds)){
+                    } elseif (in_array($productChildCategoryId, $couponChildCategoryIds)) {
                         $applyDiscount = true;
                     }
                 }
@@ -502,9 +874,9 @@ class CheckoutController extends Controller
                 if (empty($couponSubCategoryIds)) {
                     $applyDiscount = true;
                 } elseif (in_array($productSubCategoryId, $couponSubCategoryIds)) {
-                    if(empty($couponChildCategoryIds)){
+                    if (empty($couponChildCategoryIds)) {
                         $applyDiscount = true;
-                    } elseif (in_array($productChildCategoryId, $couponChildCategoryIds)){
+                    } elseif (in_array($productChildCategoryId, $couponChildCategoryIds)) {
                         $applyDiscount = true;
                     }
                 }
@@ -520,9 +892,9 @@ class CheckoutController extends Controller
             $order_items->selling_price = $item['sellingPrice'];
             $order_items->discount_amount = $total_discount;
             $order_items->tax_amount = $item['tax_price'];
-            $order_items->sub_total = (($item['quantity'] * $item['sellingPrice']) - ($item['tax_price'] +  $total_discount));
+            $order_items->sub_total = (($item['quantity'] * $item['sellingPrice']) - ($item['tax_price'] + $total_discount));
             $order_items->total = (($item['quantity'] * $item['sellingPrice']) - $total_discount);
-            $order_items->combination =  json_encode($item['selectedVariants']);
+            $order_items->combination = json_encode($item['selectedVariants']);
             $order_items->order_status_id = 1; // Pending
             $order_items->status = 'pending';
             $order_items->save();
@@ -698,12 +1070,12 @@ class CheckoutController extends Controller
         $address = UserAddress::getShippingAddress('shipping', $addressId);
         $pincode = $address['shipping_pincode'];
 
-        if(!empty($request->productData)){
+        if (!empty($request->productData)) {
             $productIds = array_column($request->productData, 'productId');
             $product = Product::whereIn('id', $productIds)->select('weight', 'weight_type')->get();
             $totalWeight = 0;
             foreach ($product as $products) {
-                if(!empty($products->weight)){
+                if (!empty($products->weight)) {
                     $weight = @$products->weight;
                     if ($products->weight_type == 'kg') {
                         $weight = @$products->weight * 1000;
@@ -714,7 +1086,7 @@ class CheckoutController extends Controller
         }
 
         $productweight = $totalWeight ?? 250;
-        $shippingPrice =  getShippingCharge($pincode, $productweight, $totalAmountcart);
+        $shippingPrice = getShippingCharge($pincode, $productweight, $totalAmountcart);
         return response()->json([
             'success' => true,
             'message' => 'Shipping Price fetched successfully.',
@@ -754,15 +1126,15 @@ class CheckoutController extends Controller
     {
         $userwallet = 0;
         $userwalletArr = User::where('id', $userId)->first();
-        if(!empty($userwalletArr)){
+        if (!empty($userwalletArr)) {
             $userwallet = $userwalletArr->wallet_avl_balance;
         }
         return $userwallet;
     }
 
-    public function applyCoupon($coupon_code=null, $cart_total=null, $cart_items=null)
+    public function applyCoupon($coupon_code = null, $cart_total = null, $cart_items = null)
     {
-        $userId =  Auth::guard('customer')->check() ? Auth::guard('customer')->id() : null;
+        $userId = Auth::guard('customer')->check() ? Auth::guard('customer')->id() : null;
 
         $coupon = Coupon::where('coupon_code', $coupon_code)
             ->where('is_active', 1)
@@ -779,7 +1151,7 @@ class CheckoutController extends Controller
             return response()->json(['status' => false, 'message' => 'Invalid or inactive coupon.']);
         }
         $checkCategory = $coupon->category_id;
-        $checkSubCat   = !empty($coupon->sub_categories) ? array_filter(json_decode($coupon->sub_categories, true)) : null;
+        $checkSubCat = !empty($coupon->sub_categories) ? array_filter(json_decode($coupon->sub_categories, true)) : null;
         if ($checkCategory || $checkSubCat) {
             $productIds = collect($cart_items)
                 ->pluck('productId')
@@ -796,7 +1168,7 @@ class CheckoutController extends Controller
                 return response()->json(['status' => false, 'message' => 'Cart contains no valid public products.']);
             }
 
-            $productCategoryIds    = $products->pluck('main_category_id')->unique()->toArray();
+            $productCategoryIds = $products->pluck('main_category_id')->unique()->toArray();
             $productSubCategoryIds = $products->pluck('main_sub_category_id')->unique()->toArray();
 
             // Category check
@@ -891,76 +1263,75 @@ class CheckoutController extends Controller
         }
 
         return response()->json([
-            'status'   => true,
-            'message'  => 'Coupon applied successfully.',
+            'status' => true,
+            'message' => 'Coupon applied successfully.',
             'discount' => round($discount, 2),
-            'coupon'   => $coupon->only('id', 'coupon_code', 'discount_type', 'discount_value'),
+            'coupon' => $coupon->only('id', 'coupon_code', 'discount_type', 'discount_value'),
         ]);
     }
 
-    public function orderCancelled(Request $request){       
+    public function orderCancelled(Request $request)
+    {
         $request->validate([
             'orderId' => 'required|integer|exists:orders,id',
         ]);
- 
-        $orderStatusArray = ['Shipped','out-for-delivery','in-transit','Delivered'];
+
+        $orderStatusArray = ['Shipped', 'out-for-delivery', 'in-transit', 'Delivered'];
         $order = OrderItem::with('order')->where('order_id', $request->orderId)->firstOrFail();
-        if(in_array($order->order->status,$orderStatusArray)){
+        if (in_array($order->order->status, $orderStatusArray)) {
             return response()->json([
-                'status'=>true,
-                'message'=>'Your Order is in '.$order->status.' So You can not cancel this order Now'
+                'status' => true,
+                'message' => 'Your Order is in ' . $order->status . ' So You can not cancel this order Now'
             ]);
-        }
-        else{
-            if($order->order->payment_method == "cod" && $order->order->payment_status == "unpaid"){
-                Order::where('id',$request->orderId)->update([
-                    'status'=>'cancelled'
+        } else {
+            if ($order->order->payment_method == "cod" && $order->order->payment_status == "unpaid") {
+                Order::where('id', $request->orderId)->update([
+                    'status' => 'cancelled'
                 ]);
- 
-                OrderItem::where('order_id',$request->orderId)->update([
-                    'status'=>'cancelled'
+
+                OrderItem::where('order_id', $request->orderId)->update([
+                    'status' => 'cancelled'
                 ]);
-                $userData = User::where('id',$order->order->user_id)->first();
+                $userData = User::where('id', $order->order->user_id)->first();
                 $orderData = OrderItem::with('order')->where('order_id', $request->orderId)->get();
-                info("----userData-----",["UserData:",$userData, "orderData:",$orderData]);
-                $this->mailService->orderCancelled($userData,$orderData);
+                info("----userData-----", ["UserData:", $userData, "orderData:", $orderData]);
+                $this->mailService->orderCancelled($userData, $orderData);
                 return response()->json([
-                    'status'=>true,
-                    'message'=>"Your Order is successfully Cancelled"
+                    'status' => true,
+                    'message' => "Your Order is successfully Cancelled"
                 ]);
-            }
-            else{
-                if(($order->order->payment_method == "wallet" || $order->order->payment_method == "razorpay") && $order->order->payment_status == "paid"){
- 
-                    $userData = User::where('id',$order->order->user_id)->first();
+            } else {
+                if (($order->order->payment_method == "wallet" || $order->order->payment_method == "razorpay") && $order->order->payment_status == "paid") {
+
+                    $userData = User::where('id', $order->order->user_id)->first();
                     $newAmount = $order->order->total + $userData->wallet_avl_balance;
-                   
-                    User::where('id',$userData->id)->update([
-                        'wallet_avl_balance'=>$newAmount
+
+                    User::where('id', $userData->id)->update([
+                        'wallet_avl_balance' => $newAmount
                     ]);
-                     $orderData = OrderItem::with('order')->where('order_id', $request->orderId)->get();
-                    $this->mailService->orderCancelled($userData,$orderData);
-                   
-                    $history = new WalletHistory ;
+                    $orderData = OrderItem::with('order')->where('order_id', $request->orderId)->get();
+                    $this->mailService->orderCancelled($userData, $orderData);
+
+                    $history = new WalletHistory;
                     $history->user_id = $userData->id;
                     $history->order_id = $order->order->id;
-                    $history->amount = $order->total;  
-                    $history->gst_amount = 0.00 ;
+                    $history->amount = $order->total;
+                    $history->gst_amount = 0.00;
                     $history->type = "credit";
                     $history->transaction_id = null;
                     $history->save();
- 
-                    DB::Transaction(function() use ($order){
-                        Order::where('id',$order->order->id)->update([
-                            'status'=>'cancelled'
+
+                    DB::Transaction(function () use ($order) {
+                        Order::where('id', $order->order->id)->update([
+                            'status' => 'cancelled'
                         ]);
- 
-                        OrderItem::where('order_id',$order->order->id)->update([
-                            'status'=>'cancelled'
+
+                        OrderItem::where('order_id', $order->order->id)->update([
+                            'status' => 'cancelled'
                         ]);
                     });
                 }
-               
+
             }
         }
     }

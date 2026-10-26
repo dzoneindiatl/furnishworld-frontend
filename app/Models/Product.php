@@ -119,7 +119,7 @@ class Product extends Model
     public function reviews()
     {
         return $this->hasMany(UserReview::class, 'product_id')
-            ->where('is_active', 1);
+            ->where('is_active', "1");
     }
 
     public function getWishlists()

@@ -219,10 +219,10 @@ $(document).ready(function () {
 });
 
 /*Same as billing address*/
-$('.select_shipping_address').click(function(){
-    if($(this).prop('checked') === true){
+$('.select_shipping_address').click(function () {
+    if ($(this).prop('checked') === true) {
         $('#main_shipping').slideUp();
-        $('#same_as_billing').prop('checked',false);        
+        $('#same_as_billing').prop('checked', false);
     }
 });
 
@@ -230,7 +230,7 @@ function toggleShippingAddressForm() {
     const checkbox = document.getElementById('same_as_billing');
     if (checkbox.checked) {
         $('.select_shipping_address').prop('checked', false);
-    } 
+    }
 }
 
 // Payemtn method COD and wallet should not be select together
@@ -238,12 +238,12 @@ function togglewalletCod() {
     const checkbox = document.getElementById('payment1');
     if (checkbox.checked) {
         $('#payment3').prop('checked', false);
-    }  
+    }
 }
 
-$('#payment3').click(function(){
-    if($(this).prop('checked') === true){
-        $('#payment1').prop('checked',false);        
+$('#payment3').click(function () {
+    if ($(this).prop('checked') === true) {
+        $('#payment1').prop('checked', false);
     }
 });
 // Payemtn method COD and wallet should not be select together
@@ -268,12 +268,12 @@ $.ajaxSetup({
     }
 });
 var totalShippingCharge = 0;
-$('#pay_now').on('click', function (e) { 
+$('#pay_now').on('click', function (e) {
     $('.error-msg').html("");
 
     var cartItems = getCartItems();
     console.log(' cart items ', cartItems.length);
-    if (parseInt(cartItems.length) === 0) { 
+    if (parseInt(cartItems.length) === 0) {
         $('#pay_now').remove();
         $('#shoopping_continue').show();
         $('.error-msg').html("Your cart is empty, Please add some product in cart.");
@@ -283,15 +283,15 @@ $('#pay_now').on('click', function (e) {
     // Adddress relevant validation
     let that = $(this);
     let selectedBilling = $('.select_billing_address:checked').val();
-    console.log("selectedBilling--------",selectedBilling); 
+    console.log("selectedBilling--------", selectedBilling);
     let isSameAsBillingChecked = $('#same_as_billing').is(':checked');
-    console.log("isSameAsBillingChecked------------",isSameAsBillingChecked); 
+    console.log("isSameAsBillingChecked------------", isSameAsBillingChecked);
     let selectedShipping = $('.select_shipping_address:checked').val();
     if (!selectedBilling) {
         $('.error-msg').html("Please select a billing address.");
         e.preventDefault();
         return;
-    }  
+    }
     if (!isSameAsBillingChecked && !selectedShipping) {
         $('.error-msg').html("Please select a shipping address or check 'Same as billing address'.");
         e.preventDefault();
@@ -306,20 +306,20 @@ $('#pay_now').on('click', function (e) {
     console.log('payonline : ', $('[name="pay_online"]:checked').length);
     console.log('wallet_online  : ', $('[name="wallet_online"]:checked').length);
 
-    if($('[name="pay_online"]:checked').length == 0 && $('[name="wallet_online"]:checked').length == 0){
+    if ($('[name="pay_online"]:checked').length == 0 && $('[name="wallet_online"]:checked').length == 0 && $('[name="cc_payment"]:checked').length == 0) {
         e.preventDefault();
-         $('.error-msg').html("Please select any payment method.");
+        $('.error-msg').html("Please select any payment method.");
         return;
     }
     // payment method validation
-    
+
     // Quantity Validation on checkout page
     var isQuantity = true;
     cartItems.forEach(function (item) {
         let variants = item.selectedVariants || {};
         let product_sku = item.name.toLowerCase();
         let variant_sku = product_sku.toLowerCase();
-        if(item.productType==2){
+        if (item.productType == 2) {
             // variant_sku = product_sku + '_' + variants.colour.toLowerCase() + '_' + variants.size.toLowerCase();
             variant_sku = product_sku + '_' + variants.color.toLowerCase();
         }
@@ -337,76 +337,76 @@ $('#pay_now').on('click', function (e) {
                 _token: $('meta[name="csrf-token"]').attr('content'),
                 product_id: item.productId,
                 sku: variant_sku,
-                },
+            },
             success: function (response) {
                 getExactVariantComboQty = response;
 
                 console.log('Add to cart ');
-                console.log('maxSellingQty 1 : ',maxSellingQty);
-                if(parseInt(maxSellingQty) > parseInt(getExactVariantComboQty) || parseInt(maxSellingQty)==0){
+                console.log('maxSellingQty 1 : ', maxSellingQty);
+                if (parseInt(maxSellingQty) > parseInt(getExactVariantComboQty) || parseInt(maxSellingQty) == 0) {
                     console.log('if');
                     maxSellingQtyNew = getExactVariantComboQty;
                 } else {
                     maxSellingQtyNew = maxSellingQty;
                 }
-                console.log('getExactVariantComboQty : ',getExactVariantComboQty);
-                console.log('maxSellingQty 2 : ',maxSellingQty);
-                console.log('maxSellingQtyNew 3 : ',maxSellingQtyNew);
+                console.log('getExactVariantComboQty : ', getExactVariantComboQty);
+                console.log('maxSellingQty 2 : ', maxSellingQty);
+                console.log('maxSellingQtyNew 3 : ', maxSellingQtyNew);
 
-                $(".addToDecQtyBtn").attr("disabled",false).html(originalHtmlMinus);
-                $(".addToNewQtyBtn").attr("disabled",false).html(originalHtmlPlus);
+                $(".addToDecQtyBtn").attr("disabled", false).html(originalHtmlMinus);
+                $(".addToNewQtyBtn").attr("disabled", false).html(originalHtmlPlus);
             },
             error: function (xhr) {
-               // alert('Failed to add to cart. Please try again.');
+                // alert('Failed to add to cart. Please try again.');
             }
         });
         // get variant colour and size combo exact qty
 
         var quantity = item.quantity;
-        if(parseInt(quantity) > parseInt(maxSellingQtyNew) &&  maxSellingQtyNew !=0){
+        if (parseInt(quantity) > parseInt(maxSellingQtyNew) && maxSellingQtyNew != 0) {
             isQuantity = false;
             e.preventDefault();
             $('#paymentError').show();
             $(".error-msg").html("You can't order above max quantity of product, Your product quantity is exceed : " + quantity);
-            setTimeout(function(){  $(".error-msg").html("");  }, 5000);
-        } 
+            setTimeout(function () { $(".error-msg").html(""); }, 5000);
+        }
     });
-    if(!isQuantity){
+    if (!isQuantity) {
         return false;
     }
     // Quantity Validation on checkout page
-    console.log( 'calculate cart : ', cartItems);
+    console.log('calculate cart : ', cartItems);
     var totals = calculateCartTotals(cartItems);
     var subTotal = totals.finalAmount;
     console.log('subTotal  : ', subTotal);
 
     // COD order should be less than 500 validation
-    if($('[name="pay_online"]:checked').val() =='cod' && subTotal > codMaxLimit){
+    if ($('[name="pay_online"]:checked').val() == 'cod' && subTotal > codMaxLimit) {
         e.preventDefault();
         $('#paymentError').show();
-        $(".error-msg").html("Cash on Delivery available for orders up to ₹"+codMaxLimit);
-        setTimeout(function(){  $(".error-msg").html("");  }, 5000);
+        $(".error-msg").html("Cash on Delivery available for orders up to ₹" + codMaxLimit);
+        setTimeout(function () { $(".error-msg").html(""); }, 5000);
         return false;
     } else {
         $(".error-msg").html("");
     }
-    
-    console.log('subTotal : pay now'. subTotal);
-    if(parseInt(subTotal) == 0){ //  order amount should be greater than 0 rs validation
+
+    console.log('subTotal : pay now'.subTotal);
+    if (parseInt(subTotal) == 0) { //  order amount should be greater than 0 rs validation
         e.preventDefault();
         $('#paymentError').show();
         $(".error-msg").html("You cant process order with zero amount.");
-        setTimeout(function(){  $(".error-msg").html("");  }, 5000);
+        setTimeout(function () { $(".error-msg").html(""); }, 5000);
         return false;
     } else {
         $(".error-msg").html("");
     }
-    
-    if(parseInt(subTotal) < 0){ //  order amount should be greater than 0 rs validation
-         e.preventDefault();
+
+    if (parseInt(subTotal) < 0) { //  order amount should be greater than 0 rs validation
+        e.preventDefault();
         $('#paymentError').show();
         $(".error-msg").html("You cant process order with minus amount.");
-        setTimeout(function(){  $(".error-msg").html("");  }, 5000);
+        setTimeout(function () { $(".error-msg").html(""); }, 5000);
         return false;
     } else {
         $(".error-msg").html("");
@@ -415,8 +415,9 @@ $('#pay_now').on('click', function (e) {
 
     var payment_type = document.querySelector('input[name="pay_online"]:checked')?.value;
     var walletCheckbox = document.getElementById('payment1');
+
     var wallet_type = walletCheckbox?.checked ? "wallet" : null;
-    if (wallet_type && $('[name="pay_online"]:checked').val() !='cod') {
+    if (wallet_type && $('[name="pay_online"]:checked').val() != 'cod') {
         // Get real available waller balance 
         var walletBalance = 0;
         $.ajax({
@@ -432,7 +433,6 @@ $('#pay_now').on('click', function (e) {
         // Get real available waller balance 
         console.log('user_id  : ', USERID);
         console.log('walletBalance  : ', walletBalance);
-       
         // var subTotal = parseFloat($('.finalAmount').text().replace(/[^\d.]/g, ''));
         var wallet_amount = 0;
         if (walletCheckbox?.checked) {
@@ -440,10 +440,12 @@ $('#pay_now').on('click', function (e) {
                 wallet_amount = subTotal;
                 payment_type = "wallet";
                 subTotal = 0;
-            } else if (payment_type === "razorpay") {
-                wallet_amount = walletBalance;
-                subTotal = subTotal - walletBalance;
-            }
+            } 
+            
+            // else if (payment_type === "razorpay") {
+            //     wallet_amount = walletBalance;
+            //     subTotal = subTotal - walletBalance;
+            // }
         }
     } else {
         var subTotal = parseFloat($('.finalAmount').text().replace(/[^\d.]/g, ''));
@@ -461,9 +463,21 @@ $('#pay_now').on('click', function (e) {
         shippingcharge: totalShippingCharge,
     };
     var url = window.location.origin + "/place-order";
-    console.log("===========postData=============",postData); 
-    console.log("place order url------",url); 
-    that.prop('disabled', true).text('Please wait...');
+    console.log("===========postData=============", postData);
+    console.log("place order url------", url);
+window.addEventListener('pageshow', function (event) {
+    // Restore checkout after browser Back/Forward navigation
+    $('#payNowBtn')
+        .prop('disabled', false)
+        .text('Pay Now');
+
+    // Also restore the button if the page was restored from bfcache
+    if (event.persisted) {
+        $('#payNowBtn')
+            .prop('disabled', false)
+            .text('Pay Now');
+    }
+});
     $.ajax({
         type: "POST",
         url: url,
@@ -474,68 +488,121 @@ $('#pay_now').on('click', function (e) {
         data: JSON.stringify(postData),
 
         success: function (data) {
-            if (data.success==false) {
+            if (data.success == false) {
                 console.log(' final order response ', data);
                 $(".error-msg").html(data.message);
-                setTimeout(function(){  $(".error-msg").html("");  }, 5000);
+                setTimeout(function () { $(".error-msg").html(""); }, 5000);
             } else {
+                if (payment_type === 'ccavenue') {
+                    if (data.ccavenue && data.ccavenue.action && data.ccavenue.encRequest && data.ccavenue.access_code) {
+                        localStorage.removeItem('coupon_id');
+                        localStorage.removeItem('coupon_discount');
+
+                        var ccavenueForm = document.createElement('form');
+                        ccavenueForm.method = 'POST';
+                        ccavenueForm.action = data.ccavenue.action;
+                        [['encRequest', data.ccavenue.encRequest], ['access_code', data.ccavenue.access_code]].forEach(function (field) {
+                            var input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = field[0];
+                            input.value = field[1];
+                            ccavenueForm.appendChild(input);
+                        });
+                        document.body.appendChild(ccavenueForm);
+                        ccavenueForm.submit();
+                    } else {
+                        $('.error-msg').html(data.message || 'Unable to start CCAvenue payment. Please try again.');
+                        that.prop('disabled', false).text('Pay Now');
+                    }
+                    return;
+                }
+                if (payment_type === 'payu') {
+                    if (data.payu && data.payu.action && data.payu.fields) {
+                        localStorage.removeItem('coupon_id');
+                        localStorage.removeItem('coupon_discount');
+
+                        var payuForm = document.createElement('form');
+                        payuForm.method = 'POST';
+                        payuForm.action = data.payu.action;
+
+                        Object.keys(data.payu.fields).forEach(function (name) {
+                            var input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = name;
+                            input.value = data.payu.fields[name];
+                            payuForm.appendChild(input);
+                        });
+
+                        document.body.appendChild(payuForm);
+                        payuForm.submit();
+                    } else {
+                        $('.error-msg').html(
+                            data.message || 'Unable to start PayU payment. Please try again.'
+                        );
+                        that.prop('disabled', false).text('Pay Now');
+                    }
+
+                    return;
+                }
                 if (payment_type === "wallet" && data.success) {
                     localStorage.removeItem('coupon_id');
                     localStorage.removeItem('coupon_discount');
                     window.location.href = data.url;
                 }
-                if (payment_type == 'razorpay') {
-                    if (data.success) {
-                        if (data.type == 'wallet') {
-                            location.href = window.location.origin + "/dashboard";
-                        } else {
-                            var options = {
-                                "key": RAZORPAYKEY,
-                                "amount": data.data.amount,
-                                "currency": "INR",
-                                "name": "FurnishWorlds",
-                                "description": "Transaction",
-                                "image": "https://furnishworlds.com/uploads/settings/JUL2026/1783656397-settings.jpg",
-                                "order_id": data.data.id,
-                                "callback_url": window.location.origin + "/checkout-callback",
-                                "prefill": {
-                                    "name": USERNAME,
-                                    "email": USEREMAIL,
-                                    "contact": USERPHONE
-                                },
-                                "notes": {
-                                    "coupon_id": postData.coupon_id,
-                                    "coupon_discount": postData.coupon_discount,
-                                    "shippingcharge": postData.shippingcharge,
-                                    "billing_id": postData.billing_id,
-                                    "shipping_id": postData.shipping_id,
-                                },
-                                "theme": {
-                                    "color": "#3399cc"
-                                },
-                                "handler": function(response) {
-                                    localStorage.removeItem('coupon_id');
-                                    localStorage.removeItem('coupon_discount');
-                                    // Razorpay response ko backend par bhejna
-                                    console.log("Payment Success:", response);
+                // if (payment_type == 'razorpay') {
+                //     if (data.success) {
+                //         if (data.type == 'wallet') {
+                //             location.href = window.location.origin + "/dashboard";
+                //         } else {
+                //             var options = {
+                //                 "key": RAZORPAYKEY,
+                //                 "amount": data.data.amount,
+                //                 "currency": "INR",
+                //                 "name": "FurnishWorlds",
+                //                 "description": "Transaction",
+                //                 "image": "https://furnishworlds.com/uploads/settings/JUL2026/1783656397-settings.jpg",
+                //                 "order_id": data.data.id,
+                //                 "callback_url": window.location.origin + "/checkout-callback",
+                //                 "prefill": {
+                //                     "name": USERNAME,
+                //                     "email": USEREMAIL,
+                //                     "contact": USERPHONE
+                //                 },
+                //                 "notes": {
+                //                     "coupon_id": postData.coupon_id,
+                //                     "coupon_discount": postData.coupon_discount,
+                //                     "shippingcharge": postData.shippingcharge,
+                //                     "billing_id": postData.billing_id,
+                //                     "shipping_id": postData.shipping_id,
+                //                 },
+                //                 "theme": {
+                //                     "color": "#3399cc"
+                //                 },
+                //                 "handler": function (response) {
+                //                     localStorage.removeItem('coupon_id');
+                //                     localStorage.removeItem('coupon_discount');
+                //                     // Razorpay response ko backend par bhejna
+                //                     console.log("Payment Success:", response);
 
-                                },
-                                "modal": {
-                                    "ondismiss": function() {
-                                        console.log("Razorpay closed");
-                                    }
-                                }
-                            };
-                            var rzp1 = new Razorpay(options);
-                            rzp1.on('payment.failed', function(response) {
-                                console.log("Payment Failed:", response.error);
-                            });
-                            rzp1.open();
-                        }
-                    }
-                } else {
+                //                 },
+                //                 "modal": {
+                //                     "ondismiss": function () {
+                //                         console.log("Razorpay closed");
+                //                     }
+                //                 }
+                //             };
+                //             var rzp1 = new Razorpay(options);
+                //             rzp1.on('payment.failed', function (response) {
+                //                 console.log("Payment Failed:", response.error);
+                //             });
+                //             rzp1.open();
+                //         }
+                //     }
+                // }
+
+                else {
                     if (data.success) {
-                                 // COD successful
+                        // COD successful
                         localStorage.removeItem('coupon_id');
                         localStorage.removeItem('coupon_discount');
                         window.location.href = data.url;
@@ -547,13 +614,17 @@ $('#pay_now').on('click', function (e) {
         error: function (err) {
             that.prop('disabled', false).text('Pay Now');
             $('.error-msg').remove();
-            if (err.status == 422) {
+            if (err.status == 422 && err.responseJSON && err.responseJSON.errors) {
                 $("#add-new-billing-address").addClass('d-none');
                 $('#new-billing-address').toggleClass('show');
                 $.each(err.responseJSON.errors, function (i, error) {
                     var el = $(document).find('[name="' + i + '"]');
                     el.after($('<span class="error-msg" style="color: red;">' + error[0] + '</span>'));
                 });
+            } else {
+                $('<span class="error-msg" style="color: red;"></span>')
+                    .text(err.responseJSON && err.responseJSON.message ? err.responseJSON.message : 'Unable to place your order. Please try again.')
+                    .insertBefore('#pay_now');
             }
         }
     });
@@ -593,14 +664,14 @@ function renderCart() {
     var cartOutOfStock = [];
     var cartAllItems = getCartItems();
 
-    console.log("--------renderCart-----in renderCartMethod--",cartAllItems); 
+    console.log("--------renderCart-----in renderCartMethod--", cartAllItems);
     cartAllItems.forEach(function (item, index) {
         let variants = item.selectedVariants || {};
         //  product is out of stock
 
         let product_sku = item.name.toLowerCase();
         let variant_sku = product_sku.toLowerCase();
-        if(item.productType==2){
+        if (item.productType == 2) {
             // variant_sku = product_sku + '_' + variants.colour.toLowerCase() + '_' + variants.size.toLowerCase();
             variant_sku = product_sku + '_' + variants.color.toLowerCase();
         }
@@ -617,19 +688,19 @@ function renderCart() {
                 variant_sku: variant_sku,
             },
             success: function (response) {
-                if(!response){
+                if (!response) {
                     cartItems.push(item);
                 } else {
                     cartOutOfStock.push(item);
                 }
             },
             error: function (xhr) {
-            // alert('Failed to add to cart. Please try again.');
+                // alert('Failed to add to cart. Please try again.');
             }
         });
         //  product is out of stock 
     });
-    if(cartOutOfStock!=''){
+    if (cartOutOfStock != '') {
         document.addEventListener("DOMContentLoaded", function () {
             var myModal = new bootstrap.Modal(document.getElementById('out-of-stock-product'));
             myModal.show();
@@ -637,7 +708,6 @@ function renderCart() {
         // confirm('You have some out of stock product in cart, You can buy these product when will be in stock.');
         console.log(' cartItems new ', cartItems);
     }
-    
     console.log(' render cart ', cartItems);
     var $container = $('#checkout-cart-container');
     let couponDiscount = parseFloat(localStorage.getItem('coupon_discount')) || 0;
@@ -646,7 +716,7 @@ function renderCart() {
         $('#totalMrp, #delivery, #totalDiscount, #subTotal, #couponDiscount, #total-items, #grandTotal, #taxableAmount, #taxPrice, .finalAmount').text('₹0');
         $('#pay_now').remove();
         $('#shoopping_continue').show();
-        $('.Delivery-sec').html('<h3>Your Cart is empty !!!</h3>' + emptyCartImg +'</br><button class="w-100 full-btn" id="shoopping_continue"><a href="https://vasvi.in/" style="color:#fff">Add to Cart Any Item</a></button>');
+        $('.Delivery-sec').html('<h3>Your Cart is empty !!!</h3>' + emptyCartImg + '</br><button class="w-100 full-btn" id="shoopping_continue"><a href="https://vasvi.in/" style="color:#fff">Add to Cart Any Item</a></button>');
         return;
     }
 
@@ -657,22 +727,22 @@ function renderCart() {
     let totalTaxPrice = 0;
     let taxOption = 'inclusive';
     let qty = 0;
-    let taxRate = 0; 
+    let taxRate = 0;
     console.log(' before loop ', cartItems);
     cartItems.forEach(function (item) {
         qty = item.quantity;
-        
+
         totalMrp += item.price * item.quantity;
         // if (item.discountType == "flat") {
         //     totalDiscount += parseInt(item.discountAmount);
         // } else if (item.discountType == "percentage") {
         //     totalDiscount += ((parseInt(item.discountAmount) * totalMrp) / 100);
         // }
-        totalDiscount += item.price - item.sellingPrice ;  
+        totalDiscount += item.price - item.sellingPrice;
         taxOption = item.tax_option;
-        taxRate = item.tax_rate; 
+        taxRate = item.tax_rate;
 
-        totalTaxPrice += ((item.sellingPrice * taxRate)/100) ; 
+        totalTaxPrice += ((item.sellingPrice * taxRate) / 100);
 
         output += `
                 <li>
@@ -692,7 +762,6 @@ function renderCart() {
                 </li>`;
     });
     output += '</ul>';
-    
     $container.html(output);
     let subTotal = totalMrp - totalDiscount;
     let grandTotal = subTotal - couponDiscount;
@@ -705,7 +774,6 @@ function renderCart() {
     console.log(totalShippingCharge);
     let finalAmount = grandTotal + totalShippingCharge;
     // Update Summary
-    
     // Maanage COD checkbox text value 
     if (totalMrp > 12000) {
         $(".cod_value").html('Not Available');
@@ -719,7 +787,6 @@ function renderCart() {
     } else {
         $("#totalMrp").html("0"); // Or use .text('') depending on your layout
     }
-    
     if (totalDiscount > 0) {
         $("#totalDiscount").html(`-₹${totalDiscount.toFixed(2)}`).show();
     } else {
@@ -727,16 +794,15 @@ function renderCart() {
     }
 
     $('#subTotal').html(`₹${(subTotal).toFixed(2)}`);
-    
     if (couponDiscount > 0) {
         $("#couponDiscount").html(`-₹${couponDiscount.toFixed(2)}`).show();
     } else {
         $("#couponDiscount").html("0"); // Or use .text('') depending on your layout
     }
-    
+
     $('#grandTotal').html(`₹${(grandTotal).toFixed(2)}`);
     $('#taxableAmount').html(`₹${(taxableAmount).toFixed(2)}`);
-    
+
     if (taxOption == 'inclusive') {
         $("#taxPrice").html(`+₹${totalTaxPrice.toFixed(2)}`).show();
     } else if (taxOption == 'exclusive') {
@@ -744,7 +810,6 @@ function renderCart() {
     } else {
         $("#taxPrice").html("0"); // Or use .text('') depending on your layout
     }
-    
     if (finalAmount > 0) {
         //$('.finalAmount').html(`₹${finalAmount.toFixed(2)}`);
         if (taxOption == 'inclusive') {
@@ -757,10 +822,10 @@ function renderCart() {
         $('.finalAmount').html(`₹0`);
         $('.checkoutButton').addClass('disabled-link');
     }
-    
+
     $('#delivery').text(`₹${delivery.toLocaleString()}`);
     // $('#total-items').text(cartItems.length);
-    $('#total-items').html(qty); 
+    $('#total-items').html(qty);
 }
 
 
@@ -778,7 +843,7 @@ function calculateCartTotals(cartItems) {
 
         if (item.discountType == "flat") {
             totalDiscount += parseInt(item.discountAmount);
-        } 
+        }
         else if (item.discountType == "percentage") {
             totalDiscount += ((parseInt(item.discountAmount) * totalMrp) / 100);
         }
@@ -899,7 +964,7 @@ function shippingCalculation(shipping_id, cartItems, subTotal) {
             if (response.success) {
                 const data = response.data;
                 totalShippingCharge = response.shippingPrice;
-                if(deliveryShippingCharge){
+                if (deliveryShippingCharge) {
                     deliveryShippingCharge.innerHTML = `₹${response.shippingPrice}`;
                 }
             } else {

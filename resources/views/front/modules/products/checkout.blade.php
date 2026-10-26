@@ -298,7 +298,7 @@
                                                 </div>
                                             </label>
                                         </div>
-                                        <div class="checkout-payment-item">
+                                        {{-- <div class="checkout-payment-item">
                                             <input class="checkout-payment-input" id="payment2" type="radio"
                                                 name="pay_online" value="razorpay">
                                             <label class="checkout-payment-label" for="payment2">
@@ -308,7 +308,7 @@
                                                     <p>Pay by Razorpay online</p>
                                                 </div>
                                             </label>
-                                        </div>
+                                        </div> --}}
                                         <div class="checkout-payment-item">
                                             <input class="checkout-payment-input" id="payment3" type="radio"
                                                 name="pay_online" value="cod" />
@@ -320,6 +320,30 @@
                                                 </div>
                                             </label>
                                         </div>
+                                        		<div class="checkout-payment-item" id="ccavenuePaymentOption">
+								<input class="checkout-payment-input payment_method" id="payment4" type="radio" name="pay_online" value="ccavenue">
+								<label class="checkout-payment-label" for="payment4">
+									<p class="checkout-payment-title"><img src="images/icon-upi.png" alt=""> Pay With CC Avenue</p>
+									<div class="checkout-payment-box">
+										<p>Pay via CC avenue; you can pay with your credit card if you don’t have a CC Avenue account.</p>   
+									</div>
+								</label>     
+							</div>
+                            <div class="checkout-payment-item">
+    <input class="checkout-payment-input payment_method"
+           id="payment5"
+           type="radio"
+           name="pay_online"
+           value="payu">
+    <label class="checkout-payment-label" for="payment5">
+        <p class="checkout-payment-title">
+            <img src="images/icon-upi.png" alt=""> Pay with PayU
+        </p>
+        <div class="checkout-payment-box">
+            <p>Pay securely using PayU.</p>
+        </div>
+    </label>
+</div>
                                         <!-- <div class="checkout-payment-item">
                                                                                                         <input class="checkout-payment-input" id="payment4" type="radio" name="payment" >
                                                                                                         <label class="checkout-payment-label" for="payment4">
@@ -451,14 +475,14 @@
 @endsection
 
 @push('scripts')
-    <script>
+    {{-- <script>
         var RAZORPAYKEY = "{{ env('RAZORPAY_MODE') == 'test' ? env('RAZORPAY_TEST_KEY') : env('RAZORPAY_LIVE_KEY') }}";
-    </script>
+    </script> --}}
     <script>
         window.dbCartItems = @json($cart ?? []); 
     </script>
     <script src="{{ asset('assets/front/js/checkouts.js') }}"></script>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    {{-- <script src="https://checkout.razorpay.com/v1/checkout.js"></script> --}}
 
 
     <script>
@@ -505,7 +529,12 @@
             }
 
 
-            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            if(isLoggedIn){
+                cartItems = window.dbCartItems; 
+            } else{
+                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            }
+            console.log("==========my cartItems=========",cartItems); 
             let subTotal = 0;
             cartItems.forEach(function(item) {
                 subTotal += item.price * item.quantity;

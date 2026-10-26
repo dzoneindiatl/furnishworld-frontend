@@ -48,7 +48,10 @@
                 <div class="content-area">
                     <div class="product-cat-page">
                         <div class="filter_left_sidebar">
-                            <h4 class="filter_head">Filters</h4>
+                            <div class="filter-top">
+                                <h4 class="filter_head">Filters</h4>
+                                <button class="filter-close"><img src={{ asset('assets/images/close_icon.png') }} alt="img"></button>
+                            </div>
                             <div class="filter_left_sidebar_inner">
                                 <div class="filter_left_sidebar_box active">
                                     <div class="inner_filter_sec">
@@ -189,16 +192,19 @@
                             </div>
                         </div>
                     </div>
+                    <div class="filter-overlay"></div>
                     {{-- <div class="product-filter-overlay"></div>  --}}
                     <div class="products-area">
                         <div class="product-area-top-sec">
-                            <span class="tracking-count"><b>Total:</b> {{ $results->count() }}</span>
+                            <span class="tracking-count"><b>Total Product:</b> {{ $totalResults }}</span>
                             <div class="sort_by_wrapper">
+                                <button class="filter-btn">
+                                    <img src="{{ asset('assets/images/filter_icon.png') }}" alt="img"></button>
                                 <span class="sort_by_label">Sort By :</span>
 
                                 <div class="sort_select_box">
                                     <select name="sortBy" id="sortBy">
-                                        <option value="">Select Recommended</option>
+                                        <option value="">Recommended</option>
                                         <option value="best_seller">Best Seller</option>
                                         <option value="is_featured">Featured</option>
                                         <option value="trending">Trending</option>
@@ -212,7 +218,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="product-display-mode"> 
+                            <div class="product-display-mode">
                                 <div id="grid" class="">
                                     <a href="javascript:void(0)" title="2 Column"><span></span><span></span></a>
                                 </div>
@@ -229,7 +235,7 @@
                             </div>
                         </div>
                         <ul class="products column-3" id="product-list">
-                            @include('front.modules.shop.load_more_data')
+                            @include('front.modules.shop.load_more_data_new')
                         </ul>
                         <div id="productLoader" style="display:none; text-align:center;"></div>
                     </div>
@@ -405,6 +411,7 @@
 </style>
 <script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
 <script>
+ 
     var url = "{{ route('front-get-category') }}";
 
     function getSubCategory() {
@@ -562,5 +569,7 @@
             });
         }
 
+        
     });
+
 </script>

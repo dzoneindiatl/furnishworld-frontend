@@ -28,7 +28,7 @@
                                      <li class="product-item product">
                                          <div class="product-wrap">
                                             <div class="product-image" data-product-id="{{ $product->id }}">
-                                                 <a href="{{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($product->name) . '.html', 'sku' => $product->sku]) }}">
+                                                 <a href="@if(!empty($product->sku)){{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($product->name) . '.html', 'sku' => $product->sku]) }} @endif">
                                                      <div class="product-main-image">
                                                          <img src="{{ asset('uploads/products/' . $firstImage) }}"
                                                              alt="" class="main-image">
@@ -57,7 +57,7 @@
                                                     <div class="product-option-item">
                                                          {{-- <div class="product-option-title">Size</div> --}}
                                                         <div class="product-addtocart-button">
-                                                            <a href="{{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($product->name) . '.html', 'sku' => $product->sku]) }}" class="product-addtocart">
+                                                            <a href="@if(isset($product->sku) && !empty($product->sku)){{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($product->name) . '.html', 'sku' => $product->sku]) }} @endif" class="product-addtocart">
                                                                  <div class="icon-cart-pro">
                                                                     <svg fill="#fff"
                                                                          height="20px" width="20px" version="1.1"
@@ -109,20 +109,66 @@
                                                  </div>
                                              </div>
                                              <div class="product-content">
-                                                 <h5 class="product-title">
-                                                     <a
-                                                         href="{{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($product->name) . '.html', 'sku' => $product->sku]) }}">{{ $product->name }}</a>
-                                                 </h5>
-                                                 <div class="product-price">
+                                                <h5 class="product-title">
+                                                     <a href="@if(isset($product->sku) && !empty($product->sku)){{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($product->name) . '.html', 'sku' => $product->sku]) }}@endif">{{ $product->name }}</a>
+                                                </h5>
+                                                @php 
+                                                    if(isset($priceDrop) && !empty($priceDrop)){
+                                                        $productId = $priceDrop->product_id;
+                                                        $discountAmount = $priceDrop->amount;
+                                                        if($priceDrop->gain_type == "drop"){
+                                                            if($productId == "all"){
+                                                                if($priceDrop->drop_type == "percentage"){
+                                                                    $mainPrice =$selling_price - (($discountAmount/100) * $selling_price) ; 
+                                                                }
+                                                                if($priceDrop->drop_type == "flat"){
+                                                                    $mainPrice = $selling_price - $discountAmount ; 
+                                                                }
+                                                            }
+                                                            else{
+                                                                $productIdArray = explode(",",$productId); 
+                                                                if(in_array($trending->id,$productIdArray)){
+                                                                    if ($priceDrop->drop_type == "percentage") {
+                                                                        $mainPrice = $selling_price - (($priceDrop->amount / 100) * $selling_price);
+                                                                    } elseif ($priceDrop->drop_type == "flat") {
+                                                                        $mainPrice = $selling_price - $priceDrop->amount;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        if($priceDrop->gain_type == "gain"){
+                                                            if($productId == "all"){
+                                                                if($priceDrop->drop_type == "percentage"){
+                                                                    $mainPrice =$selling_price + (($discountAmount/100) * $selling_price) ; 
+                                                                }
+                                                                if($priceDrop->drop_type == "flat"){
+                                                                    $mainPrice = $selling_price + $discountAmount ; 
+                                                                }
+                                                            }
+                                                            else{
+                                                                $productIdArray = explode(",",$productId); 
+                                                                if(in_array($trending->id,$productIdArray)){
+                                                                    if ($priceDrop->drop_type == "percentage") {
+                                                                        $mainPrice = $selling_price + (($priceDrop->amount / 100) * $selling_price);
+                                                                    } elseif ($priceDrop->drop_type == "flat") {
+                                                                        $mainPrice = $selling_price + $priceDrop->amount;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }    
+                                                    }
+                                                @endphp
+                                                <div class="product-price">
                                                      @if ($discount_product > 0)
                                                          <del>₹ {{ floor($buying_price) }}</del>
                                                      @endif
-                                                     <ins>₹ {{ floor($selling_price) }}</ins>
+                                                     <ins>₹ @if(isset($priceDrop) && !empty($priceDrop) && $mainPrice > 0) {{ $mainPrice }} @else {{ floor($selling_price) }} @endif </ins>
                                                     @if(!empty($discountAmountText))
                                                         <span class="single-product-priceoff" id="discountShow">{{ $discountAmountText }}</span>
                                                     @endif 
-                                                 </div>
-                                                 <div class="product-wishlist wishlist">
+                                                </div>
+
+                                                <div class="product-wishlist wishlist">
                                                      <span class="icon-top addtoWishList"
                                                          data-product-id="{{ $product->id }}">
                                                          @if (isset($isWishlisteddata))

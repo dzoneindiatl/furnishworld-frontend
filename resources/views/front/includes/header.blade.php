@@ -131,6 +131,52 @@
                     @if (Auth::guard('customer')->check())
                         <div id="headerCartItems">
                             @foreach ($carts->take(2) as $index => $cart)
+                                @php 
+                                                    if(isset($priceDrop) && !empty($priceDrop)){
+                                                        $productId = $priceDrop->product_id;
+                                                        $discountAmount = $priceDrop->amount;
+                                                        if($priceDrop->gain_type == "drop"){
+                                                            if($productId == "all"){
+                                                                if($priceDrop->drop_type == "percentage"){
+                                                                    $mainPrice =$cart->product->selling_price - (($discountAmount/100) * $cart->product->selling_price) ; 
+                                                                }
+                                                                if($priceDrop->drop_type == "flat"){
+                                                                    $mainPrice = $cart->product->selling_price - $discountAmount ; 
+                                                                }
+                                                            }
+                                                            else{
+                                                                $productIdArray = explode(",",$productId); 
+                                                                if(in_array($cart->product->id,$productIdArray)){
+                                                                    if ($priceDrop->drop_type == "percentage") {
+                                                                        $mainPrice = $cart->product->selling_price - (($priceDrop->amount / 100) * $cart->product->selling_price);
+                                                                    } elseif ($priceDrop->drop_type == "flat") {
+                                                                        $mainPrice = $cart->product->selling_price - $priceDrop->amount;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        if($priceDrop->gain_type == "gain"){
+                                                            if($productId == "all"){
+                                                                if($priceDrop->drop_type == "percentage"){
+                                                                    $mainPrice =$cart->product->selling_price + (($discountAmount/100) * $cart->product->selling_price) ; 
+                                                                }
+                                                                if($priceDrop->drop_type == "flat"){
+                                                                    $mainPrice = $cart->product->selling_price + $discountAmount ; 
+                                                                }
+                                                            }
+                                                            else{
+                                                                $productIdArray = explode(",",$productId); 
+                                                                if(in_array($cart->product->id,$productIdArray)){
+                                                                    if ($priceDrop->drop_type == "percentage") {
+                                                                        $mainPrice = $cart->product->selling_price + (($priceDrop->amount / 100) * $cart->product->selling_price);
+                                                                    } elseif ($priceDrop->drop_type == "flat") {
+                                                                        $mainPrice = $cart->product->selling_price + $priceDrop->amount;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }    
+                                                    }
+                                                @endphp
                                 <div class="cart-item" data-cartid = "{{ $cart->id }}">
                                     <a href="{{ route('front-product.detail', ['product' => 'product', 'title' => productSlug($cart->product->name) . '.html', 'sku' => $cart->product->sku]) }}"><img
                                             src="{{ $cart->product->images['first'] }}" alt=""></a>
@@ -138,7 +184,7 @@
                                         <h5>{{ $cart->product->name }}</h5>
                                         <span>Qty: {{ $cart->quantity }}</span>
                                         <strong>
-                                            ₹{{ $cart->product->selling_price }}
+                                            ₹ @if(isset($priceDrop) && !empty($priceDrop)) {{ $mainPrice }} @else {{ $cart->product->selling_price }} @endif 
                                         </strong>
                                     </div>
                                     <button type="button" class="remove-item close-product"

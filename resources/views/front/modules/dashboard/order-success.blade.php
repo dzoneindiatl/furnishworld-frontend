@@ -27,7 +27,7 @@
               <div class="thankyou-order-received">
                 <i class="fa-regular fa-check-circle success"></i>
                 <!-- <i class="fa-regular fa-check-circle failed"></i> -->
-                <h5>Hey {{ auth()->guard('customer')->user()->name }}</h5>
+                <h5>Hey {{ $order->user?->name ?? 'there' }}</h5>
                 <p>Thank you. Your order has been received.</p>
                 </div>
                 <div style="text-align: center;"><p>We've got your order! We'll keep you updated once your order ships. Please find your order details below.

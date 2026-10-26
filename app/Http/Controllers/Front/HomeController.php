@@ -46,15 +46,11 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use DB;
 use App\Models\ProductDetailManager; 
+use App\Models\PriceDrop; 
 
 // use App\Service\SpecificationCombination; 
 class HomeController extends Controller
 {
-    // public $specification; 
-    // public function __construct(SpecificationCombination $specificationCombination){
-
-    //     $this->specification = $specificationCombination; 
-    // }
     public function index()
     {
         $cookie = Cookie::get('auto_login');
@@ -67,6 +63,8 @@ class HomeController extends Controller
                 Cookie::queue(Cookie::forget('auto_login'));
             }
         }
+        $today = now()->toDateString();
+        $priceDrop = PriceDrop::whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->where('is_deleted',0)->latest()->first();
 
         $isWishlisteddata = [];
         $MainCategory = Category::select('id','slug','description','name','image','image2','image3','thumbnail_image')
@@ -115,7 +113,7 @@ class HomeController extends Controller
      
         $testimonials = Testimonial::where(['is_active' => 1])->get();
         $new_arrivals_product = Product::where('is_new_arrivals', 1)->where("is_deleted",  0)->where(['is_active' => 1])->where(['is_new_arrivals' => true, 'draf' => false])->orderBy('id', 'desc')->get();   
-        $trendingProduct = Product::select('id','name','sku','slug','discount','discount_type','buying_price')->where('trending', 1)->where("is_deleted",  0)->where(['is_active' => "1"])->where(['trending' => true, 'draf' => false])->orderBy('id', 'desc')->get();   
+        $trendingProduct = Product::select('id','name','sku','slug','discount','discount_type','buying_price','selling_price')->where('trending', 1)->where("is_deleted",  0)->where(['is_active' => "1"])->where(['trending' => true, 'draf' => false])->orderBy('id', 'desc')->get();   
         $trendingProduct->each(function ($product) {
             $product->primary_variant_value = null;
             foreach ($product->productVariants as $productVariant) {
@@ -172,7 +170,7 @@ class HomeController extends Controller
                 }
             }
         }); 
-        return view('front.modules.home.index', compact('best_seller_products','ActiveCoupon','homeSlider','MainCategory','testimonials',  'new_arrivals_product','allProduct', 'isWishlisteddata', 'referralCode','featureSubCategory','refreshYourRoom','modernLiving1','modernLiving2','modernLiving3','productGallery','childCategory','subCategory','trendingProduct'));
+        return view('front.modules.home.index', compact('best_seller_products','ActiveCoupon','homeSlider','MainCategory','testimonials',  'new_arrivals_product','allProduct', 'isWishlisteddata', 'referralCode','featureSubCategory','refreshYourRoom','modernLiving1','modernLiving2','modernLiving3','productGallery','childCategory','subCategory','trendingProduct','priceDrop'));
     }
     public function indexNew()
     {
@@ -380,7 +378,12 @@ class HomeController extends Controller
             if (!$productId || !$skuIds) {
                 return response()->json(['error' => 'Missing required data'], 422);
             }
+            
+            
+            $today = now()->toDateString();
+            $priceDrop = PriceDrop::whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->where('is_deleted',0)->latest()->first();
 
+            
             $combination = ProductVariantCombination::select('price', 'selling_price', 'sku', 'discount', 'discount_type','qty')
                 ->where('product_id', $productId)
                 ->where('combination_id', json_encode($skuIds))
@@ -390,10 +393,53 @@ class HomeController extends Controller
                 return response()->json(['error' => 'Combination not found'], 404);
             }
 
-            // $images = ProductGraphics::where([
-            //     'product_id' => $productId,
-            //     'variant_id' => $variantId
-            // ])->orderBy('is_front', 'desc')->get(['graphic', 'graphic_type']);
+            if(isset($priceDrop) && !empty($priceDrop)){
+                $productId = $priceDrop->product_id;
+                $discountAmount = $priceDrop->amount;
+                if($priceDrop->gain_type == "drop"){
+                    if($productId == "all"){
+                        if($priceDrop->drop_type == "percentage"){
+                            $mainPrice =$combination->selling_price - (($discountAmount/100) * $combination->selling_price) ; 
+                        }
+                        if($priceDrop->drop_type == "flat"){
+                            $mainPrice = $combination->selling_price - $discountAmount ; 
+                        }
+                    }
+                    else{
+                        $productIdArray = explode(",",$productId); 
+                        if(in_array($productId,$productIdArray)){
+                            if ($priceDrop->drop_type == "percentage") {
+                                $mainPrice = $combination->selling_price - (($priceDrop->amount / 100) * $combination->selling_price);
+                            } 
+                            if ($priceDrop->drop_type == "flat") {
+                                $mainPrice = $combination->selling_price - $priceDrop->amount;
+                            }
+                        }
+                    }
+                }
+                if($priceDrop->gain_type == "gain"){
+                    if($productId == "all"){
+                        if($priceDrop->drop_type == "percentage"){
+                            $mainPrice = $combination->selling_price + (($discountAmount/100) * $combination->selling_price) ; 
+                        }
+                        if($priceDrop->drop_type == "flat"){
+                            $mainPrice = $combination->selling_price + $discountAmount ; 
+                        }
+                    }
+                    else{
+                        $productIdArray = explode(",",$productId); 
+                        if(in_array($productId,$productIdArray)){
+                            if ($priceDrop->drop_type == "percentage") {
+                                $mainPrice = $combination->selling_price + (($priceDrop->amount / 100) * $combination->selling_price);
+                            } 
+                            if ($priceDrop->drop_type == "flat") {
+                                $mainPrice = $combination->selling_price + $priceDrop->amount;
+                            }
+                        }
+                    }
+                }    
+            }               
+            $combination->selling_price = (isset($priceDrop) && !empty($priceDrop)) ? $mainPrice : $combination->selling_price;  
 
             $images = ProductGraphics::where([
                 'product_id' => $productId,
@@ -639,13 +685,14 @@ class HomeController extends Controller
         $isWishlisteddata = [];
         $parent = '';
         $grandParent = '';
+        $today = now()->toDateString();
+        $priceDrop = PriceDrop::whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->where('is_deleted',0)->latest()->first();
 
         $DB = Product::select('id','name','slug','buying_price','selling_price','discount','discount_type','sku')->where('is_deleted', 0)
-            ->where('is_active', "1"); 
+            ->where('is_active', "1")->orderBy('id','DESC'); 
         $hasCategoryFilter = $request->filled('category_id') || $request->filled('sub_category_id') ||  $request->filled('sub_child_category_id');
+        
         if (!$hasCategoryFilter) {
-
-            // Main Category
             if (count($segments) === 1) {
                 $DB->where('main_category_id', $category->id);
                 $categoriesData = Category::where('is_active', 1)
@@ -653,8 +700,6 @@ class HomeController extends Controller
                     ->where('parent_id', $category->id)
                     ->get();
             }
-
-                // Sub Category
             elseif (count($segments) === 2) {
 
                 $DB->where(function ($q) use ($subCategory) {
@@ -672,7 +717,6 @@ class HomeController extends Controller
                     ->get();
             }
 
-            // Sub Child Category
             elseif (count($segments) === 3) {
 
                 $DB->where(function ($q) use ($subChildCategory) {
@@ -821,13 +865,13 @@ class HomeController extends Controller
 
         if ($request->ajax()) {
             return response()->json([
-                'html' => view('front.modules.shop.load_more_data',compact('results','isWishlisteddata','totalResults','category','grandParent','parent','categoriesData','variants','attributes','limit','allSubCategory','AllMainCategory','variantColor','path'))->render(),
+                'html' => view('front.modules.shop.load_more_data',compact('results','isWishlisteddata','totalResults','category','grandParent','parent','categoriesData','variants','attributes','limit','allSubCategory','AllMainCategory','variantColor','path','priceDrop'))->render(),
                 'totalResults' => $totalResults,
                 'hasMore' => $hasMore,
                 'nextOffset' => $offset + $results->count(),
             ]);
         } 
-        return view('front.modules.shop.index',compact('results','categoriesData','totalResults','variants','attributes','limit','category','isWishlisteddata','parent','grandParent','AllMainCategory','allSubCategory','variantColor','hasMore','allChildCategory','path'));
+        return view('front.modules.shop.index',compact('results','categoriesData','totalResults','variants','attributes','limit','category','isWishlisteddata','parent','grandParent','AllMainCategory','allSubCategory','variantColor','hasMore','allChildCategory','path','priceDrop'));
     }
 
     public function collectionListing(Request $request, $slug)
@@ -1037,17 +1081,18 @@ class HomeController extends Controller
             $recent = array_slice($recent, 0, 50);
             session(['recently_viewed' => $recent]);
         }
+        $today = now()->toDateString();
+        $priceDrop = PriceDrop::whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->where('is_deleted',0)->latest()->first();
 
         $productcat = Category::where('id', $product->main_category_id)->first();
-
         $productDetailId = explode(',',$productcat->product_detail_manager); 
         $productDetailManager = ProductDetailManager::whereIn('id',$productDetailId)->select('id','section_name','content','order')->orderBy('order','asc')->get(); 
         $productSubCat = Category::where('id', $product->main_sub_category_id)->first(); 
         
         $productChildCat = Category::where('id', $product->main_child_category_id)->first();
         
-        // $productreview = Product::with(['reviews.user'])->where('sku', $sku)->where('is_active', 1)->first();
-        // $reviews = $productreview->reviews()->latest()->get();
+        $productreview = Product::with(['reviews.user'])->where('sku', $sku)->where('is_active', "1")->first();
+        $reviews = $productreview->reviews()->latest()->get();
         $productVariantSpecification = ProductVariantSpecialization::where('product_id',$product->id)->get(); 
 
         $productvariants = ProductVariant::with([
@@ -1148,15 +1193,15 @@ class HomeController extends Controller
                 ->toArray();
         }
         $best_seller_products = Product::where('best_seller', 1)->where('is_active', 1)->orderBy('id', 'desc')->get();
-
+        $couponOnDetail = Coupon::where('show_on_detail',1)->where('is_active',1)->first();         
         $facebook = Setting::select('id','value')->where('key','Social.facebook')->first();
         $instagram = Setting::select('id','value')->where('key','Social.instagram')->first(); 
         $pinterst = Setting::select('id','value')->where('key','Social.pinterest')->first(); 
         $youtube = Setting::select('id','value')->where('key','Social.youtube')->first(); 
         $twitter = Setting::select('id','value')->where('key','Social.twitter')->first();        
-
+        
         // 'reviews', 'productreview',
-        return view('front.modules.shop.product-detail', compact('product','productChildCat', 'productcat', 'productSubCat', 'productvariants', 'related_products', 'bestproduct', 'releatedProduct', 'returnexchangeProduct', 'contactDetails', 'productVarientCom', 'isWishlisted', 'isWishlisteddata', 'categoryTaxes',  'recentlyViewedProducts','productVariantSpecification','facebook','instagram','pinterst','youtube','twitter','productDetailManager', 'best_seller_products'));
+        return view('front.modules.shop.product-detail', compact('product','productChildCat', 'productcat', 'productSubCat', 'productvariants', 'related_products', 'bestproduct', 'releatedProduct', 'returnexchangeProduct', 'contactDetails', 'productVarientCom', 'isWishlisted', 'isWishlisteddata', 'categoryTaxes',  'recentlyViewedProducts','productVariantSpecification','facebook','instagram','pinterst','youtube','twitter','productDetailManager', 'best_seller_products','priceDrop','couponOnDetail'));
     }
 
     public function viewBag()
@@ -1186,7 +1231,9 @@ class HomeController extends Controller
                     ->pluck('product_id')
                     ->toArray();
             }
-        
+            $today = now()->toDateString();
+            $priceDrop = PriceDrop::whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->where('is_deleted',0)->latest()->first();
+
              $bestproduct = Product::where('best_seller', 1)->where("is_deleted",  0)->where(['best_seller' => true, 'draf' => false])->orderBy('id', 'desc')->get();
              $recentViewproduct = RecentlyViewed::with('product')->get(); 
      
@@ -1202,7 +1249,57 @@ class HomeController extends Controller
                 $combination = ProductVariantCombination::find(
                     $cartItem->product_variant_combination_id
                 );
+                $today = now()->toDateString();
+                $priceDrop = PriceDrop::whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->where('is_deleted',0)->latest()->first();
+
                 $selectedVariants = [];
+                if(isset($priceDrop) && !empty($priceDrop)){
+                    $productId = $priceDrop->product_id;
+                    $discountAmount = $priceDrop->amount;
+                    if($priceDrop->gain_type == "drop"){
+                        if($productId == "all"){
+                            if($priceDrop->drop_type == "percentage"){
+                                $mainPrice =$combination->selling_price - (($discountAmount/100) * $combination->selling_price) ; 
+                            }
+                            if($priceDrop->drop_type == "flat"){
+                                $mainPrice = $combination->selling_price - $discountAmount ; 
+                            }
+                        }
+                        else{
+                            $productIdArray = explode(",",$productId); 
+                            if(in_array($productId,$productIdArray)){
+                                if ($priceDrop->drop_type == "percentage") {
+                                    $mainPrice = $combination->selling_price - (($priceDrop->amount / 100) * $combination->selling_price);
+                                } 
+                                if ($priceDrop->drop_type == "flat") {
+                                    $mainPrice = $combination->selling_price - $priceDrop->amount;
+                                }
+                            }
+                        }
+                    }
+                    if($priceDrop->gain_type == "gain"){
+                        if($productId == "all"){
+                            if($priceDrop->drop_type == "percentage"){
+                                $mainPrice = $combination->selling_price + (($discountAmount/100) * $combination->selling_price) ; 
+                            }
+                            if($priceDrop->drop_type == "flat"){
+                                $mainPrice = $combination->selling_price + $discountAmount ; 
+                            }
+                        }
+                        else{
+                            $productIdArray = explode(",",$productId); 
+                            if(in_array($productId,$productIdArray)){
+                                if ($priceDrop->drop_type == "percentage") {
+                                    $mainPrice = $combination->selling_price + (($priceDrop->amount / 100) * $combination->selling_price);
+                                } 
+                                if ($priceDrop->drop_type == "flat") {
+                                    $mainPrice = $combination->selling_price + $priceDrop->amount;
+                                }
+                            }
+                        }
+                    }    
+                }               
+                $combination->selling_price = (isset($priceDrop) && !empty($priceDrop)) ? $mainPrice : $combination->selling_price;  
 
                 if ($combination && $combination->combination_id) {
                     $combinationIds = json_decode($combination->combination_id,true);
@@ -1210,15 +1307,12 @@ class HomeController extends Controller
                     info("----combination ids----", [
                         $combinationIds
                     ]);
-
+                    $variantValue = ""; 
                     foreach ($combinationIds as $variantValueId) {
 
                         $variantValue = VariantValue::with('variant')
                             ->find($variantValueId);
 
-                        info("---------variantValue---------", [
-                            $variantValue
-                        ]);
 
                         if ($variantValue && $variantValue->variant) {
 
@@ -1287,7 +1381,7 @@ class HomeController extends Controller
                 
             });
 
-            return view('front.modules.products.viewbag', compact('cartItems', 'bestproduct', 'isWishlisted','recentViewproduct','cart'));
+            return view('front.modules.products.viewbag', compact('cartItems', 'bestproduct', 'isWishlisted','recentViewproduct','cart','priceDrop'));
         } catch (\Exception $e) {
             Log::error($e);
             return redirect()->back()->with(['error' => 'Unable to load cart', 'error_msg' => $e->getMessage()]);
@@ -1402,6 +1496,58 @@ class HomeController extends Controller
             $cart->each(function ($cartItem) {
                 $combination = ProductVariantCombination::find($cartItem->product_variant_combination_id);
                 info('----combination----',[$combination]);
+
+                $today = now()->toDateString();
+                $priceDrop = PriceDrop::whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->where('is_deleted',0)->latest()->first();
+
+                $selectedVariants = [];
+                if(isset($priceDrop) && !empty($priceDrop)){
+                    $productId = $priceDrop->product_id;
+                    $discountAmount = $priceDrop->amount;
+                    if($priceDrop->gain_type == "drop"){
+                        if($productId == "all"){
+                            if($priceDrop->drop_type == "percentage"){
+                                $mainPrice =$combination->selling_price - (($discountAmount/100) * $combination->selling_price) ; 
+                            }
+                            if($priceDrop->drop_type == "flat"){
+                                $mainPrice = $combination->selling_price - $discountAmount ; 
+                            }
+                        }
+                        else{
+                            $productIdArray = explode(",",$productId); 
+                            if(in_array($productId,$productIdArray)){
+                                if ($priceDrop->drop_type == "percentage") {
+                                    $mainPrice = $combination->selling_price - (($priceDrop->amount / 100) * $combination->selling_price);
+                                } 
+                                if ($priceDrop->drop_type == "flat") {
+                                    $mainPrice = $combination->selling_price - $priceDrop->amount;
+                                }
+                            }
+                        }
+                    }
+                    if($priceDrop->gain_type == "gain"){
+                        if($productId == "all"){
+                            if($priceDrop->drop_type == "percentage"){
+                                $mainPrice = $combination->selling_price + (($discountAmount/100) * $combination->selling_price) ; 
+                            }
+                            if($priceDrop->drop_type == "flat"){
+                                $mainPrice = $combination->selling_price + $discountAmount ; 
+                            }
+                        }
+                        else{
+                            $productIdArray = explode(",",$productId); 
+                            if(in_array($productId,$productIdArray)){
+                                if ($priceDrop->drop_type == "percentage") {
+                                    $mainPrice = $combination->selling_price + (($priceDrop->amount / 100) * $combination->selling_price);
+                                } 
+                                if ($priceDrop->drop_type == "flat") {
+                                    $mainPrice = $combination->selling_price + $priceDrop->amount;
+                                }
+                            }
+                        }
+                    }    
+                }               
+                $combination->selling_price = (isset($priceDrop) && !empty($priceDrop)) ? $mainPrice : $combination->selling_price; 
                 $selectedVariants = [];
                 if ($combination &&$combination->primary_variant_value_id) {
                     $variantValue = VariantValue::with('variant')->find($combination->primary_variant_value_id);
