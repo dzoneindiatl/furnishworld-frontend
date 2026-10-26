@@ -19,21 +19,11 @@
     <div class="pt-60">
         <section class="fw_offer_strip">
             <div class="container">
-<<<<<<< HEAD
-
                 <div class="fw_offer_grid">
-
-=======
-                <div class="fw_offer_grid">
->>>>>>> clean-mukul-furnish-v2
                     <div class="left-column">
                         <!-- Countdown  $ActiveCoupon->end_date-->
                         <div class="fw_offer_box fw_countdown_box">
                             <span class="fw_offer_label">FLASH <span>SALE</span></span>
-<<<<<<< HEAD
-
-=======
->>>>>>> clean-mukul-furnish-v2
                             <div class="fw_timer">
                                 <div><strong id="days">00</strong><span>Days</span></div>
                                 <div><strong id="hours">00</strong><span>Hrs</span></div>
@@ -71,11 +61,6 @@
                             </div>
                         </div>
                     </div>
-<<<<<<< HEAD
-
-                    <!-- Animated Ads -->
-=======
->>>>>>> clean-mukul-furnish-v2
                     @php
                         $images = json_decode($ActiveCoupon->image, true);
                     @endphp
@@ -238,11 +223,6 @@
                                         <span class="material-symbols-outlined">favorite</span>
                                     </button>
                                 </div>
-<<<<<<< HEAD
-                                <div class="price-wrap">
-                                    <span class="price">₹{{ $bestseller->selling_price }}</span>
-                                    <span class="old-price">₹{{ $bestseller->buying_price }}</span>
-=======
                                 @php 
                                     if(isset($priceDrop) && !empty($priceDrop)){
                                         $productId = $priceDrop->product_id;
@@ -292,7 +272,6 @@
                                 <div class="price-wrap">
                                     <span class="price">₹@if(isset($priceDrop) && !empty($priceDrop) && $mainPrice > 0) {{ $mainPrice }} @else {{ $bestseller->buying_price }} @endif </span>
                                     <span class="old-price">₹{{ $bestseller->buying_price }} </span>
->>>>>>> clean-mukul-furnish-v2
                                 </div>
                                 <!--div class="product-actions">
                                     <a href="{{ env('WEBSITE_URL') . 'product/product/' . productSlug($bestseller->name) . '.html/' . $bestseller->sku }}"
@@ -486,11 +465,6 @@
                                         <span class="material-symbols-outlined">favorite</span>
                                     </button>
                                 </div>
-<<<<<<< HEAD
-                                <div class="price-wrap">
-                                    <span class="price">₹{{ $trending->selling_price }}</span>
-                                    <span class="old-price">₹{{ $trending->buying_price }}</span>
-=======
                                 @php 
                                     if(isset($priceDrop) && !empty($priceDrop)){
                                         $productId = $priceDrop->product_id;
@@ -540,7 +514,6 @@
                                 <div class="price-wrap">
                                     <span class="price">₹ @if(isset($priceDrop) && !empty($priceDrop) && $mainPrice > 0) {{ $mainPrice }} @else {{ $trending->selling_price }} @endif</span>
                                     <span class="old-price">₹ {{ $trending->buying_price }}</span>
->>>>>>> clean-mukul-furnish-v2
                                 </div>
                                 <!--div class="product-actions">
                                     <a href="{{ env('WEBSITE_URL') . 'product/product/' . productSlug($bestseller->name) . '.html/' . $bestseller->sku }}"

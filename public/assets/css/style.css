@@ -5565,11 +5565,7 @@ textarea.form-control {
 
 @media (max-width: 576px) {
     .offer-banner {
-<<<<<<< HEAD
-        padding: 10px 12px;
-=======
                 padding: 3px 5px;
->>>>>>> clean-mukul-furnish-v2
     }
 
     .offer-banner-content {
@@ -6008,11 +6004,7 @@ textarea.form-control {
 .product-action-buttons button {
     position: relative;
     overflow: hidden;
-<<<<<<< HEAD
-    height: 52px;
-=======
     height: 42px;
->>>>>>> clean-mukul-furnish-v2
     border: 1px solid #2b5e44;
     padding: 0 28px;
     display: flex;
